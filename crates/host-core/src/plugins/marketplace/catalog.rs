@@ -17,7 +17,7 @@ pub(crate) fn built_in_catalog() -> MarketCatalogFile {
         schema_version: 1,
         provider_id: "official".into(),
         catalog_id: None,
-        name: Some("PI-Desktop Official Plugins (bundled fallback)".into()),
+        name: Some("京车小智工作台 Official Plugins (bundled fallback)".into()),
         homepage: Some("https://github.com/vastsa/pi-desktop-plugins".into()),
         updated_at: Some("2026-07-28T00:00:00Z".into()),
         generated_at: None,
@@ -30,13 +30,13 @@ pub(crate) fn built_in_catalog() -> MarketCatalogFile {
                 id: "demo.hello".into(),
                 name: "Hello".into(),
                 description: "Official sample plugin with panel, command, and echo tool.".into(),
-                author: "PI-Desktop".into(),
+                author: "京车小智工作台".into(),
                 icon_url: None,
                 categories: vec!["demo".into(), "official".into()],
                 verified: true,
                 downloads: Some(1280),
-                homepage: Some("https://github.com/vastsa/PI-Desktop".into()),
-                repository: Some("https://github.com/vastsa/PI-Desktop".into()),
+                homepage: Some("https://github.com/zhangsa69/jingche-xiaozhi-workbench".into()),
+                repository: Some("https://github.com/zhangsa69/jingche-xiaozhi-workbench".into()),
                 readme_markdown: Some(
                     "# Hello\n\nOfficial demo plugin used by the local marketplace provider.".into(),
                 ),
@@ -62,7 +62,7 @@ pub(crate) fn built_in_catalog() -> MarketCatalogFile {
                 id: "demo.workspace-notes".into(),
                 name: "Workspace Notes".into(),
                 description: "Read/write a notes file in the current workspace and fetch optional snippets.".into(),
-                author: "PI-Desktop".into(),
+                author: "京车小智工作台".into(),
                 icon_url: None,
                 categories: vec!["productivity".into(), "official".into()],
                 verified: true,
@@ -113,7 +113,7 @@ pub(crate) fn bundled_package_bytes(plugin_id: &str, version: &str) -> Option<Ve
   "name": "Hello",
   "version": "0.2.0",
   "description": "Official sample plugin with panel, command, and echo tool.",
-  "author": "PI-Desktop",
+  "author": "京车小智工作台",
   "main": "main.js",
   "ui": {
     "panel": "renderer/index.html",
@@ -204,7 +204,7 @@ module.exports = { onLoad, onUnload };
       :root[data-base="light"] { color-scheme: light; --bg: #ffffff; --surface: #f9f9f9; --fg: #1a1c1f; --muted: #5d5d5d; --border: color-mix(in oklab, #1a1c1f 10%, transparent); --accent: #1a1c1f; }
       * { box-sizing: border-box; }
       body { margin: 0; min-height: 100vh; font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: var(--pi-plugin-titlebar-height, 0px) 16px 16px; overflow: auto; background: var(--bg); color: var(--fg); }
-      /* PI-Desktop reserves exactly a transparent 46px drag band. Normal-flow
+      /* 京车小智工作台 reserves exactly a transparent 46px drag band. Normal-flow
          content is offset automatically; fixed/sticky top UI starts at
          top: var(--pi-plugin-titlebar-height, 46px). */
       .card { border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: var(--surface); }
@@ -249,7 +249,7 @@ module.exports = { onLoad, onUnload };
   "name": "Workspace Notes",
   "version": "0.1.0",
   "description": "Read/write workspace notes and fetch remote snippets with explicit high-risk grants.",
-  "author": "PI-Desktop",
+  "author": "京车小智工作台",
   "main": "main.js",
   "ui": {
     "panel": "renderer/index.html",
@@ -345,7 +345,7 @@ module.exports = { onLoad, onUnload };
     :root[data-base="light"] { color-scheme: light; --bg: #ffffff; --surface: #f9f9f9; --fg: #1a1c1f; --muted: #5d5d5d; --border: color-mix(in oklab, #1a1c1f 10%, transparent); --accent: #1a1c1f; }
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100vh; font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--fg); padding: var(--pi-plugin-titlebar-height, 0px) 16px 16px; overflow: auto; }
-    /* PI-Desktop reserves exactly a transparent 46px drag band. Normal-flow
+    /* 京车小智工作台 reserves exactly a transparent 46px drag band. Normal-flow
        content is offset automatically; fixed/sticky top UI starts at
        top: var(--pi-plugin-titlebar-height, 46px). */
     textarea { width: 100%; min-height: 180px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: inherit; padding: 10px; box-sizing: border-box; font: inherit; }

@@ -3,7 +3,7 @@
   "version": "0.14.8-native.1",
   "desktopName": "pi-desktop.desktop",
   "private": true,
-  "description": "PI-Desktop Electron application",
+  "description": "京车小智工作台 Electron 应用",
   "homepage": "https://github.com/vastsa/PI-Desktop",
   "author": {
     "name": "vastsa",
@@ -73,16 +73,16 @@
     "zustand": "^5.0.15"
   },
   "build": {
-    "appId": "com.pi-desktop.app",
-    "productName": "PI-Desktop",
+    "appId": "cn.hebeijingche.workbench",
+    "productName": "京车小智工作台",
     "directories": {
       "output": "release"
     },
     "publish": [
       {
         "provider": "github",
-        "owner": "vastsa",
-        "repo": "PI-Desktop"
+        "owner": "zhangsa69",
+        "repo": "jingche-xiaozhi-workbench"
       }
     ],
     "files": [
@@ -190,7 +190,7 @@
       ]
     },
     "win": {
-      "executableName": "PI-Desktop",
+      "executableName": "JingcheWorkbench",
       "target": [
         {
           "target": "nsis",
@@ -215,16 +215,17 @@
           "from": "build/icon.ico",
           "to": "app-icon.ico"
         }
-      ]
+      ],
+      "artifactName": "JingcheWorkbench-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "shortcutName": "PI-Desktop",
-      "artifactName": "PI-Desktop-Setup-${version}.${ext}"
+      "shortcutName": "京车小智工作台",
+      "artifactName": "JingcheWorkbench-Setup-${version}.${ext}"
     },
     "portable": {
-      "artifactName": "PI-Desktop-Portable-${version}.${ext}",
+      "artifactName": "JingcheWorkbench-Portable-${version}.${ext}",
       "requestExecutionLevel": "user"
     },
     "deb": {

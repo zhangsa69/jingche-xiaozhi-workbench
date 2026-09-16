@@ -126,7 +126,7 @@ test("updater gates delivery mode by platform and delivery policy", () => {
   assert.match(updaterSource, /autoUpdater\.on\("error"/);
   assert.match(
     updaterSource,
-    /github\.com\/vastsa\/PI-Desktop\/releases/,
+    /github\.com\/zhangsa69\/jingche-xiaozhi-workbench\/releases/,
     "releases fallback URL",
   );
   assert.match(
@@ -224,8 +224,8 @@ test("packaging publishes an electron-updater feed for GitHub Releases", () => {
   const pkg = JSON.parse(pkgSource);
   assert.ok(pkg.dependencies["electron-updater"], "electron-updater dependency");
   assert.equal(pkg.build.publish[0].provider, "github");
-  assert.equal(pkg.build.publish[0].owner, "vastsa");
-  assert.equal(pkg.build.publish[0].repo, "PI-Desktop");
+  assert.equal(pkg.build.publish[0].owner, "zhangsa69");
+  assert.equal(pkg.build.publish[0].repo, "jingche-xiaozhi-workbench");
   const macTargets = pkg.build.mac.target.map((entry) => entry.target);
   assert.ok(macTargets.includes("zip"), "mac zip target (Squirrel.Mac feed)");
   // electron-builder must never self-publish (implicit tag publishing would
@@ -255,12 +255,12 @@ test("packaging publishes an electron-updater feed for GitHub Releases", () => {
     "rpm build-id configuration",
   );
   // GitHub asset URLs mangle spaces; keep Windows artifact names space-free.
-  assert.equal(pkg.build.nsis.artifactName, "PI-Desktop-Setup-${version}.${ext}");
+  assert.equal(pkg.build.nsis.artifactName, "JingcheWorkbench-Setup-${version}.${ext}");
   const winTargets = pkg.build.win.target.map((entry) => entry.target);
   assert.deepEqual(winTargets, ["nsis", "portable"], "Windows release targets");
   assert.equal(
     pkg.build.portable.artifactName,
-    "PI-Desktop-Portable-${version}.${ext}",
+    "JingcheWorkbench-Portable-${version}.${ext}",
   );
   assert.equal(pkg.build.portable.requestExecutionLevel, "user");
   // The upload step must carry every updater feed, and the release publishes

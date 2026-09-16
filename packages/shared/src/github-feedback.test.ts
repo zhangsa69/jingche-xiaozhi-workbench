@@ -32,7 +32,7 @@ describe("GitHub feedback issue URL", () => {
     expect(url.searchParams.get("app-version")).toBe("0.13.3");
     expect(url.searchParams.get("os")).toBe("macOS");
     expect(url.searchParams.get("environment")).toBe(
-      "PI-Desktop 0.13.3 · darwin arm64 · protocol 11 · host 0.13.3",
+      "京车小智工作台 0.13.3 · darwin arm64 · protocol 11 · host 0.13.3",
     );
   });
 

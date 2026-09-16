@@ -81,35 +81,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: macOS arm64
-            os: macos-15
-            arch: arm64
-            runner_arch: arm64
-            artifact: mac-arm64
-            platform: macos
-            dist: dist:mac
-          - name: macOS Intel x64
-            os: macos-15-intel
-            arch: x64
-            runner_arch: x86_64
-            artifact: mac-x64
-            platform: macos
-            dist: dist:mac
           - name: Windows x64
             os: windows-latest
             arch: x64
             artifact: windows-x64
             platform: windows
             dist: dist:win
-          - name: Linux x64
-            # Ubuntu 22.04 keeps host-core at glibc 2.35 so Ubuntu 22.04,
-            # Debian 12, and Fedora 36+ can load the binary. ubuntu-latest
-            # (24.04) would raise the floor to 2.39.
-            os: ubuntu-22.04
-            arch: x64
-            artifact: linux-x64
-            platform: linux
-            dist: dist:linux
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     defaults:
@@ -117,17 +94,6 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v7
-
-      - name: Verify native macOS runner architecture
-        if: matrix.platform == 'macos'
-        run: |
-          set -euo pipefail
-          actual_arch="$(uname -m)"
-          expected_arch="${{ matrix.runner_arch }}"
-          if [ "$actual_arch" != "$expected_arch" ]; then
-            echo "::error::Expected $expected_arch runner, got $actual_arch."
-            exit 1
-          fi
 
       - name: Compare tag with apps/desktop/package.json
         if: startsWith(github.ref, 'refs/tags/v')
@@ -179,84 +145,11 @@ jobs:
           trap - EXIT
 
       - name: Package installers (${{ matrix.dist }})
-        if: matrix.platform != 'macos'
         # The dist scripts pass --publish never themselves: electron-builder
         # must not self-publish on tag builds (no token; softprops owns it).
         # The explicit architecture keeps the package and native Rust sidecar
         # aligned with the runner selected by this matrix entry.
         run: pnpm --filter @pi-desktop/desktop run ${{ matrix.dist }} -- --${{ matrix.arch }}
-
-      - name: Package unsigned macOS installer
-        if: matrix.platform == 'macos' && inputs.sign_macos != true
-        env:
-          # Default release lane: macOS artifacts stay unsigned unless a
-          # workflow_dispatch run explicitly sets sign_macos=true.
-          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: |
-          set -euo pipefail
-          # Artifact names are defined in apps/desktop/package.json: the mac
-          # pattern labels ZIPs, and the dmg target pattern labels DMGs.
-          pnpm --filter @pi-desktop/desktop run dist:mac -- --${{ matrix.arch }}
-
-      - name: Package signed and notarized macOS installer
-        if: matrix.platform == 'macos' && inputs.sign_macos == true
-        env:
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: |
-          set -euo pipefail
-          # Artifact names are defined in apps/desktop/package.json: the mac
-          # pattern labels ZIPs, and the dmg target pattern labels DMGs.
-          pnpm --filter @pi-desktop/desktop run dist:mac -- --${{ matrix.arch }} \
-            -c.mac.forceCodeSigning=true \
-            -c.mac.notarize=true
-
-      - name: Staple macOS installer ticket
-        if: matrix.platform == 'macos' && inputs.sign_macos == true
-        run: scripts/staple-macos-release-dmg.sh apps/desktop/release
-
-      - name: Verify signed and notarized macOS installer
-        if: matrix.platform == 'macos' && inputs.sign_macos == true
-        run: scripts/verify-macos-release.sh apps/desktop/release
-
-      - name: Verify Linux host-core glibc floor
-        if: matrix.platform == 'linux'
-        run: node scripts/check-linux-host-glibc.mjs target/release/pi-desktop-host-core
-
-      - name: Export Linux ASAR release asset
-        if: matrix.platform == 'linux'
-        run: node scripts/export-linux-asar.mjs
-
-      - name: Verify macOS artifact names
-        if: matrix.platform == 'macos'
-        run: |
-          set -euo pipefail
-          shopt -s nullglob
-          expected_dmg=(apps/desktop/release/PI-Desktop-*-${{ matrix.arch }}.dmg)
-          expected_dmg_blockmap=(apps/desktop/release/PI-Desktop-*-${{ matrix.arch }}.dmg.blockmap)
-          expected_zip=(apps/desktop/release/PI-Desktop-*-${{ matrix.arch }}-mac.zip)
-          expected_zip_blockmap=(apps/desktop/release/PI-Desktop-*-${{ matrix.arch }}-mac.zip.blockmap)
-          if [[ "${#expected_dmg[@]}" -ne 1 || "${#expected_dmg_blockmap[@]}" -ne 1 || "${#expected_zip[@]}" -ne 1 || "${#expected_zip_blockmap[@]}" -ne 1 ]]; then
-            echo "::error::Expected exactly one ${{ matrix.arch }} DMG, DMG blockmap, ZIP, and ZIP blockmap."
-            printf '%s\n' apps/desktop/release/* || true
-            exit 1
-          fi
-          for artifact in apps/desktop/release/PI-Desktop-*; do
-            case "$artifact" in
-              *-${{ matrix.arch }}.dmg|*-${{ matrix.arch }}.dmg.blockmap|*-${{ matrix.arch }}-mac.zip|*-${{ matrix.arch }}-mac.zip.blockmap) ;;
-              *)
-                echo "::error::Unexpected unlabelled or wrong-architecture macOS artifact: $artifact"
-                exit 1
-                ;;
-            esac
-          done
-
-      - name: Disambiguate macOS update metadata
-        if: matrix.platform == 'macos'
-        run: mv apps/desktop/release/latest-mac.yml apps/desktop/release/latest-mac-${{ matrix.arch }}.yml
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -292,47 +185,12 @@ jobs:
       - name: List artifacts
         run: ls -la dist/
 
-      - name: Merge macOS updater metadata
-        working-directory: dist
-        run: |
-          set -euo pipefail
-          ruby <<'RUBY'
-          require "yaml"
-
-          paths = Dir["latest-mac-*.yml"].sort
-          expected_paths = ["latest-mac-arm64.yml", "latest-mac-x64.yml"]
-          abort "Expected both macOS updater feeds" unless paths == expected_paths
-
-          feeds = paths.map do |path|
-            YAML.safe_load(File.read(path), permitted_classes: [], aliases: false)
-          end
-          versions = feeds.map { |feed| feed.fetch("version") }.uniq
-          abort "macOS updater feeds disagree on version" unless versions.length == 1
-
-          files = feeds.flat_map { |feed| feed.fetch("files") }
-            .uniq { |file| file.fetch("url") }
-          zip = files.find { |file| file.fetch("url").end_with?(".zip") }
-          abort "macOS updater feeds contain no ZIP" if zip.nil?
-
-          merged = feeds.first.merge(
-            "version" => versions.first,
-            "files" => files,
-            "path" => zip.fetch("url"),
-            "sha512" => zip.fetch("sha512"),
-          )
-          File.write("latest-mac.yml", merged.to_yaml)
-          RUBY
-          rm latest-mac-arm64.yml latest-mac-x64.yml
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          # D126/D285/D364: all desktop platforms and both native macOS
-          # architectures ship from tag builds — installers, the Windows
-          # portable exe, the Linux ASAR, blockmaps, and the latest*.yml
-          # feeds that drive electron-updater on each platform (in-app for
-          # Windows NSIS and Linux AppImage; macOS and Windows portable remain
-          # manual-delivery by product policy).
+          # Windows NSIS installer + portable exe, blockmaps and the latest.yml
+          # feed that drives electron-updater (in-app for Windows NSIS;
+          # portable remains manual-delivery).
           files: dist/*
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, '-') }}

@@ -4,7 +4,7 @@
   "name": "Browser",
   "version": "1.0.0",
   "description": "Work-panel browser chrome and agent CDP against the host guest page.",
-  "author": "PI-Desktop",
+  "author": "京车小智工作台",
   "main": "main.js",
   "contributes": {
     "views": [

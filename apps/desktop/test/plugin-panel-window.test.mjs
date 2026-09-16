@@ -160,7 +160,7 @@ test("checked-in plugin panels follow the host chrome contract", () => {
   assert.equal(bundledPanelSources.length, 2);
   for (const panelSource of [examplePanelSource, ...bundledPanelSources]) {
     assert.match(panelSource, /meta name="pi-plugin-chrome" content="v2"/);
-    assert.match(panelSource, /PI-Desktop reserves exactly a transparent 46px drag band/);
+    assert.match(panelSource, /京车小智工作台 reserves exactly a transparent 46px drag band/);
     assert.match(panelSource, /var\(--pi-plugin-titlebar-height, 46px\)/);
     assert.doesNotMatch(panelSource, /top:\s*0/);
   }
