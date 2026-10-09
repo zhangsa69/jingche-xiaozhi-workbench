@@ -1,0 +1,122 @@
+/*
+  Workbench wallpaper — the fixed product skin.
+
+  This is a single-consumer presentation layer, not a token layer: the palette
+  lives in tokens.css (--ds-app-bg-image / --ds-app-bg-scrim /
+  --ds-app-veil-alpha / --ds-app-veil-alpha-soft) and every value here only
+  consumes it.
+
+  Why the renderer owns this instead of an external injector: an injector such as
+  Codex-Dream-Skin has to attach to a closed binary through a loopback CDP port
+  because it cannot change the app it decorates. This app is the source of truth
+  for its own UI, so the wallpaper is plain CSS that ships with the build. No
+  debug port, no injected <style>, no rewritten bundle, nothing to restore.
+
+  How it paints: once on `#root`, which already spans the window and sits under
+  every child element. That needs no extra DOM node, no z-index, and no new
+  stacking context — panels above it only trade opacity for see-through. Blur is
+  deliberately absent: `backdrop-filter` is banned by the interaction-performance
+  contract and is an expensive per-frame composite, while a veil costs nothing.
+
+  Kept opaque on purpose: the startup splash, message bubbles, composer,
+  code cards, menus, dialogs, tooltips, and toasts. They are foreground content,
+  not plates the photo should show through.
+
+  The whole settings shell is opaque too, for two reasons: it is a focused page
+  with the densest form layout in the app, and its rail is pinned to
+  `--ds-settings-rail-bg` pixel-for-pixel by scripts/e2e/theme-surfaces.js so a
+  contributed theme can move that surface. Thinning the rail with a veil would
+  break that contract, and thinning only the content column would leave the rail
+  reading as a different material than the pane beside it.
+
+  Cascade handles: every selector is prefixed with `:root` and this partial is
+  imported last, so each built-in rule stays byte-identical while this layer wins
+  on specificity and declaration order. macOS keeps its native sidebar vibrancy:
+  the `:root[data-platform="darwin"]` rules are more specific than the bare
+  `:root` ones below, so the glass still wins there.
+
+  To turn the wallpaper off: delete this file and its import in globals.css.
+*/
+
+/*
+  The token blocks declare `--ds-app-bg-image: none` per theme, and
+  `:root[data-theme="…"]` outranks a bare `:root`. The value is therefore set on
+  the same three selectors, where this later partial wins on declaration order.
+*/
+:root,
+:root[data-theme="dark"],
+:root[data-theme="light"] {
+  --ds-app-bg-image: url("../assets/theme/workbench-backdrop.jpg");
+}
+
+/*
+  Scrim first in the layer list, photo second: `background-image` paints the
+  first layer on top, so the scrim veils the photo. The scrim token is a colour,
+  and a colour is not a valid `<image>`, so it is wrapped in a flat
+  `linear-gradient` — dropping it in raw would invalidate the whole declaration
+  and leave the shell unpainted.
+*/
+:root #root {
+  background-image:
+    linear-gradient(var(--ds-app-bg-scrim), var(--ds-app-bg-scrim)),
+    var(--ds-app-bg-image);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Let the photo through: the shell plate itself paints nothing. The shell's own
+   settings variant is covered too, because it used to repaint the page tone. */
+:root .app-shell,
+:root .app-shell.settings-mode {
+  background: transparent;
+}
+
+/* Navigation-weight plates: chrome and rails carry little text, so the picture
+   stays legible behind them. `.sidebar` only trades `background-color`; its
+   `background-image` stays the theme hook it already was. */
+:root .sidebar,
+:root .sidebar-rail {
+  background-color: color-mix(
+    in oklab,
+    var(--ds-bg-sidebar, var(--ds-bg-primary)) var(--ds-app-veil-alpha-soft),
+    transparent
+  );
+}
+
+:root .main-titlebar,
+:root .conversation-topbar,
+:root .window-controls {
+  background-color: color-mix(
+    in oklab,
+    var(--ds-bg-primary) var(--ds-app-veil-alpha-soft),
+    transparent
+  );
+}
+
+/* Reading-weight plates: the densest text, so the heaviest veil. */
+:root .main-pane {
+  background-color: color-mix(
+    in oklab,
+    var(--ds-bg-primary) var(--ds-app-veil-alpha),
+    transparent
+  );
+}
+
+/* The dock column and its raised header keep their two-step tone (D419) and only
+   trade opacity, so the column still reads a step lighter than the chat pane. */
+:root .work-panel {
+  background-color: color-mix(
+    in oklab,
+    var(--ds-bg-dock) var(--ds-app-veil-alpha),
+    transparent
+  );
+}
+
+:root .work-panel-header {
+  background-color: color-mix(
+    in oklab,
+    var(--ds-bg-dock-raised) var(--ds-app-veil-alpha),
+    transparent
+  );
+}

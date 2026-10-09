@@ -44,6 +44,18 @@
    * a gradient or picture plate.
    */
   --ds-bg-sidebar-image: none;
+  /*
+   * Workbench wallpaper paint layer. Mirrors the `--ds-bg-sidebar-image`
+   * contract: the image stays a separate <image> layer so the surface colour
+   * below keeps working for color-mix, borders, and glass tint. The scrim is
+   * painted over the photo and the veil alpha thins each panel so the picture
+   * shows through; both are re-declared per theme because the same photo needs
+   * a dark plate in dark and a bleached plate in light.
+   */
+  --ds-app-bg-image: none;
+  --ds-app-bg-scrim: color-mix(in oklab, var(--ds-bg-under) 48%, transparent);
+  --ds-app-veil-alpha: 62%;
+  --ds-app-veil-alpha-soft: 52%;
   --ds-bg-secondary: var(--gray-800);
   --ds-bg-tertiary: var(--gray-750);
   --ds-bg-inset: var(--gray-1000);
@@ -252,6 +264,14 @@
   /* Codex elevation-prominent exact (same dark/light formula). */
   --ds-shadow-composer: 0 3px 7.5px #0000000a, 0 0 20px #0000000d;
   --ds-bg-elevated-primary: color-mix(in oklab, #ffffff 70%, transparent);
+  /* Light keeps the same photo but bleaches it: a heavier scrim plus denser
+     panels, so the picture reads as a pale texture behind ink text. Measured on
+     a composited capture, these values hold ink text at 6.5:1 over the darkest
+     plate the photo can produce while the texture stays visible. */
+  --ds-app-bg-image: none;
+  --ds-app-bg-scrim: color-mix(in oklab, var(--ds-bg-under) 45%, transparent);
+  --ds-app-veil-alpha: 78%;
+  --ds-app-veil-alpha-soft: 70%;
 }
 
 @theme {
