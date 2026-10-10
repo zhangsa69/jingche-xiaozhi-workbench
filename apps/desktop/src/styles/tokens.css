@@ -69,6 +69,18 @@
   --ds-bg-dock-raised: transparent;
   --ds-bg-elevated: color-mix(in oklab, var(--gray-800) 96%, transparent);
   --ds-bg-elevated-opaque: var(--gray-750);
+  /*
+    Opaque plate for the interactive decision cards in the transcript (plan
+    approval, ask tool, permission). Those cards used to be 3.5%-8% washes that
+    only read as a solid plate because the chat pane behind them was opaque; the
+    wallpaper skin thins that pane, so each card now carries its own plate
+    instead of borrowing one. It sits one step below `--ds-raised`, which is
+    what a selected option and the primary button inside a card use, so the
+    card -> control elevation stays readable on both themes. Derived from
+    `--ds-bg-secondary` rather than written twice: the light block moves that
+    token, and this one follows.
+  */
+  --ds-card-surface: var(--ds-bg-secondary);
   --ds-bg-hover: color-mix(in oklab, var(--gray-0) 6%, transparent);
   --ds-bg-active: color-mix(in oklab, var(--gray-0) 10%, transparent);
   /* Codex elevated-primary #212121f5 / color-mix(gray-800 96%, transparent) */
@@ -147,7 +159,9 @@
   /* D148: dark keeps the ~45% black veil. */
   --ds-scrim: color-mix(in oklab, #000 45%, transparent);
   --ds-modal-veil: color-mix(in oklab, var(--ds-bg-primary) 78%, transparent);
-  --ds-tool-row-bg: var(--ds-tile);
+  /* Tool output is a content plate, not a wash: it needs an opaque fill of its
+     own now that the chat pane behind it is thinned by the wallpaper skin. */
+  --ds-tool-row-bg: var(--ds-card-surface);
   --ds-send-disabled-bg: color-mix(in oklab, var(--ds-text-primary) 18%, transparent);
   --ds-send-disabled-fg: color-mix(in oklab, var(--gray-900) 70%, transparent);
   --ds-placeholder-ink: color-mix(in oklab, var(--gray-0) 42%, transparent);
@@ -243,7 +257,7 @@
   /* D148: light drops the scrim to ~28% ink so white dialogs stay readable. */
   --ds-scrim: color-mix(in oklab, #1a1c1f 28%, transparent);
   --ds-modal-veil: color-mix(in oklab, #1a1c1f 32%, transparent);
-  --ds-tool-row-bg: color-mix(in oklab, #1a1c1f 2%, transparent);
+  --ds-tool-row-bg: var(--ds-card-surface);
   --ds-send-disabled-bg: #8e8e90; /* gold disabled send chip */
   --ds-send-disabled-fg: #ffffff;
   --ds-placeholder-ink: #4a4c4f;

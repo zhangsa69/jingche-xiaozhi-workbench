@@ -362,7 +362,14 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  flex: 0 0 auto;
+  /*
+    Both groups must be able to give width back. The toolbar is nowrap and the
+    model chip is its widest child, so a rigid group keeps its full content
+    width and pushes the chip past the shell's rounded edge once the pane is
+    narrow. `min-width: 0` is what lets a flex item shrink below its content.
+  */
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .composer-right .context-inspector-trigger {
@@ -559,7 +566,9 @@
   margin-bottom: 8px;
   padding: 7px 9px;
   border-radius: var(--radius-md);
-  background: var(--ds-tile);
+  /* Opaque card plate: the chat pane behind it is thinned by the wallpaper
+     skin, so a 3.5% wash would let the transcript show through the card. */
+  background: var(--ds-card-surface);
 }
 
 .plan-approval-copy {
@@ -623,7 +632,9 @@
 
 .plan-approval-artifact-path {
   min-width: 0;
-  max-width: min(38vw, 320px);
+  /* Cap against the card, not the viewport: the dock can be far narrower than
+     the window, and a viewport-relative cap lets the path push the row wide. */
+  max-width: min(100%, 320px);
   overflow: hidden;
   color: var(--ds-text-muted);
   font-family: var(--font-mono);
@@ -674,7 +685,9 @@
   flex: 0 1 220px;
   align-items: stretch;
   border-radius: var(--radius-sm);
-  background: var(--ds-tile-deep);
+  /* The split sits inside the approval card and is the primary action, so it
+     takes the same raised plate a selected option uses. */
+  background: var(--ds-raised);
 }
 
 .plan-approval-approve-main {
@@ -712,7 +725,8 @@
   }
 
   .plan-approval-artifact-path {
-    max-width: min(48vw, 320px);
+    /* Narrow container: let the path use whatever the card gives it. */
+    max-width: 100%;
   }
 }
 

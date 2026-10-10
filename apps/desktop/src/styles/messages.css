@@ -49,14 +49,17 @@
   align-items: flex-start;
 }
 
-/* Decision cards are soft tiles (D297): risk rides in the tint and the risk
-   pill rather than a coloured rail. */
+/* Decision cards carry their own opaque plate. They used to be 3.5%-8% washes
+   that only read as a card because the chat pane behind them was opaque; the
+   wallpaper skin thins that pane, so a wash would let the transcript show
+   through. Risk rides in the tint and the risk pill rather than a coloured
+   rail (D297). */
 .permission-card {
   width: min(100%, 720px);
   margin: 10px 0;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  background: color-mix(in oklab, var(--ds-warning) 7%, transparent);
+  background: color-mix(in oklab, var(--ds-warning) 10%, var(--ds-card-surface));
 }
 
 .asktool-card {
@@ -64,7 +67,7 @@
   margin: 10px 0;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  background: var(--ds-tile);
+  background: var(--ds-card-surface);
 }
 
 .asktool-card-header,
@@ -634,7 +637,7 @@
   margin: 2px 0 6px 18px;
   overflow: auto;
   border-radius: var(--radius-sm);
-  background: var(--ds-tile);
+  background: var(--ds-card-surface);
   animation: review-change-reveal var(--motion-duration-normal) var(--motion-ease-out) both;
 }
 
@@ -748,12 +751,12 @@
   width: min(100%, 720px);
   margin: 12px 0 8px;
   border-radius: var(--radius-md);
-  background: var(--ds-tile);
+  background: var(--ds-card-surface);
   padding: 12px 14px;
 }
 
 .turn-outcome-card.failed {
-  background: color-mix(in oklab, var(--ds-error) 7%, transparent);
+  background: color-mix(in oklab, var(--ds-error) 7%, var(--ds-card-surface));
 }
 
 .turn-outcome-heading {
@@ -816,11 +819,11 @@
 }
 
 .permission-card.risk-high {
-  background: color-mix(in oklab, var(--ds-error) 7%, transparent);
+  background: color-mix(in oklab, var(--ds-error) 10%, var(--ds-card-surface));
 }
 
 .permission-card.risk-low {
-  background: var(--ds-tile);
+  background: var(--ds-card-surface);
 }
 
 .permission-card-header,
@@ -1854,7 +1857,7 @@
 .message-error {
   width: min(100%, 680px);
   border-radius: var(--radius-md);
-  background: color-mix(in oklab, var(--ds-error) 7%, transparent);
+  background: color-mix(in oklab, var(--ds-error) 7%, var(--ds-card-surface));
   padding: 10px 12px;
   color: var(--ds-text-primary);
 }
@@ -2099,6 +2102,9 @@
   container: subagent-activity / inline-size;
   overflow: hidden;
   border-radius: var(--radius-md-plus);
+  /* Kept as a wash on purpose: transcript-style.test.mjs pins this to
+     `var(--ds-tile)` as part of the D319/D323 contract (the tile belongs to the
+     delegation card, and the live parent turn stays transparent). */
   background: var(--ds-tile);
 }
 
@@ -2778,6 +2784,9 @@
   min-width: 0;
   margin: 2px 0 8px 24px;
   border-radius: var(--radius-md);
+  /* Kept as a wash on purpose: subagent-transcript.test.mjs pins this to
+     `var(--ds-tile)`. Process containers stay soft tiles; the opaque plate is
+     reserved for the decision cards the user has to act on. */
   background: var(--ds-tile);
   padding: 6px 10px 8px 12px;
 }
@@ -2934,7 +2943,7 @@
 }
 
 .tool-row-content.is-error {
-  background: color-mix(in oklab, var(--ds-error) 7%, transparent);
+  background: color-mix(in oklab, var(--ds-error) 7%, var(--ds-card-surface));
   color: color-mix(in oklab, var(--ds-error) 72%, var(--ds-text-primary));
 }
 
@@ -2961,7 +2970,7 @@
 .tool-diff {
   overflow: hidden;
   border-radius: var(--radius-md);
-  background: var(--ds-tile);
+  background: var(--ds-card-surface);
 }
 
 .tool-diff .diff-line {
@@ -2987,7 +2996,7 @@
   flex-direction: column;
   overflow: auto;
   border-radius: var(--radius-md);
-  background: var(--ds-tile);
+  background: var(--ds-card-surface);
   padding: 6px 4px;
   gap: 1px;
 }
@@ -3079,7 +3088,7 @@
   overflow: auto;
   overscroll-behavior-y: contain;
   border-radius: var(--radius-md);
-  background: var(--ds-tile);
+  background: var(--ds-card-surface);
   padding: 6px 10px;
   gap: 2px;
   scrollbar-gutter: stable;
@@ -3118,7 +3127,7 @@
   align-items: baseline;
   gap: 6px;
   border-radius: var(--radius-md);
-  background: var(--ds-tile);
+  background: var(--ds-card-surface);
   padding: 8px 10px;
   color: var(--ds-text-secondary);
   font-size: var(--text-sm);

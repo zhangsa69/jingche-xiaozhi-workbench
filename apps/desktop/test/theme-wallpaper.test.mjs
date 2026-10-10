@@ -94,10 +94,15 @@ test("plates trade opacity but keep their own surface tone", () => {
     skin,
     /:root \.work-panel-header \{\s*background-color:\s*color-mix\(\s*in oklab,\s*var\(--ds-bg-dock-raised\) var\(--ds-app-veil-alpha\),/,
   );
-  // Chrome plates read lighter-weight than the reading plates.
-  assert.match(
+});
+
+test("window chrome stays out of the skin", () => {
+  // The titlebar and the window-controls band overlay the scrolling
+  // transcript, and the transcript's top padding only clears them at scroll
+  // offset zero. A translucent plate there shows scrolled text through the bar.
+  assert.doesNotMatch(
     skin,
-    /:root \.main-titlebar,\s*:root \.conversation-topbar,\s*:root \.window-controls \{\s*background-color:\s*color-mix\(\s*in oklab,\s*var\(--ds-bg-primary\) var\(--ds-app-veil-alpha-soft\),/,
+    /:root \.main-titlebar\b|:root \.conversation-topbar\b|:root \.window-controls\b/,
   );
 });
 

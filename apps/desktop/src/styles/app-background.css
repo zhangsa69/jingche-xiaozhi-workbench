@@ -22,6 +22,14 @@
   code cards, menus, dialogs, tooltips, and toasts. They are foreground content,
   not plates the photo should show through.
 
+  The window chrome is opaque for a second reason. `.main-titlebar`,
+  `.conversation-topbar`, and `.window-controls` are absolute/fixed overlays that
+  sit on top of the thread scroller, and `padding-top` on the transcript only
+  clears them at scroll offset zero. Any transparency there lets scrolled text
+  show through the bar, which reads as doubled or folded text — so these three
+  keep their built-in opaque plate and never enter the wallpaper. The preview
+  overlay (`.window-chrome-row`) already paints nothing and joins them.
+
   The whole settings shell is opaque too, for two reasons: it is a focused page
   with the densest form layout in the app, and its rail is pinned to
   `--ds-settings-rail-bg` pixel-for-pixel by scripts/e2e/theme-surfaces.js so a
@@ -84,15 +92,12 @@
   );
 }
 
-:root .main-titlebar,
-:root .conversation-topbar,
-:root .window-controls {
-  background-color: color-mix(
-    in oklab,
-    var(--ds-bg-primary) var(--ds-app-veil-alpha-soft),
-    transparent
-  );
-}
+/*
+  Window chrome stays out of the skin: `.main-titlebar`, `.conversation-topbar`,
+  and `.window-controls` overlay the scrolling transcript, so a translucent plate
+  would show scrolled text through the bar. They fall back to the opaque
+  `--ds-bg-primary` plate declared in chrome.css.
+*/
 
 /* Reading-weight plates: the densest text, so the heaviest veil. */
 :root .main-pane {

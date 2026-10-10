@@ -545,7 +545,13 @@
 
 .subagent-detail-summary {
   display: flex;
-  flex: 0 0 auto;
+  /*
+    Give width back when the dock column is narrow. The badges are rigid and the
+    heading beside them is the flexible child, so a rigid row keeps its full
+    content width and pushes the hero past its own edge.
+  */
+  flex: 0 1 auto;
+  min-width: 0;
   flex-wrap: nowrap;
   align-items: center;
   gap: 6px;
@@ -556,6 +562,10 @@
   display: inline-flex;
   flex: none;
   align-items: center;
+  /* Never exceed the row: the badge is rigid, so it needs its own ceiling or a
+     long outcome label overflows the hero. */
+  max-width: 100%;
+  overflow: hidden;
   height: 20px;
   padding: 0 8px;
   border-radius: var(--radius-full);
@@ -653,6 +663,8 @@
 }
 
 .subagent-detail-task-card {
+  /* Kept as a wash on purpose: subagent-panel.test.mjs pins this to
+     `var(--ds-tile)`. */
   min-width: 0;
   border-radius: var(--radius-md);
   background: var(--ds-tile);

@@ -103,6 +103,17 @@
   transform-origin: bottom right;
 }
 
+/*
+  The chip is the widest child of a nowrap toolbar, so cap it against the group
+  it lives in instead of the viewport: a viewport-relative cap knows nothing
+  about the pane width, and the pane can be as narrow as the main-pane floor.
+  This sits after theme-overrides.css, which caps `.composer-right .icon-btn` at
+  a flat 220px, and wins on declaration order at equal specificity.
+*/
+.composer-right .composer-model-thinking-chip {
+  max-width: min(300px, 100%);
+}
+
 .composer-model-thinking-chip {
   max-width: min(300px, calc(100vw - 24px));
   min-width: 0;
