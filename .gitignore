@@ -8,6 +8,7 @@ out/
 build/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+docs/.vitepress/.temp/
 !apps/desktop/build/
 apps/desktop/build/icon.iconset/
 target/
