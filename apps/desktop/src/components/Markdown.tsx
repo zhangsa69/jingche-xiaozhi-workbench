@@ -741,7 +741,14 @@ function MarkdownImage({
         alt={alt ?? ""}
         className="chat-image-remote"
         title={urlTitle}
+        role="button"
+        tabIndex={0}
         onClick={() => openUrl(source)}
+        onKeyDown={(event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          openUrl(source);
+        }}
       />
     );
   }
@@ -753,7 +760,14 @@ function MarkdownImage({
         alt={alt ?? ""}
         className="chat-image-local"
         title={rel ? fileTitle : source}
+        role={localRef ? "button" : undefined}
+        tabIndex={localRef ? 0 : undefined}
         onClick={localRef ? () => openFileRef(localRef, baseDir) : undefined}
+        onKeyDown={localRef ? (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          openFileRef(localRef, baseDir);
+        } : undefined}
       />
     );
   }
