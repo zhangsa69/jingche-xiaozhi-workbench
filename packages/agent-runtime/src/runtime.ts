@@ -158,6 +158,10 @@ import {
 } from "./reasoning-replay.js";
 import { genericModelConfig, visionFromModelConfig } from "./model-capabilities.js";
 import type { ProjectInstructions } from "./project-instructions.js";
+import {
+  appendDatasetIndexPrompt,
+  type DatasetIndexEntry,
+} from "./dataset-index-prompt.js";
 import { projectInstructionsPrompt } from "./project-instructions-prompt.js";
 import { projectMemoryPrompt } from "./project-memory-prompt.js";
 import {
@@ -1453,6 +1457,11 @@ export class DesktopAgentRuntime {
   private onEvent: (envelope: AgentEventEnvelope) => void;
   private streamSink: StreamCoalescer;
   private baseSystemPrompt: string;
+  /**
+   * Datasets mounted for this session (W-24). Empty by default, which keeps the
+   * composed prompt byte-identical to what it was before the feature existed.
+   */
+  private datasetIndex: DatasetIndexEntry[] = [];
   private planningState: PlanningState;
   private pendingPlanId?: string;
   private currentAssistant?: UiMessage;
@@ -1878,7 +1887,7 @@ Delegation rules:
     const projectPrompt = projectInstructionsPrompt(this.projectInstructions);
     const memoryPrompt = projectMemoryPrompt(this.projectMemory);
     const optionalToolsPrompt = this.optionalToolsPrompt();
-    return composeModeSystemPrompt(
+    const base = composeModeSystemPrompt(
       this.mode,
       [
         this.baseSystemPrompt,
@@ -1887,6 +1896,25 @@ Delegation rules:
         ...(memoryPrompt ? [memoryPrompt] : []),
       ].join("\n\n"),
     );
+    // Appended last so the mounted list sits closest to the turn that uses it,
+    // and after the mode prompt so a mode's own wording is never split.
+    return appendDatasetIndexPrompt(base, this.datasetIndex);
+  }
+
+  /**
+   * Mount or unmount datasets for this session (W-24).
+   *
+   * The index is rebuilt into the live system prompt immediately: a mount that
+   * only took effect on the next session would let the current task answer as
+   * if the dataset were not there, which reads like the mount silently failed.
+   */
+  setDatasetIndex(entries: readonly DatasetIndexEntry[]): void {
+    this.datasetIndex = entries.map((entry) => ({ ...entry }));
+    this.agent.state.systemPrompt = this.composeSystemPrompt();
+  }
+
+  getDatasetIndex(): DatasetIndexEntry[] {
+    return this.datasetIndex.map((entry) => ({ ...entry }));
   }
 
   /**
