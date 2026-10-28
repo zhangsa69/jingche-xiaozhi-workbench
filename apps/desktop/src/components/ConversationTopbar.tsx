@@ -5,6 +5,7 @@ import {
   IconNewSession,
   IconSearch,
 } from "./icons";
+import { TaskOverviewPopover } from "./TaskOverviewPopover";
 import { TooltipButton } from "./ui";
 
 function projectName(path?: string | null, name?: string | null) {
@@ -91,6 +92,7 @@ export function ConversationTopbar({
 
       <div className="ct-right">
         <div className="ct-actions">
+          {activeSession ? <TaskOverviewPopover /> : null}
           <TooltipButton
             type="button"
             className="ct-icon-btn"

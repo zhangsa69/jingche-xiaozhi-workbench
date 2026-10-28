@@ -2580,6 +2580,74 @@ describe("DesktopAgentRuntime plan transitions", () => {
 
     await runtime.dispose();
   });
+
+  it("offers a step marker only while an approved contract executes (W-05)", async () => {
+    const runtime = createRuntime({});
+    const agent = (runtime as any).agent;
+    agent.continue = vi.fn(async () => undefined);
+    agent.waitForIdle = vi.fn(async () => undefined);
+
+    const execution: PlanExecution = {
+      id: "execution-steps",
+      proposalId: "proposal-steps",
+      sessionId: "session-1",
+      kind: "plan",
+      plan: [
+        "# Steps plan",
+        "",
+        "## Steps",
+        "- [ ] Parse the snapshot",
+        "- [ ] Track the current step",
+        "- [ ] Render the bar",
+      ].join("\n"),
+      title: "Steps plan",
+      question: "Proceed?",
+      artifact: {
+        relativePath: ".pi/plan/proposal-steps.md",
+        sha256: "abc123",
+        sizeBytes: 64,
+      },
+      targetPermissionMode: "auto",
+      state: "running",
+    };
+
+    await runtime.executeApprovedPlan(execution, "execution-turn-steps");
+
+    // The instruction carries the step list the user approved, so the model
+    // reports against the same numbering the bar renders.
+    const internal = (runtime as any).fullEntries.at(-1).message;
+    expect(internal.content).toContain("<approved-steps>");
+    expect(internal.content).toContain("1. Parse the snapshot");
+    expect(internal.content).toContain("3. Render the bar");
+
+    const tools = (runtime as any).activeTools() as Array<{
+      name: string;
+      execute: (id: string, params: unknown) => Promise<any>;
+    }>;
+    const marker = tools.find((tool) => tool.name === "UpdateStep");
+    expect(marker).toBeDefined();
+
+    const result = await marker!.execute("call-1", { step: 2 });
+    expect(result.details).toMatchObject({ step: 2, total: 3 });
+    expect(result.content[0].text).toBe("Step 2/3: Track the current step");
+    expect(result.isError).toBeUndefined();
+
+    const invalid = await marker!.execute("call-2", { step: 9 });
+    expect(invalid.isError).toBe(true);
+    expect(invalid.content[0].text).toContain("has 3 steps");
+
+    // Outside an approved execution the marker is not a capability the model
+    // may call: the catalog drops it with the contract.
+    (runtime as any).autonomousExecution = false;
+    (runtime as any).rebuildToolCatalog();
+    expect(
+      ((runtime as any).activeTools() as Array<{ name: string }>).some(
+        (tool) => tool.name === "UpdateStep",
+      ),
+    ).toBe(false);
+
+    await runtime.dispose();
+  });
 });
 
 describe("DesktopAgentRuntime thinking configuration", () => {

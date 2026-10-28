@@ -103,6 +103,15 @@ export const ErrorCodes = {
   EDIT_DISABLED_IN_PLAN: "EDIT_DISABLED_IN_PLAN",
   PLUGIN_DISABLED_IN_PLAN: "PLUGIN_DISABLED_IN_PLAN",
   TOOL_DISABLED_IN_PLAN: "TOOL_DISABLED_IN_PLAN",
+  /**
+   * Read-only mode (W-01) refuses anything outside its allowlist. Kept apart
+   * from the `_IN_PLAN` family because the fix differs: Plan wants a submitted
+   * plan, read-only wants a mode switch.
+   */
+  WRITE_DISABLED_IN_READ_ONLY: "WRITE_DISABLED_IN_READ_ONLY",
+  EDIT_DISABLED_IN_READ_ONLY: "EDIT_DISABLED_IN_READ_ONLY",
+  PLUGIN_DISABLED_IN_READ_ONLY: "PLUGIN_DISABLED_IN_READ_ONLY",
+  TOOL_DISABLED_IN_READ_ONLY: "TOOL_DISABLED_IN_READ_ONLY",
   PLAN_NOT_ACTIVE: "PLAN_NOT_ACTIVE",
   /** SubmitPlan in Goal mode, or SubmitGoal in Plan mode (D198). */
   PLAN_KIND_MISMATCH: "PLAN_KIND_MISMATCH",

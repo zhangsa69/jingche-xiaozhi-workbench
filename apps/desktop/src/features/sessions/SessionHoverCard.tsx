@@ -87,11 +87,12 @@ export function SessionHoverCard({
     return () => observer.disconnect();
   }, [target]);
 
-  const modeKey = session.mode === "plan" ? "chat.modePlan"
-    : session.mode === "goal" ? "chat.modeGoal"
-      : session.permissionMode === "auto" ? "chat.permissionAuto"
-        : session.permissionMode === "accept-edits" ? "chat.permissionAcceptEdits"
-          : session.permissionMode === "ask" ? "chat.permissionAsk" : "chat.modeAgent";
+  const modeKey = session.mode === "read-only" ? "chat.modeReadOnly"
+    : session.mode === "plan" ? "chat.modePlan"
+      : session.mode === "goal" ? "chat.modeGoal"
+        : session.permissionMode === "auto" ? "chat.permissionAuto"
+          : session.permissionMode === "accept-edits" ? "chat.permissionAcceptEdits"
+            : session.permissionMode === "ask" ? "chat.permissionAsk" : "chat.modeAgent";
   const result = summary ? currentCollaborationResult(summary) : undefined;
   const modelName = summary?.modelName;
   const timestamp = (value: string | undefined) => formatSessionTimestamp(value, i18n.language);

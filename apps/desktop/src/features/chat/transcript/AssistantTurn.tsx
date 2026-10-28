@@ -1,8 +1,10 @@
 import {
   memo,
   useContext,
+  useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { useTranslation } from "react-i18next";
 import type {
@@ -250,6 +252,41 @@ export const AssistantTurn = memo(function AssistantTurn({
   const responseDurationMs = assistantTurnResponseDuration(entry);
   const responseOutputTokens = assistantTurnResponseOutputTokens(entry);
   const modelId = metaMessage?.modelId ?? latestUsageMessage?.modelId;
+
+  // Wall clock for the whole turn, not just model streaming: WorkBuddy shows
+  // one duration per reply that counts while it runs and freezes when done.
+  const [now, setNow] = useState(Date.now);
+  const [finishedAt, setFinishedAt] = useState<number | null>(null);
+  const wasActiveRef = useRef(isActive);
+  useEffect(() => {
+    if (wasActiveRef.current && !isActive) setFinishedAt(Date.now());
+    wasActiveRef.current = isActive;
+    if (!isActive) return;
+    setNow(Date.now());
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [isActive]);
+  const turnStartedAtMs = (() => {
+    const first = messages[0];
+    if (!first) return undefined;
+    const parsed = Date.parse(first.createdAt);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  })();
+  const turnDurationMs = (() => {
+    if (turnStartedAtMs === undefined) return undefined;
+    if (isActive) return Math.max(0, now - turnStartedAtMs);
+    if (finishedAt !== null) return Math.max(0, finishedAt - turnStartedAtMs);
+    // Reloaded history: rebuild the end from the last row's own timestamps so
+    // the frozen value still matches what the user saw while it ran.
+    const last = messages[messages.length - 1];
+    const lastCreated = last ? Date.parse(last.createdAt) : Number.NaN;
+    if (!Number.isFinite(lastCreated)) return undefined;
+    return Math.max(
+      0,
+      lastCreated + (last.responseDurationMs ?? 0) - turnStartedAtMs,
+    );
+  })();
+
   const hasError = messages.some((message) => Boolean(message.error));
   const complete =
     !isActive && !hasError && Boolean(content) && Boolean(actionMessage);
@@ -334,12 +371,24 @@ export const AssistantTurn = memo(function AssistantTurn({
             </div>
           ),
         )}
-        {!isActive && metaMessage ? (
+        {isActive ? (
+          turnDurationMs !== undefined ? (
+            <MessageMeta
+              modelId={modelId}
+              usage={usage}
+              responseDurationMs={responseDurationMs}
+              responseOutputTokens={responseOutputTokens}
+              durationMs={turnDurationMs}
+              live
+            />
+          ) : null
+        ) : metaMessage ? (
           <MessageMeta
             modelId={modelId}
             usage={usage}
             responseDurationMs={responseDurationMs}
             responseOutputTokens={responseOutputTokens}
+            durationMs={turnDurationMs}
           />
         ) : null}
         {(content || hasError) && actionMessage && !transcriptReadOnly ? (

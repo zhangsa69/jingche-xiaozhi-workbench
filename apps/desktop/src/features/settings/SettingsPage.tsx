@@ -374,8 +374,9 @@ export function SettingsPage() {
                     aria-label={t("settings.mode")}
                   >
                     {([
-                      ["agent", "settings.modeAgent"],
+                      ["read-only", "settings.modeReadOnly"],
                       ["plan", "settings.modePlan"],
+                      ["agent", "settings.modeAgent"],
                       ["goal", "settings.modeGoal"],
                     ] as const).map(([value, labelKey]) => (
                       <button

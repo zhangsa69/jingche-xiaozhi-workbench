@@ -8,6 +8,7 @@ import {
   modeForProposalKind,
   normalizeGlobalPermissionMode,
   normalizeMode,
+  isReadOnlyMode,
   normalizeProposalKind,
   proposalKindForMode,
   isCommandShellCatalog,
@@ -85,6 +86,20 @@ describe("Plan protocol contracts", () => {
     expect(normalizeMode("goal")).toBe("goal");
     expect(normalizeMode("agent")).toBe("agent");
     expect(normalizeMode(undefined)).toBe("agent");
+  });
+
+  it("keeps the read-only mode and its pre-release name (W-01)", () => {
+    expect(normalizeMode("read-only")).toBe("read-only");
+    // `ask` was the name before the rename; drafts written then still mean
+    // "answer, do not touch the workspace".
+    expect(normalizeMode("ask")).toBe("read-only");
+    expect(isReadOnlyMode("read-only")).toBe(true);
+    expect(isReadOnlyMode("ask")).toBe(true);
+    expect(isReadOnlyMode("plan")).toBe(false);
+    expect(isReadOnlyMode("goal")).toBe(false);
+    expect(isReadOnlyMode("agent")).toBe(false);
+    // A read-only session posts no contract, so no proposal kind is derived.
+    expect(proposalKindForMode("read-only")).toBeNull();
   });
 
   it("pairs each contract mode with its proposal kind and back (D198)", () => {

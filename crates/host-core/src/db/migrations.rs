@@ -221,15 +221,17 @@ pub(crate) fn migrate_and_validate_top_level_mode(
     let Some(item) = object.get_mut(key) else {
         return Ok(());
     };
-    let mode = item
-        .as_str()
-        .ok_or_else(|| anyhow!("{context}.{key} must be the string 'agent', 'plan' or 'goal'"))?;
+    let mode = item.as_str().ok_or_else(|| {
+        anyhow!("{context}.{key} must be the string 'read-only', 'agent', 'plan' or 'goal'")
+    })?;
     match mode {
         "chat" => *item = Value::String("plan".into()),
-        "agent" | "plan" | "goal" => {}
+        // `ask` was the pre-release name for the read-only mode (W-01).
+        "ask" => *item = Value::String("read-only".into()),
+        "read-only" | "agent" | "plan" | "goal" => {}
         other => {
             return Err(anyhow!(
-                "{context}.{key} has invalid mode '{other}'; expected 'agent', 'plan' or 'goal'"
+                "{context}.{key} has invalid mode '{other}'; expected 'read-only', 'agent', 'plan' or 'goal'"
             ));
         }
     }
@@ -240,7 +242,7 @@ pub(crate) fn validate_session_modes(tx: &rusqlite::Transaction<'_>) -> Result<(
     let invalid: Option<(String, String)> = tx
         .query_row(
             "SELECT id, mode FROM sessions
-             WHERE mode NOT IN ('agent', 'plan', 'goal')
+             WHERE mode NOT IN ('read-only', 'agent', 'plan', 'goal')
              LIMIT 1",
             [],
             |row| Ok((row.get(0)?, row.get(1)?)),
@@ -248,7 +250,7 @@ pub(crate) fn validate_session_modes(tx: &rusqlite::Transaction<'_>) -> Result<(
         .optional()?;
     if let Some((id, mode)) = invalid {
         return Err(anyhow!(
-            "session '{id}' has invalid mode '{mode}'; expected 'agent', 'plan' or 'goal'"
+            "session '{id}' has invalid mode '{mode}'; expected 'read-only', 'agent', 'plan' or 'goal'"
         ));
     }
     Ok(())

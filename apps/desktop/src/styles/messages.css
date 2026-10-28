@@ -425,6 +425,24 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* W-08: once the wait runs long, the reassurance drops onto its own line
+   instead of squeezing the label. */
+.working-indicator.is-slow {
+  flex-wrap: wrap;
+}
+
+.working-indicator-hint {
+  flex-basis: 100%;
+  color: var(--ds-text-muted);
+  font-size: var(--text-xs-plus);
+}
+
+/* W-08: the last rung says the turn is likely stuck, so the hint stops being
+   background noise. */
+.working-indicator[data-silence="3"] .working-indicator-hint {
+  color: var(--ds-text-secondary);
+}
+
 .planning-state-indicator {
   box-sizing: border-box;
   display: flex;
@@ -1348,6 +1366,17 @@
 .message-meta-chip.model {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* The reply duration ticks once a second, so it needs tabular digits to stop
+   the whole meta row from jittering while it counts. */
+.message-meta-chip.duration {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.message-meta.is-live .message-meta-chip.duration {
+  color: var(--ds-text-primary);
 }
 
 .context-inspector {
@@ -2666,6 +2695,29 @@
 .tool-row-name {
   flex: none;
   font-weight: var(--font-weight-medium);
+  color: var(--ds-text-secondary);
+}
+
+/* W-07: ordinal of this call inside its activity group. */
+.tool-row-step {
+  flex: none;
+  color: var(--ds-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+/* W-07: single-step duration; the live value ticks once a second. */
+.tool-row-duration {
+  flex: none;
+  color: var(--ds-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.tool-row-duration.is-live {
   color: var(--ds-text-secondary);
 }
 

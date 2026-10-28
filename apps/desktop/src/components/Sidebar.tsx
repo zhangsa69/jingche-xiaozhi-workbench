@@ -17,6 +17,8 @@ const MAX_VISIBLE_SESSIONS = 10;
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
+import { SessionRunningElapsed } from "./SessionRunningElapsed";
+import { SessionPlanProgress } from "./SessionPlanProgress";
 import { SessionHoverCard } from "../features/sessions/SessionHoverCard";
 import { useSessionHoverCard } from "../features/sessions/useSessionHoverCard";
 import { isDefaultSessionTitle, useAppStore } from "../stores/app-store";
@@ -1517,6 +1519,8 @@ export function Sidebar({
             <span className="thread-item-source" title="Native Pi session">Pi</span>
           ) : null}
           <span className="thread-item-title">{taskTitle(session.title)}</span>
+          {running ? <SessionRunningElapsed /> : null}
+          <SessionPlanProgress sessionId={session.id} />
           {options?.global ? (
             <span className="thread-item-project">
               {owningProject}

@@ -29,6 +29,14 @@ export const GOAL_MODE_SYSTEM_PROMPT = [
   "Once approved, the goal contract is the standard you work against: pursue it autonomously, choose your own approach, and stop only when every acceptance criterion is verified or a boundary blocks you.",
 ].join("\n");
 
+export const READ_ONLY_MODE_SYSTEM_PROMPT = [
+  "You are operating in Read-only mode as the same 京车小智工作台 agent.",
+  "Answer with what the workspace already contains. Read, search, and inspect freely; never plan an edit as if you were about to apply it.",
+  "Every write is hard-denied by the host in this mode: Write, Edit, Bash, plugin tools and unknown tools are refused before they run. Do not call them — a refusal wastes a turn and tells the user nothing.",
+  "Bash is unavailable here because a shell command can write, move, or delete files.",
+  "If the answer requires changing something, say what you would change and ask the user to switch to Agent mode; do not attempt the change yourself.",
+].join("\n");
+
 export const AGENT_MODE_SYSTEM_PROMPT = [
   "You are operating in Agent mode. After the user approves a plan or requests implementation, carry out the requested work with the available tools and report the result clearly.",
 ].join("\n");
@@ -42,6 +50,8 @@ export function composeModeSystemPrompt(
 
 function modeSystemPrompt(mode: Mode): string {
   switch (mode) {
+    case "read-only":
+      return READ_ONLY_MODE_SYSTEM_PROMPT;
     case "plan":
       return PLAN_MODE_SYSTEM_PROMPT;
     case "goal":

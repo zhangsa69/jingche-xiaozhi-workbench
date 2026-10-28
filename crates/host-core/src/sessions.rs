@@ -11,17 +11,21 @@ use std::sync::{Mutex, OnceLock};
 
 use crate::transcripts::{self, CompactionRecord, MessageRecord, RevisionRecord};
 
-pub const MODES: [&str; 3] = ["plan", "goal", "agent"];
+pub const MODES: [&str; 4] = ["read-only", "plan", "goal", "agent"];
 
 /// Maximum number of Unicode scalar values accepted for a user-defined title.
 pub const MAX_SESSION_TITLE_CHARS: usize = 80;
 
 /// Compatibility normalization for v7 callers and imported records. The
-/// persisted operating profile is now always `plan`, `goal` or `agent`.
+/// persisted operating profile is now always `read-only`, `plan`, `goal` or
+/// `agent`.
 pub fn normalize_mode(mode: Option<&str>) -> String {
     match mode {
         Some("plan") | Some("chat") => "plan".into(),
         Some("goal") => "goal".into(),
+        // `ask` was the pre-release name for the read-only mode (W-01). Rows
+        // and scheduled tasks written under that name keep their intent.
+        Some("read-only") | Some("ask") => "read-only".into(),
         Some("agent") => "agent".into(),
         _ => "agent".into(),
     }
@@ -32,9 +36,20 @@ pub fn is_valid_mode(mode: &str) -> bool {
 }
 
 /// Plan and Goal negotiate a contract before executing (D198), so they share one
-/// tool allowlist and one hard deny. Agent is the only executing mode.
+/// tool allowlist and one hard deny. Read-only and Agent are not contract modes:
+/// they submit nothing for approval.
 pub fn is_contract_mode(mode: &str) -> bool {
     matches!(mode, "plan" | "goal")
+}
+
+/// Read-only mode (W-01) answers questions and never writes. It is deliberately
+/// not a contract mode: there is no SubmitPlan/SubmitGoal handshake, just a
+/// narrower allowlist enforced in `permissions`.
+pub fn is_read_only_mode(mode: &str) -> bool {
+    // Only the canonical value: `ask` is an alias handled by `normalize_mode`,
+    // and it is also a *permission* mode name, so matching it here would deny
+    // writes if a caller ever swapped the two arguments.
+    matches!(mode, "read-only")
 }
 
 /// Values accepted by the persisted per-session thinking selector.  Keep this
@@ -1583,8 +1598,9 @@ pub fn configure_session_with_thinking(
     thinking_level: Option<&str>,
     permission_mode: Option<&str>,
 ) -> Result<Option<SessionSummary>> {
-    if !(is_valid_mode(mode) || mode == "chat") {
-        return Err(anyhow!("mode must be plan or agent"));
+    // `chat` and `ask` are the two retired spellings; both normalize below.
+    if !(is_valid_mode(mode) || mode == "chat" || mode == "ask") {
+        return Err(anyhow!("mode must be read-only, plan, goal or agent"));
     }
     let mode = normalize_mode(Some(mode));
     if let Some(level) = thinking_level {
@@ -3390,6 +3406,23 @@ mod tests {
             model_id: Some("model-1".into()),
             created_at: "2026-07-28T00:00:03Z".into(),
         }
+    }
+
+    /// W-01: the read-only mode is a first-class persisted mode, and its
+    /// pre-release name keeps working so old rows are not rejected on open.
+    #[test]
+    fn read_only_mode_is_valid_and_keeps_its_alias() {
+        assert!(is_valid_mode("read-only"));
+        assert!(is_read_only_mode("read-only"));
+        assert!(!is_read_only_mode("agent"));
+        assert!(!is_read_only_mode("plan"));
+        assert!(!is_read_only_mode("goal"));
+        // `ask` is a *permission* mode name; it must never read as a session
+        // mode at the gate, or a swapped argument would silently block writes.
+        assert!(!is_read_only_mode("ask"));
+        assert_eq!(normalize_mode(Some("read-only")), "read-only");
+        assert_eq!(normalize_mode(Some("ask")), "read-only");
+        assert_eq!(normalize_mode(Some("chat")), "plan");
     }
 
     #[test]

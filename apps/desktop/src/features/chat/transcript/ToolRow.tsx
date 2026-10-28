@@ -86,6 +86,8 @@ type ToolRowProps = {
   delegationStatuses?: ReadonlyMap<string, SubagentOutcome>;
   /** Runtime timings read from the turn's delegation lifecycle rows. */
   delegationTimings?: ReadonlyMap<string, SubagentTiming>;
+  /** 1-based position among the tool calls of this activity group (W-07). */
+  stepIndex?: number;
 };
 
 function toolRowDelegationId(message: UiMessage): string | undefined {
@@ -110,6 +112,7 @@ function toolRowPropsEqual(
     previous.message !== next.message ||
     previous.variant !== next.variant ||
     previous.onUserInteraction !== next.onUserInteraction ||
+    previous.stepIndex !== next.stepIndex ||
     !subagentRunsEqual(previous.delegate, next.delegate)
   ) {
     return false;
@@ -136,6 +139,7 @@ export const ToolRow = memo(function ToolRow({
   onUserInteraction,
   delegationStatuses,
   delegationTimings,
+  stepIndex,
 }: ToolRowProps) {
   const { t } = useTranslation();
   const detailsId = useId();
@@ -291,12 +295,32 @@ export const ToolRow = memo(function ToolRow({
       ? formatToolDuration(durationMs / 1000)
       : "";
 
+  // W-07: an ordinary row also shows its own single-step duration. While the
+  // call runs the value ticks from the row's timestamp; once the host reports
+  // `toolDurationMs` that frozen value wins, so a reload matches the live read.
+  const toolStartedAt =
+    variant !== "topology" && message.createdAt
+      ? Date.parse(message.createdAt) || undefined
+      : undefined;
+  const toolElapsedMs =
+    variant === "topology"
+      ? undefined
+      : (message.toolDurationMs ??
+        (status === "running" && toolStartedAt !== undefined
+          ? Math.max(0, now - toolStartedAt)
+          : undefined));
+  const toolDuration =
+    typeof toolElapsedMs === "number" && toolElapsedMs > 0
+      ? formatToolDuration(toolElapsedMs / 1000)
+      : "";
+
+  const ticking = outcome === "running" || status === "running";
   useEffect(() => {
-    if (outcome !== "running") return;
+    if (!ticking) return;
     setNow(Date.now());
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
-  }, [outcome]);
+  }, [ticking]);
 
   const statusTone =
     run === "running" || (!run && status === "running")
@@ -392,6 +416,11 @@ export const ToolRow = memo(function ToolRow({
             >
               <ToolActionIcon action={action} />
             </span>
+            {stepIndex !== undefined ? (
+              <span className="tool-row-step" aria-hidden>
+                #{stepIndex}
+              </span>
+            ) : null}
             <span
               className={`tool-row-name ${status === "running" ? "running" : ""}`}
             >
@@ -437,6 +466,13 @@ export const ToolRow = memo(function ToolRow({
               </span>
             ) : null}
             <ToolChips chips={chips} />
+            {toolDuration ? (
+              <span
+                className={`tool-row-duration${status === "running" ? " is-live" : ""}`}
+              >
+                {toolDuration}
+              </span>
+            ) : null}
             {runHead && statusLabel ? (
               <span
                 className={`tool-row-state ${statusTone}`}

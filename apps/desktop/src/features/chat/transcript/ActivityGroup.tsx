@@ -42,6 +42,11 @@ import {
   getToolAction,
   getToolSummary,
 } from "../../../lib/tool-display";
+import {
+  SILENCE_HINT_FALLBACKS,
+  SILENCE_HINT_KEYS,
+  silenceLevel,
+} from "./silence-ladder";
 import { ReviewChangeCard } from "../../../components/ReviewChangeCard";
 import { IconChevronRight, IconCircleAlert, IconSparkles, IconWorkflow } from "../../../components/icons";
 import {
@@ -316,6 +321,8 @@ export const ActivityGroup = memo(function ActivityGroup({
 
   const renderActivityItems = () => {
     let renderedTopology = false;
+    const toolTotal = items.filter((item) => item.kind === "tool").length;
+    let toolStep = 0;
     return items.map((item, itemIndex) => {
       if (hasSubagentTopology && isDelegationActivityItem(item)) {
         if (renderedTopology) return null;
@@ -330,10 +337,17 @@ export const ActivityGroup = memo(function ActivityGroup({
           />
         );
       }
+      // A lone call needs no ordinal; `#1` on the only row is noise (W-07).
+      let stepIndex: number | undefined;
+      if (item.kind === "tool" && toolTotal > 1) {
+        toolStep += 1;
+        stepIndex = toolStep;
+      }
       return item.kind === "tool" ? (
         <Fragment key={item.message.id}>
           <ToolRow
             message={item.message}
+            {...(stepIndex !== undefined ? { stepIndex } : {})}
             onUserInteraction={claimDisclosure}
             {...(item.delegate ? { delegate: item.delegate } : {})}
           />
@@ -436,9 +450,15 @@ export function WorkingIndicator({ startedAt }: { startedAt?: number } = {}) {
     return () => window.clearInterval(timer);
   }, [startedAt]);
 
+  // W-08: the wait escalates in three steps (20s / 45s / 120s). The level only
+  // moves up, so each rung is announced once instead of every second.
+  const level = silenceLevel(elapsed);
+  const slow = level > 0;
+
   return (
     <div
-      className="working-indicator"
+      className={`working-indicator${slow ? " is-slow" : ""}`}
+      data-silence={level}
       data-testid="working-indicator"
       role="status"
       aria-live="polite"
@@ -452,6 +472,13 @@ export function WorkingIndicator({ startedAt }: { startedAt?: number } = {}) {
       {elapsed > 0 ? (
         <span className="working-elapsed" aria-hidden="true">
           {formatToolDuration(elapsed)}
+        </span>
+      ) : null}
+      {slow ? (
+        <span className="working-indicator-hint">
+          {t(SILENCE_HINT_KEYS[level - 1], {
+            defaultValue: SILENCE_HINT_FALLBACKS[level - 1],
+          })}
         </span>
       ) : null}
     </div>

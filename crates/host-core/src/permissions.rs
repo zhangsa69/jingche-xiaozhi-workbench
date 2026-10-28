@@ -152,6 +152,17 @@ impl PermissionManager {
         )
     }
 
+    /// Read-only mode's allowlist (W-01). Bash is excluded on purpose: a shell
+    /// can write, move or delete files, so admitting it would make the mode's
+    /// promise false. Plugin tools are excluded too — their plan-safe actions
+    /// are about inspecting a target, not about answering a question.
+    pub fn read_only_mode_allows(tool_name: &str) -> bool {
+        matches!(
+            tool_name,
+            "Read" | "Glob" | "Grep" | "BrowserPreview" | "new_context"
+        )
+    }
+
     /// Auto-decision with an effective permission mode (D115).
     ///
     /// `permission_mode` is the already-resolved effective mode — the
@@ -231,6 +242,13 @@ impl PermissionManager {
             } else {
                 return Some(PermissionDecision::Deny);
             }
+        }
+
+        // Read-only mode (W-01) gets the same hard treatment with a narrower
+        // list: no grant, no `auto`, no scratch exception can turn a write back
+        // on, because the mode's whole promise is that nothing is modified.
+        if crate::sessions::is_read_only_mode(mode) && !Self::read_only_mode_allows(tool_name) {
+            return Some(PermissionDecision::Deny);
         }
 
         if requires_external_path_permission {
@@ -598,6 +616,64 @@ mod tests {
             pm.evaluate_auto_with_permission_mode("s", "Bash", "goal", "auto", &no_grants()),
             Some(PermissionDecision::AllowOnce)
         );
+    }
+
+    /// W-01: read-only mode denies every write path at the gate, so no
+    /// permission mode, session grant or scratch exception can re-enable one.
+    #[test]
+    fn read_only_mode_denies_writes_under_every_permission_mode() {
+        let pm = PermissionManager::default();
+        let mut grants = HashMap::new();
+        grants.insert(
+            "s".to_string(),
+            vec!["Write".to_string(), "Edit".to_string(), "Bash".to_string()],
+        );
+        for tool in ["Write", "Edit", "Bash", "plugin_x_run", "unknown"] {
+            for permission_mode in ["ask", "accept-edits", "auto"] {
+                assert_eq!(
+                    pm.evaluate_auto_with_permission_mode(
+                        "s",
+                        tool,
+                        "read-only",
+                        permission_mode,
+                        &grants
+                    ),
+                    Some(PermissionDecision::Deny),
+                    "{tool} must be denied in read-only + {permission_mode}"
+                );
+            }
+        }
+    }
+
+    /// Reading is the whole point of the mode, so the inspect core is never
+    /// denied — low-risk tools auto-allow, medium-risk ones may still prompt,
+    /// which is what a read-only user expects.
+    #[test]
+    fn read_only_mode_keeps_the_inspect_core() {
+        let pm = PermissionManager::default();
+        for tool in ["Read", "Glob", "Grep", "BrowserPreview", "new_context"] {
+            for permission_mode in ["ask", "accept-edits", "auto"] {
+                let decision = pm.evaluate_auto_with_permission_mode(
+                    "s",
+                    tool,
+                    "read-only",
+                    permission_mode,
+                    &no_grants(),
+                );
+                assert_ne!(
+                    decision,
+                    Some(PermissionDecision::Deny),
+                    "{tool} must stay available in read-only + {permission_mode}"
+                );
+            }
+        }
+        for tool in ["Read", "Glob", "Grep"] {
+            assert_eq!(
+                pm.evaluate_auto_with_permission_mode("s", tool, "read-only", "ask", &no_grants()),
+                Some(PermissionDecision::AllowOnce),
+                "{tool} is low risk and must auto-allow"
+            );
+        }
     }
 
     #[test]

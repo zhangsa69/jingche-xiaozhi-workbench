@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { PlanningState, UiMessage } from "@pi-desktop/shared";
 import { proposalKindForMode } from "@pi-desktop/shared";
 import { ConversationMinimap } from "../../../components/ConversationMinimap";
+import { PlanStepBar } from "../../../components/PlanStepBar";
 import { PermissionCard } from "../../../components/PermissionCard";
 import { TooltipButton } from "../../../components/ui";
 import { TurnOutcomeCard } from "../../../components/TurnOutcomeCard";
@@ -205,6 +206,12 @@ export const ChatTranscript = memo(function ChatTranscript({
       )}
       {!transcriptReadOnly && paneVisible && !veilCovering && sessionId ? (
         <ResponseAnnotationOverlay sessionId={sessionId} scrollRef={scrollRef} onNavigate={navigateAnnotation} />
+      ) : null}
+      {/* W-05: the approved contract's position stays pinned above the rows it
+        * describes. A reading window shows an older page whose marker rows may
+        * not be loaded, so it keeps the bar out rather than showing `0/8`. */}
+      {sessionId && !transcriptReadOnly && !readingWindow ? (
+        <PlanStepBar sessionId={sessionId} messages={messages} />
       ) : null}
       <div
         className="thread-scroll"

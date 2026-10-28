@@ -124,6 +124,10 @@ does not turn temporary thread pressure into a host process exit.
 | `EDIT_DISABLED_IN_PLAN` | no | contract-mode hard-deny for Edit |
 | `PLUGIN_DISABLED_IN_PLAN` | no | contract-mode hard-deny for every plugin tool |
 | `TOOL_DISABLED_IN_PLAN` | no | contract-mode hard-deny for an unknown/unlisted tool |
+| `WRITE_DISABLED_IN_READ_ONLY` | no | read-only-mode hard-deny for Write |
+| `EDIT_DISABLED_IN_READ_ONLY` | no | read-only-mode hard-deny for Edit |
+| `PLUGIN_DISABLED_IN_READ_ONLY` | no | read-only-mode hard-deny for every plugin tool |
+| `TOOL_DISABLED_IN_READ_ONLY` | no | read-only-mode hard-deny for an unlisted tool, including Bash |
 | `PLAN_NOT_ACTIVE` | no | a submit tool ran while no contract was being negotiated |
 | `PLAN_KIND_MISMATCH` | no | `SubmitPlan` in Goal mode, or `SubmitGoal` in Plan mode |
 | `PLAN_APPROVAL_REQUIRED` | no | SubmitPlan/SubmitGoal is waiting for a separate approval |

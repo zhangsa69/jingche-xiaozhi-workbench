@@ -102,6 +102,28 @@ export function ComposerToolbar({
 }: ComposerToolbarProps) {
   const platform = (window.piDesktop?.platform ?? "darwin") as ShortcutPlatform;
   const steeringShortcut = keybindingDisplayParts("Alt+Enter", platform).join("+");
+  // Goal pins `auto`, and read-only pins its own allowlist; in both the
+  // permission selector cannot change anything, so it is shown as locked
+  // rather than inviting a click that would do nothing.
+  const permissionLocked = mode === "goal" || mode === "read-only";
+  const permissionLockReason =
+    mode === "goal"
+      ? t("goal.autoWarning")
+      : mode === "read-only"
+        ? t("chat.modeReadOnlyHint")
+        : mode === "plan" && composerPermissionMode === "auto"
+          ? t("plan.autoWarning")
+          : undefined;
+  const permissionLabel = permissionLockReason
+    ? `${t("chat.permissionMode")} · ${permissionLockReason}`
+    : t("chat.permissionMode");
+  // The chip is a cycle button, so the tooltip has to say what the current
+  // state means — "Mode" alone leaves read-only users guessing why writes fail.
+  const modeChipLabel = planningLive
+    ? t(`${mode}.planning`)
+    : mode === "read-only"
+      ? `${t("settings.mode")} · ${t("chat.modeReadOnlyHint")}`
+      : t("settings.mode");
   return (
     <div className="composer-toolbar">
       <div className="composer-left">
@@ -125,8 +147,8 @@ export function ComposerToolbar({
           className="icon-btn mode-chip composer-mode-chip"
           data-mode={mode}
           data-planning={planningLive ? "true" : undefined}
-          tooltip={planningLive ? t(`${mode}.planning`) : t("settings.mode")}
-          ariaLabel={planningLive ? t(`${mode}.planning`) : t("settings.mode")}
+          tooltip={modeChipLabel}
+          ariaLabel={modeChipLabel}
           disabled={controlsBlocked}
           onClick={async () => {
             modelMenu.setOpen(false);
@@ -155,7 +177,7 @@ export function ComposerToolbar({
         </TooltipButton>
         <AnchoredMenu
           className="composer-permission"
-          open={permissionOpen && mode !== "goal"}
+          open={permissionOpen && !permissionLocked}
           onClose={() => setPermissionOpen(false)}
           menuClassName="composer-permission-menu"
           label={t("chat.permissionMode")}
@@ -167,23 +189,11 @@ export function ComposerToolbar({
               ref={ref}
               type="button"
               className={`icon-btn mode-chip ${permissionOpen ? "active" : ""}`}
-              tooltip={
-                mode === "goal"
-                  ? `${t("chat.permissionMode")} · ${t("goal.autoWarning")}`
-                  : mode === "plan" && composerPermissionMode === "auto"
-                    ? `${t("chat.permissionMode")} · ${t("plan.autoWarning")}`
-                    : t("chat.permissionMode")
-              }
-              ariaLabel={
-                mode === "goal"
-                  ? `${t("chat.permissionMode")} · ${t("goal.autoWarning")}`
-                  : mode === "plan" && composerPermissionMode === "auto"
-                    ? `${t("chat.permissionMode")} · ${t("plan.autoWarning")}`
-                    : t("chat.permissionMode")
-              }
-              aria-haspopup={mode === "goal" ? undefined : "menu"}
-              aria-expanded={mode === "goal" ? false : permissionOpen}
-              disabled={controlsBlocked || mode === "goal"}
+              tooltip={permissionLabel}
+              ariaLabel={permissionLabel}
+              aria-haspopup={permissionLocked ? undefined : "menu"}
+              aria-expanded={permissionLocked ? false : permissionOpen}
+              disabled={controlsBlocked || permissionLocked}
               onClick={() => {
                 modelMenu.setOpen(false);
                 setPermissionOpen((open) => !open);

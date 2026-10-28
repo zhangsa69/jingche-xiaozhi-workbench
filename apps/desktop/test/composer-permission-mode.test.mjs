@@ -27,17 +27,23 @@ test("Agent and Plan permission menus present only effective selectable modes", 
   assert.doesNotMatch(permissionControlSource, /\["inherit",/);
 });
 
-test("Goal keeps the permission chip visible but fixes it to Full auto", () => {
+test("Goal and Read-only keep the chip visible but locked", () => {
   const permissionControlSource = composerSource.slice(
     composerSource.indexOf('className="composer-permission"'),
     composerSource.indexOf('<div className="composer-right">'),
   );
 
+  // Goal pins Full auto; read-only pins its own allowlist. Neither can be
+  // changed by the selector, so both lock it instead of faking a choice.
+  assert.match(
+    composerSource,
+    /const permissionLocked = mode === "goal" \|\| mode === "read-only";/,
+  );
   assert.match(
     composerSource,
     /const composerPermissionMode: Exclude<PermissionMode, "inherit"> =\s*\n\s*mode === "goal" \? "auto" : effectivePermissionMode;/,
   );
-  assert.match(permissionControlSource, /mode === "goal" \? undefined : "menu"/);
-  assert.match(permissionControlSource, /disabled=\{controlsBlocked \|\| mode === "goal"\}/);
-  assert.match(permissionControlSource, /permissionOpen && mode !== "goal"/);
+  assert.match(permissionControlSource, /aria-haspopup=\{permissionLocked \? undefined : "menu"\}/);
+  assert.match(permissionControlSource, /disabled=\{controlsBlocked \|\| permissionLocked\}/);
+  assert.match(permissionControlSource, /permissionOpen && !permissionLocked/);
 });

@@ -37,6 +37,22 @@
   white-space: nowrap;
 }
 
+/* W-09: elapsed time of a running session, kept quiet until you look for it. */
+.thread-item-elapsed {
+  flex: 0 0 auto;
+  color: var(--ds-text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* W-10: the same 3/8 the transcript bar shows, at sidebar density. */
+.thread-item-steps {
+  flex: 0 0 auto;
+  color: var(--ds-text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
 .thread-item:hover,
 .thread-item.active {
   background: var(--ds-bg-hover);

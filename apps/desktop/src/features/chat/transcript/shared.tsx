@@ -23,7 +23,11 @@ import { messageThinking as thinkingText } from "../../../lib/assistant-turns";
 import { useReferencedImageDataUrl } from "../../../lib/use-referenced-image-data-url";
 import { isHtmlFilePath, splitChatText } from "../../../lib/chat-links";
 import type { SourcePositionProps } from "../../../lib/markdown-source";
-import { getToolAction, type ToolAction } from "../../../lib/tool-display";
+import {
+  formatToolDuration,
+  getToolAction,
+  type ToolAction,
+} from "../../../lib/tool-display";
 import { calculateTokenRate } from "../../../lib/context-usage";
 import { useAppStore } from "../../../stores/app-store";
 import { Markdown, useCopy } from "../../../components/Markdown";
@@ -103,11 +107,17 @@ export function MessageMeta({
   usage,
   responseDurationMs,
   responseOutputTokens,
+  durationMs,
+  live = false,
 }: {
   modelId?: string;
   usage?: MessageUsage;
   responseDurationMs?: number;
   responseOutputTokens?: number;
+  /** Whole-turn wall clock, from the user send to the answer settling. */
+  durationMs?: number;
+  /** The turn is still streaming, so the same field keeps counting. */
+  live?: boolean;
 }) {
   const { t } = useTranslation();
   const throughput = calculateTokenRate(
@@ -115,11 +125,25 @@ export function MessageMeta({
     responseDurationMs,
   );
   const showThroughput = !usage && throughput !== undefined;
-  if (!modelId && !showThroughput) {
+  const duration =
+    typeof durationMs === "number" && Number.isFinite(durationMs) && durationMs >= 0
+      ? formatToolDuration(Math.floor(durationMs / 1000))
+      : "";
+  if (!modelId && !showThroughput && !duration) {
     return null;
   }
   return (
-    <div className="message-meta">
+    <div className={`message-meta${live ? " is-live" : ""}`}>
+      {duration ? (
+        <span
+          className="message-meta-chip duration"
+          title={live ? t("chat.processingFor", { time: duration }) : undefined}
+        >
+          {live
+            ? t("chat.processingFor", { time: duration })
+            : t("chat.processedFor", { time: duration })}
+        </span>
+      ) : null}
       {modelId ? (
         <span className="message-meta-chip model" title={modelId}>
           {modelId}

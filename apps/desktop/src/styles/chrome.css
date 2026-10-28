@@ -580,6 +580,188 @@
   background: var(--ds-tile);
 }
 
+/* W-03: the task overview hangs off the top bar's checklist button. The badge
+ * carries the artifact count so the answer reads without opening the panel. */
+.task-overview {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ct-overview-btn {
+  position: relative;
+}
+
+.ct-overview-badge {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  display: grid;
+  min-width: 14px;
+  height: 14px;
+  place-items: center;
+  padding: 0 3px;
+  border-radius: var(--radius-full);
+  background: var(--ds-text-primary);
+  color: var(--ds-bg-primary);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.task-overview-popover {
+  position: fixed;
+  z-index: 60;
+  display: flex;
+  width: min(320px, calc(100vw - 32px));
+  max-height: min(480px, calc(100vh - 96px));
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--radius-md-plus);
+  background: var(--ds-bg-elevated-opaque);
+  padding: 12px;
+  color: var(--ds-text-primary);
+  box-shadow: var(--ds-shadow-dialog);
+  font-size: var(--text-xs);
+  line-height: var(--leading-body);
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  transition: opacity var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.task-overview-popover.is-open {
+  opacity: 1;
+}
+
+.task-overview-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ds-text-secondary);
+}
+
+.task-overview-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-round);
+  background: var(--ds-text-muted);
+}
+
+.task-overview-dot.is-running {
+  background: var(--ds-success);
+}
+
+.task-overview-state {
+  color: var(--ds-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.task-overview-elapsed {
+  margin-left: auto;
+  color: var(--ds-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.task-overview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.task-overview-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--ds-text-secondary);
+}
+
+.task-overview-count {
+  color: var(--ds-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.task-overview-empty {
+  margin: 0;
+  color: var(--ds-text-muted);
+}
+
+.task-overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.task-overview-artifact {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  padding: 4px 6px;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.task-overview-artifact:hover {
+  background: var(--ds-bg-hover);
+}
+
+.task-overview-artifact-path {
+  overflow: hidden;
+  font-family: var(--font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-overview-artifact-counts {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.task-overview-step {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 2px 6px;
+}
+
+.task-overview-step-index {
+  flex: 0 0 auto;
+  color: var(--ds-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.task-overview-step-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-overview-step-state {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--ds-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.task-overview-step-state.is-running {
+  color: var(--ds-success);
+}
+
 /* Keep the sole work-panel toggle anchored to the viewport while the in-flow
  * panel changes MainPane width. AppShell ownership keeps it available on every
  * non-Settings route and above the panel header throughout both animations. */
@@ -1179,3 +1361,92 @@
 
 /* Preview mode: the three shell actions sit tight at the band's left edge
  * (new task, restore the panel, toggle the panel), then the drag region. */
+
+/* W-05: the approved contract's position, pinned above the rows it describes.
+   It is a sibling of `.thread-scroll`, so it never scrolls away and never
+   shifts `.thread-content` geometry (the minimap measures that). */
+.plan-steps {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-4);
+  border-bottom: 1px solid var(--ds-border-subtle);
+  background: var(--ds-bg-primary);
+  font-size: var(--text-xs);
+  color: var(--ds-text-muted);
+  flex: 0 0 auto;
+}
+
+.plan-steps-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.plan-steps-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-text-secondary);
+  white-space: nowrap;
+}
+
+.plan-steps-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.plan-steps-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+}
+
+.plan-steps-list::-webkit-scrollbar {
+  display: none;
+}
+
+.plan-step {
+  display: grid;
+  place-items: center;
+  min-width: var(--space-5);
+  height: var(--space-5);
+  padding: 0 var(--space-1);
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--ds-text-faint);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.plan-step:hover:not(:disabled) {
+  background: var(--ds-bg-hover);
+  color: var(--ds-text-secondary);
+}
+
+.plan-step:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.plan-step.done {
+  border-color: var(--ds-border-default);
+  color: var(--ds-text-secondary);
+}
+
+.plan-step.active {
+  border-color: var(--ds-accent);
+  background: var(--ds-bg-active);
+  color: var(--ds-text-primary);
+}
+
+.plan-step-index {
+  display: block;
+}

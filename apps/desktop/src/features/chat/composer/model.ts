@@ -27,9 +27,11 @@ export const PLACEHOLDER_KEYS = {
   ],
 } as const;
 
-export const MODE_CYCLE: readonly Mode[] = ["agent", "plan", "goal"];
+/** Chip order, gentle to least careful: ask → plan → build → pursue a goal. */
+export const MODE_CYCLE: readonly Mode[] = ["read-only", "plan", "agent", "goal"];
 
 export const MODE_LABEL_KEYS: Record<Mode, string> = {
+  "read-only": "settings.modeReadOnly",
   agent: "settings.modeAgent",
   plan: "settings.modePlan",
   goal: "settings.modeGoal",

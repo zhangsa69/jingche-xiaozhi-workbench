@@ -129,7 +129,9 @@ export function createEventsSlice({
               ? executionActive
               : state.isRunning,
           sessions: state.sessions.map((session) =>
-            session.id === event.sessionId
+            // Read-only is the user's constraint, not a runtime default, so a
+            // stray planning event must not quietly promote it to Agent (W-01).
+            session.id === event.sessionId && session.mode !== "read-only"
               ? { ...session, mode: nextMode }
               : session,
           ),

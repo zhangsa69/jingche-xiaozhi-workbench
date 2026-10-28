@@ -37,12 +37,17 @@ const legacyModeKey = ["mode", "Chat"].join("");
 const legacyModeCommand = ["builtin.mode", "chat"].join(".");
 const legacyModeLiteral = ["mode:", '"chat"'].join(" ");
 
-test("renderer exposes Agent, Plan, and Goal as the only operating modes", () => {
-  assert.match(composerSource, /MODE_CYCLE: readonly Mode\[\] = \["agent", "plan", "goal"\]/);
+test("renderer exposes Read-only, Agent, Plan, and Goal as the operating modes", () => {
+  assert.match(
+    composerSource,
+    /MODE_CYCLE: readonly Mode\[\] = \["read-only", "plan", "agent", "goal"\]/,
+  );
+  assert.match(composerSource, /settings\.modeReadOnly/);
   assert.match(composerSource, /settings\.modePlan/);
   assert.match(composerSource, /settings\.modeGoal/);
   assert.match(composerSource, /IconListChecks/);
   assert.match(composerSource, /IconTarget/);
+  assert.match(settingsSource, /\["read-only", "settings\.modeReadOnly"\]/);
   assert.match(settingsSource, /\["plan", "settings\.modePlan"\]/);
   assert.match(settingsSource, /\["goal", "settings\.modeGoal"\]/);
   assert.match(commandsSource, /case "builtin\.mode\.plan"/);

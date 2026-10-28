@@ -78,6 +78,7 @@ import type {
   SessionMessageOrigin,
   PlanExecution,
   PlanProposal,
+  PlanStep,
   PlanningState,
   Risk,
   SubagentDefinition,
@@ -99,6 +100,8 @@ import {
   isToolsOutputParams,
   MAX_SUBAGENT_CONCURRENCY,
   normalizeSubagentName,
+  parsePlanSteps,
+  PLAN_STEP_TOOL_NAME,
   proposalKindForMode,
   resolveSubagentToolNames,
   subagentModelKey,
@@ -580,7 +583,13 @@ function submitToolKind(name: string): ProposalKind | undefined {
 }
 
 function modeLabel(mode: Mode): string {
-  return mode === "plan" ? "Plan" : mode === "goal" ? "Goal" : "Agent";
+  return mode === "read-only"
+    ? "Read-only"
+    : mode === "plan"
+      ? "Plan"
+      : mode === "goal"
+        ? "Goal"
+        : "Agent";
 }
 
 type ToolCatalogEntry = {
@@ -1488,6 +1497,11 @@ export class DesktopAgentRuntime {
   private suppressSilentTurnRunEnd = false;
   /** Autonomous plan/goal execution: one progress-only continue (#43). */
   private autonomousExecution = false;
+  /**
+   * Steps of the contract currently executing (W-05). Parsed from the approved
+   * Markdown snapshot, not stored: the snapshot is already the durable record.
+   */
+  private planSteps: PlanStep[] = [];
   private pendingProgressTurnRerun = false;
   private progressTurnRerunAttempted = false;
   private progressTurnRerunInProgress = false;
@@ -3069,6 +3083,12 @@ Delegation rules:
     const contextTools = this.compactionEnabled
       ? [this.buildContextCompactionTool()]
       : [];
+    // Only during an approved execution, and only when the contract actually
+    // has a list to report on (W-05).
+    const planStepTools =
+      this.autonomousExecution && this.mode === "agent" && this.planSteps.length >= 2
+        ? [this.buildPlanStepTool()]
+        : [];
     // Trusted extension tools are non-core: the per-mode allowlist and
     // ToolSearch deferral treat them like plugin tools (spec 16 §7).
     const extensionTools = this.extensionRunner?.getAgentTools() ?? [];
@@ -3080,6 +3100,7 @@ Delegation rules:
       ...modeTools,
       ...subagentTools,
       ...contextTools,
+      ...planStepTools,
       ...extensionTools,
     ];
   }
@@ -3152,6 +3173,7 @@ Delegation rules:
   private isCoreTool(name: string): boolean {
     return (
       name === CONTEXT_COMPACTION_TOOL_NAME ||
+      name === PLAN_STEP_TOOL_NAME ||
       MODE_TRANSITION_TOOL_NAMES.has(name) ||
       // The whole delegation lifecycle stays in the core set rather than the
       // on-demand catalog: a capability the model has to go looking for is one
@@ -4698,6 +4720,59 @@ Delegation rules:
    * at the next turn boundary, where the host already owns it, so a model that
    * calls this mid-batch does not lose the results it is still holding.
    */
+  /**
+   * `UpdateStep`: the progress signal of an approved execution (W-05).
+   *
+   * Deliberately inert — it validates the number against the approved contract
+   * and answers, changing nothing. That is what makes progress replayable: the
+   * rows it leaves in the transcript are the state, so a restart, a second
+   * window, and the sidebar all read the same step without a stored counter.
+   */
+  private buildPlanStepTool(): AgentTool {
+    return {
+      name: PLAN_STEP_TOOL_NAME,
+      label: "Update Step",
+      description:
+        "Report which step of the approved contract you are starting. Call it once, immediately before starting each step, in the order the approved step list gives. It changes nothing; it only tells the user where the run stands.",
+      parameters: Type.Object({
+        step: Type.Integer({
+          description: "1-based step number from the approved step list.",
+          minimum: 1,
+        }),
+      }),
+      executionMode: "sequential",
+      execute: async (_toolCallId, params) => {
+        const requested = Number(isRecord(params) ? params.step : NaN);
+        const step = this.planSteps[requested - 1];
+        if (!step) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Unknown step ${String(requested)}. The approved contract has ${this.planSteps.length} steps numbered 1 to ${this.planSteps.length}.`,
+              },
+            ],
+            details: { step: requested, total: this.planSteps.length },
+            isError: true,
+          };
+        }
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Step ${step.index}/${this.planSteps.length}: ${step.title}`,
+            },
+          ],
+          details: {
+            step: step.index,
+            total: this.planSteps.length,
+            title: step.title,
+          },
+        };
+      },
+    };
+  }
+
   private buildContextCompactionTool(): AgentTool {
     return {
       name: CONTEXT_COMPACTION_TOOL_NAME,
@@ -6699,7 +6774,12 @@ Delegation rules:
     this.autonomousExecution = true;
 
     const kind = execution.kind === "goal" ? "goal" : "plan";
-    const instruction =
+    // Steps are parsed from the snapshot the user approved, so the bar, the
+    // sidebar and the model all read the same list (W-05).
+    this.planSteps = parsePlanSteps(execution.plan);
+    this.rebuildToolCatalog();
+    this.agent.state.tools = this.activeTools();
+    const instructionBody =
       kind === "goal"
         ? [
             "The user approved the goal contract below. Reach that goal now, autonomously.",
@@ -6713,7 +6793,7 @@ Delegation rules:
             "Choose your own approach with the normal Agent tools. Then verify every acceptance criterion yourself, running the checks the contract names rather than assuming they pass.",
             "Keep working while a criterion is still unmet and you have an untried approach. Stop early only if a boundary in the contract blocks you or a criterion cannot be verified; say which one and why.",
             "Finish with a report that walks the acceptance criteria one by one, each marked met or unmet with the evidence you observed.",
-          ].join("\n")
+          ]
         : [
             "Execute the approved implementation plan now.",
             `Use the host-created plan artifact at the workspace-relative path: ${execution.artifact.relativePath}`,
@@ -6724,7 +6804,18 @@ Delegation rules:
             execution.plan,
             "</approved-plan-markdown>",
             "Implement the approved plan with the normal Agent tools, then report the result.",
-          ].join("\n");
+          ];
+    const instruction = [
+      ...instructionBody,
+      ...(this.planSteps.length >= 2
+        ? [
+            `The approved contract lists ${this.planSteps.length} steps. Call \`${PLAN_STEP_TOOL_NAME}\` with \`step=<n>\` immediately before you start step <n>, once per step, in order. It changes nothing; it only shows the user where the run stands.`,
+            "<approved-steps>",
+            ...this.planSteps.map((step) => `${step.index}. ${step.title}`),
+            "</approved-steps>",
+          ]
+        : []),
+    ].join("\n");
     const internalId = `approved-${kind}:${execution.id}`;
     const internalMessage: AgentMessage = {
       role: "user",
@@ -6766,6 +6857,12 @@ Delegation rules:
     this.gracefulStopRequested = false;
     this.runCancelled = false;
     this.turnSubagentUsage = undefined;
+    // A prompt is not an approved execution: drop the step contract so the
+    // marker tool leaves the catalog with it (W-05).
+    if (this.planSteps.length > 0) {
+      this.planSteps = [];
+      this.rebuildToolCatalog();
+    }
     // Capabilities and path-scoped instruction claims belong to one prompt.
     this.resetDeferredToolsForPrompt();
     this.pathInstructionClaims.clear();

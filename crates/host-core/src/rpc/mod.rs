@@ -3334,6 +3334,17 @@ async fn handle_request(
                     );
                     let error_code = if cancelled {
                         "TOOL_ABORTED"
+                    } else if sessions::is_read_only_mode(&durable_mode)
+                        && !PermissionManager::read_only_mode_allows(&p.tool_name)
+                    {
+                        match p.tool_name.as_str() {
+                            "Write" => "WRITE_DISABLED_IN_READ_ONLY",
+                            "Edit" => "EDIT_DISABLED_IN_READ_ONLY",
+                            name if name.starts_with("plugin_") => {
+                                "PLUGIN_DISABLED_IN_READ_ONLY"
+                            }
+                            _ => "TOOL_DISABLED_IN_READ_ONLY",
+                        }
                     } else if sessions::is_contract_mode(&durable_mode)
                         && !PermissionManager::plan_mode_allows(&p.tool_name)
                     {
