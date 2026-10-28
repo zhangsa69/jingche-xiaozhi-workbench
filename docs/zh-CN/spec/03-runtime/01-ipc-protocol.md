@@ -1323,6 +1323,10 @@ Chrome 和代理 CDP 位于随应用打包的 `pi.browser` 插件中，通过 `p
 - `fs/resolveRef({ref, sessionId?})` → `FsChatRefResolveResult`（`{ match: FsChatRefMatch | null }`，match 指出应答的 `root`（`workspace` / `scratch` / `attachments`）、相对该应答根的 `relativePath`、绝对路径 `absolutePath` 与 `matchedBy`（`exact-relative` / `exact-absolute` / `path-suffix` / `basename`），以及在 `workspace` 命中时给出的 `projectRoot`（`{ path, name, primary }`，指出是哪个文件夹应答的））；`sessionId` 决定查哪个会话的临时目录。它补全智能体在聊天里打印的文件引用，因为渲染器看不到会话自己的临时目录：已经在某个已知根内指向真实文件的绝对引用直接胜出，`attachments/<sha256>` blob 直接对附件库解析；否则按优先级顺序搜索各根——整个打开的项目、再会话自己的临时目录（`<data_dir>/scratch/<sessionId>/`，ADR 0124）、最后附件库——第一个给出结果的根胜出。项目指的是打开的工作区背后的文件夹组（ADR 0249）：主文件夹先应答，其余文件夹随后按项目组自身顺序搜索（ADR 0263），因此简写落在同级文件夹里和落在主文件夹里一样自然，命中结果也指出是哪个文件夹应答的。同一个根内精确路径优先于简写；简写之间最长匹配尾优先，其次路径更浅者。文件面板的忽略集合同样生效。什么都没匹配到时返回 `match: null`；解析本身不打开任何东西（ADR 0262）。
 - `fs/list` 仍只限工作区；外面的遍历被拒绝（`INVALID_ARGUMENT`）。
 
+### log（只读）
+
+- `log/tail({channel?, level?, sessionId?, limit?})` → `LogTailResult`（`{ records: LogTailRecord[], truncated: boolean }`）。返回某个通道自己那份 NDJSON 文件（`<data_dir>/logs/<channel>/`）里最新的行，按从旧到新排列。`channel` 取 `app`、`host` 或 `agent`（默认 `app`）；`level` 是最低级别（`debug` / `info` / `warn` / `error`）；`sessionId` 把结果收窄到一个会话。`limit` 默认 200，并夹在 1..1000。只读在用的 `<category>.log`：轮转出的 `*.N.log` 是面板没有索要的历史。每个文件都通过 256 KiB 的尾部窗口读取，因此写入进程被杀造成的断行——以及窗口首个换行之前的那段残片——会被丢弃，而不是当作解析错误抛出来。过滤在截断之前生效。窗口截掉了字节、或匹配行数多于 `limit` 时 `truncated` 为真，面板据此说明这是部分视图，而不是暗示已经看到全部。未知的 `channel` 或 `level` 以 `INVALID_ARGUMENT` 失败，而不是返回空列表——空列表会被读成"没有日志"。仅渲染器使用，不是插件宿主 API。
+
 ## 13b. 桌面菜单和窗口 API
 
 preload 公开同步、只读 `platform: NodeJS.Platform`

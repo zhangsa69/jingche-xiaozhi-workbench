@@ -125,6 +125,10 @@ stdio 与 Tokio 的动态阻塞池隔离，因此后一种情况
 | `EDIT_DISABLED_IN_PLAN` | 不 | 编辑的契约模式硬拒绝 |
 | `PLUGIN_DISABLED_IN_PLAN` | 不 | 每个插件工具的契约模式硬拒绝 |
 | `TOOL_DISABLED_IN_PLAN` | 不 | unknown/unlisted 工具的契约模式硬拒绝 |
+| `WRITE_DISABLED_IN_READ_ONLY` | 不 | 只读模式下 Write 的硬拒绝 |
+| `EDIT_DISABLED_IN_READ_ONLY` | 不 | 只读模式下 Edit 的硬拒绝 |
+| `PLUGIN_DISABLED_IN_READ_ONLY` | 不 | 只读模式下每个插件工具的硬拒绝 |
+| `TOOL_DISABLED_IN_READ_ONLY` | 不 | 只读模式下未列入白名单的工具（含 Bash）的硬拒绝 |
 | `PLAN_NOT_ACTIVE` | 不 | 在没有协商合同的情况下运行了提交工具 |
 | `PLAN_KIND_MISMATCH` | 不 | Goal 模式下的 `SubmitPlan`，或 Plan 模式下的 `SubmitGoal` |
 | `PLAN_APPROVAL_REQUIRED` | 不 | SubmitPlan/SubmitGoal 正在等待单独的批准 |

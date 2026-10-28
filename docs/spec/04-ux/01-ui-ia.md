@@ -90,8 +90,9 @@ destination, chat as the home surface, tools and permissions inline.
   46px content header exposes a tablist and a fixed `+` trigger. Its tokenized
   60px right-side safe lane plus separated action rail keep the trigger distinct
   from the viewport-fixed work-panel toggle. Clicking `+` creates and activates
-  a unique New launcher tab; its body presents the same data-driven Review and
-  plugin-view rows as buttons, so the user chooses a destination in the page
+  a unique New launcher tab; its body presents the same data-driven Review,
+  artifact, log-tail, and plugin-view rows as buttons, so the user chooses a
+  destination in the page
   instead of opening a dropdown. Selecting a row replaces that launcher tab with
   the destination or activates an existing singleton. File paths stay distinct
   while plugin views deduplicate by view reference. The viewport-fixed toggle

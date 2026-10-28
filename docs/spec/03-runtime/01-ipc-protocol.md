@@ -1648,6 +1648,25 @@ Renderer IPC kept for the Plan-safe preview facade and URL fallback:
 - `fs/list` stays workspace-only; traversal outside is rejected
   (`INVALID_ARGUMENT`).
 
+### log (read-only)
+
+- `log/tail({channel?, level?, sessionId?, limit?})` → `LogTailResult`
+  (`{ records: LogTailRecord[], truncated: boolean }`). Returns the newest rows
+  of one channel's own NDJSON files (`<data_dir>/logs/<channel>/`), oldest
+  first. `channel` is `app`, `host`, or `agent` (default `app`); `level` is a
+  minimum severity (`debug` / `info` / `warn` / `error`); `sessionId` narrows
+  the result to one conversation. `limit` defaults to 200 and is clamped to
+  1..1000. Only the live `<category>.log` files are read: rotated `*.N.log`
+  files are history the panel is not asking for. Each file is read through a
+  256 KiB tail window, so a row torn by a killed writer — and the fragment
+  before the window's first newline — is dropped instead of surfacing as a
+  parse error. Filters apply before the cap. `truncated` is true when the
+  window cut bytes or more rows matched than `limit`, so the panel can say the
+  view is partial instead of implying it saw everything. An unknown `channel`
+  or `level` fails with `INVALID_ARGUMENT` rather than returning an empty list,
+  which would read as "there are no logs". Renderer-only; not a plugin host
+  API.
+
 ## 13b. Desktop Menu and Window APIs
 
 The preload exposes a synchronous, read-only `platform: NodeJS.Platform`

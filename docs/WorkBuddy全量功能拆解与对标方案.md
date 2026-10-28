@@ -224,7 +224,7 @@
 | W-14 | **导出 / 另存 RPC**：`fsWrite`、`dialog.showSaveDialog`、`artifactExport` | 34 | `protocol.ts:246-253`（现全只读）、`IPC_WHITELIST:290-293`、`workspace-ipc.ts:744-773`。**已实施（改口径）**：只做 `fs/export` —— 源走 `fs/reveal` 同一条 `resolveRealOpenablePath` 校验，目标是保存对话框返回的路径，renderer 从头到尾说不了目标；`fsWrite` 主动不做（会绕过审阅记录与回滚，把只读证据链撕开一个口子），导出是「出去」，不是「进来」 | M |
 | W-15 | **终端标签页**：先做「命令输出面板」（无交互 PTY），复用 host shell 流式输出；二期再评估 node-pty | 29 | `crates/host-core/src/tools/shell.rs`、`lib/work-panel-tabs.ts:1-11` | L |
 | W-16 | **变更追踪增强**：按文件分组、批量回滚、与消息双向定位 | 26 | `workpanel/ReviewTab.tsx:9-47`、`protocol.ts:239`。**已实施**：`lib/review-groups.ts` 分组 + 倒序回滚，`lib/locate-message.ts` 定位；单条回滚保留 | M |
-| W-17 | **运行日志面板**：按会话时间窗过滤、分类、搜索、跟随尾部 | 19 | `logger.ts:236-341`、新 RPC `logTail` | L |
+| W-17 | **运行日志面板**：按会话时间窗过滤、分类、搜索、跟随尾部 | 19 | `logger.ts:236-341`、新 RPC `logTail`。**已实施**：`log/tail` 按 256 KiB 尾部窗口读 NDJSON（丢掉半行），渲染端切通道 / 级别 / 搜索 / 跟随（2s 轮询），未知通道报 `INVALID_ARGUMENT`；截断显式提示 | L |
 | W-18 | **任务历史与重启**：历史任务页（重跑 / 复用输入 / 复用工作空间） | 3/16 | `Sidebar.tsx:1571`、新建 `pages/TasksPage.tsx` | M |
 | W-19 | **富格式预览**：docx/xlsx/pptx 转 HTML 交给内嵌浏览器；PDF 用 Electron 自带 viewer | 27/33 | `browser-host.ts:60`、`protocol.ts:240-245` | M |
 | W-20 | **首次授权引导 + 空间概念**：新任务时选择/授权工作目录，展示文件落点 | 5/49 | `workspace-roots.ts:44-82`、`plugin-fs-consent.ts:21-51` | M |
