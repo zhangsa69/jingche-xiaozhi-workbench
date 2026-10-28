@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "pi.office",
+  "name": "办公文档",
+  "version": "0.1.0",
+  "description": "让智能体一步生成 Word / Excel / PowerPoint 文件并直接落进工作区：OfficeDoc 写 .docx、OfficeSheet 写 .xlsx、OfficeSlides 写 .pptx。三个工具都是「给参数 → 出文件」，没有面板，也不做在线编辑回写。给 OfficeSlides 传空 slides 数组不算失败：那会得到只有标题的一页，是刻意支持的「封面页」用法。",
+  "i18n": {
+    "en": {
+      "name": "Office",
+      "description": "Let the agent produce Word, Excel and PowerPoint files in one step, written straight into the workspace: OfficeDoc writes .docx, OfficeSheet writes .xlsx, OfficeSlides writes .pptx. Each tool takes plain arguments and returns a saved file; there is no panel and no edit-in-place round trip. An empty slides array on OfficeSlides is deliberately valid: it yields a single title-only slide, which is how a cover-only deck is produced.",
+      "safetyNotes": "Nothing is ever written outside the workspace: the three tools hand their bytes to the host through pi.fs.writeBase64 instead of Node's fs, so the manifest's fs.write scope decides what can be touched and every write is audited by the host. The declared scope admits exactly *.docx, *.xlsx and *.pptx under the workspace root, so an existing source file of another type cannot be overwritten even if a tool is asked to. The OOXML is assembled by this plugin from scratch with a small built-in zip writer — no third-party library is bundled, nothing is fetched, and there is no network access of any kind. Files are minimal but valid packages: a docx is paragraphs (and an optional title), a workbook is one sheet of inline-text cells, a deck is title-plus-bullet slides. That means no formulas, no styling, no images and no macros, and a generated file overwrites an earlier one at the same path."
+    },
+    "zh-CN": {
+      "name": "办公文档",
+      "description": "让智能体一步生成 Word / Excel / PowerPoint 文件并直接落进工作区：OfficeDoc 写 .docx、OfficeSheet 写 .xlsx、OfficeSlides 写 .pptx。三个工具都是「给参数 → 出文件」，没有面板，也不做在线编辑回写。给 OfficeSlides 传空 slides 数组不算失败：那会得到只有标题的一页，是刻意支持的「封面页」用法。",
+      "safetyNotes": "写入范围严格限定在工作区内：三个工具都把字节交给宿主的 pi.fs.writeBase64，而不是直接调用 Node 的 fs，因此能写到哪儿由 manifest 的 fs.write scope 决定，每次写入都由宿主记审计。申报的 scope 只包含工作区根下的 *.docx、*.xlsx、*.pptx，所以即使模型要求，也覆盖不了其它类型的源文件。OOXML 由本插件用自带的小型 zip 写入器从零拼出——不打包任何第三方库、不下载任何东西、完全没有网络访问。产物是最小但合法的包：docx 是段落（外加可选标题）、xlsx 是一张内联文本单元格的工作表、pptx 是「标题 + 项目符号」的幻灯片，因此没有公式、没有样式、不嵌图片、不含宏；同一路径再次生成会覆盖上一个文件。"
+    }
+  },
+  "safetyNotes": "写入范围严格限定在工作区内：三个工具都把字节交给宿主的 pi.fs.writeBase64，而不是直接调用 Node 的 fs，因此能写到哪儿由 manifest 的 fs.write scope 决定，每次写入都由宿主记审计。申报的 scope 只包含工作区根下的 *.docx、*.xlsx、*.pptx，所以即使模型要求，也覆盖不了其它类型的源文件。OOXML 由本插件用自带的小型 zip 写入器从零拼出——不打包任何第三方库、不下载任何东西、完全没有网络访问。产物是最小但合法的包：docx 是段落（外加可选标题）、xlsx 是一张内联文本单元格的工作表、pptx 是「标题 + 项目符号」的幻灯片，因此没有公式、没有样式、不嵌图片、不含宏；同一路径再次生成会覆盖上一个文件。",
+  "author": "京车小智工作台",
+  "main": "main.js",
+  "permissions": ["agent.tool.register", "fs.write"],
+  "fs": {
+    "write": {
+      "root": "workspace",
+      "scope": ["**/*.docx", "**/*.xlsx", "**/*.pptx"]
+    }
+  },
+  "engines": {
+    "piDesktop": ">=0.8.0"
+  },
+  "activationEvents": ["onStartup"]
+}

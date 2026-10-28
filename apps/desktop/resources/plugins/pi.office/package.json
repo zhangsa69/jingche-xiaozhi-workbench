@@ -1,0 +1,7 @@
+{
+  "name": "pi.office",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Agent tools that generate .docx / .xlsx / .pptx files into the workspace with no third-party dependencies."
+}
