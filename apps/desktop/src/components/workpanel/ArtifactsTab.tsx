@@ -9,7 +9,9 @@ import {
 } from "../../lib/task-artifacts";
 import { fileWorkPanelTab, toolWorkPanelTab } from "../../lib/work-panel-tabs";
 import { useAppStore } from "../../stores/app-store";
-import { IconArchive, IconFileText } from "../icons";
+import { exportFile } from "../../lib/export-file";
+import { IconArchive, IconDownload, IconFileText } from "../icons";
+import { TooltipButton } from "../ui";
 import { WorkTabEmpty } from "./WorkTabEmpty";
 
 /**
@@ -104,7 +106,10 @@ export function ArtifactsTab() {
           ) : (
             <ul className="artifacts-list">
               {artifacts.map((artifact) => (
-                <li key={artifact.path}>
+                // The export button is a sibling, not a nested button: a file
+                // row is already clickable, and nesting would make both the
+                // row and the action unlabelable.
+                <li key={artifact.path} className="artifacts-item">
                   <button
                     type="button"
                     className="artifacts-row"
@@ -120,6 +125,17 @@ export function ArtifactsTab() {
                       <span className="diff-count-del">−{artifact.deletions}</span>
                     </span>
                   </button>
+                  <span className="artifacts-row-actions">
+                    <TooltipButton
+                      type="button"
+                      className="icon-btn"
+                      tooltip={t("panel.files.export")}
+                      ariaLabel={`${t("panel.files.export")}: ${artifact.path}`}
+                      onClick={() => void exportFile(artifact.path)}
+                    >
+                      <IconDownload size={13} />
+                    </TooltipButton>
+                  </span>
                 </li>
               ))}
             </ul>
@@ -202,7 +218,8 @@ export function ArtifactsTab() {
                   </li>
                 ))}
               </ul>
-              {files.length > FILE_ROWS || index.truncated ? (
+              {files.length > FILE_ROWS ||
+              (index.status === "ready" && index.truncated) ? (
                 <p className="artifacts-empty">
                   {t("panel.artifacts.more", {
                     count: Math.max(0, files.length - FILE_ROWS),

@@ -1271,6 +1271,26 @@
   list-style: none;
 }
 
+/* The export action rides on the row instead of widening it: hidden until the
+   row is hovered or focused, so a long list stays a list of file names. */
+.artifacts-item {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.artifacts-row-actions {
+  display: flex;
+  flex: 0 0 auto;
+  opacity: 0;
+  transition: opacity var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.artifacts-item:hover .artifacts-row-actions,
+.artifacts-item:focus-within .artifacts-row-actions {
+  opacity: 1;
+}
+
 .artifacts-row {
   display: flex;
   width: 100%;

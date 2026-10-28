@@ -1,8 +1,9 @@
-import { dialog, shell } from "electron";
+import { BrowserWindow, dialog, shell } from "electron";
 import { dirname } from "node:path";
 import { homedir } from "node:os";
 import { existsSync, statSync } from "node:fs";
-import { isAbsolute, join, resolve } from "node:path";
+import { copyFile } from "node:fs/promises";
+import { basename, isAbsolute, join, resolve } from "node:path";
 import {
   ErrorCodes,
   IPC,
@@ -10,6 +11,7 @@ import {
   type ComposerPasteFile,
   type FsChatRefProjectRoot,
   type FsChatRefResolveResult,
+  type FsExportRequest,
   type ProjectGroupRecord,
 } from "@pi-desktop/shared";
 import {
@@ -88,6 +90,18 @@ export type WorkspaceIpcDependencies = {
   withGitBranch: (workspace: WorkspaceRecord | null) => Promise<unknown>;
   stripWinLongPrefix: (path: string) => string;
 };
+
+/**
+ * A save dialog's `defaultPath` must be a bare name, never a path the caller
+ * aimed somewhere. Separators and reserved characters collapse to a dash.
+ */
+function sanitizeExportName(value: unknown): string {
+  const name = String(value ?? "")
+    .trim()
+    .replace(/[\\/:*?"<>|]/g, "-")
+    .slice(0, 120);
+  return name === "." || name === ".." ? "" : name;
+}
 
 export function registerWorkspaceIpc({
   registrar,
@@ -797,6 +811,50 @@ export function registerWorkspaceIpc({
     shell.showItemInFolder(stripWinLongPrefix(target));
     return { ok: true };
   });
+
+  /**
+   * W-14: copy a file the app can already read out to wherever the user picks.
+   *
+   * This is deliberately not a write primitive. The source goes through the
+   * same containment check as `fs/reveal`, and the destination is whatever the
+   * OS save dialog returns — the renderer never names it, so nothing here can
+   * write into a path the caller chooses. Between the two, "export" adds no new
+   * authority: a file the app could already open, placed where the user asked.
+   */
+  handleWithEvent(
+    IPC.invoke.fsExport,
+    async (event: Electron.IpcMainInvokeEvent, input?: FsExportRequest) => {
+      const requested = String(input?.path ?? "").trim();
+      const workspaceRoot = await optionalWorkspaceRoot();
+      const source = await resolveRealOpenablePath(
+        requested,
+        workspaceRoot,
+        await fsExtraRoots(workspaceRoot),
+      );
+      if (!source) {
+        throw Object.assign(new Error("path outside allowed roots"), {
+          errorCode: ErrorCodes.INVALID_ARGUMENT,
+        });
+      }
+
+      const options: Electron.SaveDialogOptions = {
+        defaultPath: sanitizeExportName(input?.suggestedName) || basename(source),
+        properties: ["createDirectory", "showOverwriteConfirmation"],
+      };
+      const owner = BrowserWindow.fromWebContents(event.sender);
+      const picked = owner
+        ? await dialog.showSaveDialog(owner, options)
+        : await dialog.showSaveDialog(options);
+      if (picked.canceled || !picked.filePath) return { canceled: true };
+
+      // Saving onto the source is a no-op, and `copyFile` refuses it.
+      if (resolve(picked.filePath) === resolve(source)) {
+        return { canceled: false, path: picked.filePath };
+      }
+      await copyFile(source, picked.filePath);
+      return { canceled: false, path: picked.filePath };
+    },
+  );
 
   handle(IPC.invoke.fsOpen, async (input: { path?: string } = {}) => {
     const workspaceRoot = await optionalWorkspaceRoot();

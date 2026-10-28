@@ -1599,6 +1599,9 @@ sklm: {
       "error": "Impossible de lire cet emplacement",
       "back": "Retour aux fichiers",
       "reveal": "Révéler dans le Finder",
+      "export": "Enregistrer sous",
+      "exported": "Enregistré dans {{path}}",
+      "exportError": "Impossible d'enregistrer le fichier. Réessayez.",
       "binary": "Fichier binaire — aperçu indisponible",
       "tooLarge": "Le fichier est trop volumineux pour être prévisualisé"
     }

@@ -26,10 +26,12 @@ import {
 import {
   IconChevronLeft,
   IconChevronRight,
+  IconDownload,
   IconExternal,
   IconFileText,
   IconFolder,
 } from "../icons";
+import { exportFile } from "../../lib/export-file";
 import { WorkTabEmpty } from "./WorkTabEmpty";
 
 const VIEWER_LINE_CAP = 5000;
@@ -335,6 +337,15 @@ export function FilesTab() {
             {selected}
           </span>
           {file && <span className="file-viewer-size">{formatSize(file.size)}</span>}
+          <TooltipButton
+            type="button"
+            className="icon-btn"
+            tooltip={t("panel.files.export")}
+            ariaLabel={t("panel.files.export")}
+            onClick={() => void exportFile(selected)}
+          >
+            <IconDownload size={14} />
+          </TooltipButton>
           <TooltipButton
             type="button"
             className="icon-btn"

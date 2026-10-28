@@ -48,6 +48,10 @@ describe("Plan protocol contracts", () => {
     expect(IPC_WHITELIST.has(IPC.invoke.appOpenFeedback)).toBe(true);
     expect(IPC.invoke.fsOpen).toBe("pi-desktop/fs/open");
     expect(IPC_WHITELIST.has(IPC.invoke.fsOpen)).toBe(true);
+    // W-14: export is a channel of its own — the renderer names the source,
+    // the destination comes back from the save dialog.
+    expect(IPC.invoke.fsExport).toBe("pi-desktop/fs/export");
+    expect(IPC_WHITELIST.has(IPC.invoke.fsExport)).toBe(true);
     expect(IPC.invoke.statsGetTokenUsageHistory).toBe(
       "pi-desktop/stats/getTokenUsageHistory",
     );

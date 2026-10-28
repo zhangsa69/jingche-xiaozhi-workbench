@@ -53,6 +53,24 @@ export type FsIndexResult = {
   truncated: boolean;
 };
 
+/**
+ * Export reads only: the source must already be readable through `fs/read`
+ * (workspace root, scratch, attachments, or a sibling project root), and the
+ * destination comes from the OS save dialog, never from the renderer.
+ */
+export type FsExportRequest = {
+  /** Workspace-relative or absolute path inside an allowed root. */
+  path: string;
+  /** Name the save dialog opens with; defaults to the source file name. */
+  suggestedName?: string;
+};
+
+export type FsExportResult = {
+  canceled: boolean;
+  /** Absolute destination the user picked; absent when the dialog was canceled. */
+  path?: string;
+};
+
 export type TokenUsageBucket = "day" | "week" | "month";
 
 export type TokenUsageHistoryItem = {

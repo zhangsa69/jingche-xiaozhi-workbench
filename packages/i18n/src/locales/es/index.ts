@@ -1599,6 +1599,9 @@ sklm: {
       "error": "No se pudo leer esta ubicación",
       "back": "Volver a los archivos",
       "reveal": "Mostrar en el Finder",
+      "export": "Guardar como",
+      "exported": "Guardado en {{path}}",
+      "exportError": "No se pudo guardar el archivo. Inténtalo de nuevo.",
       "binary": "Archivo binario: vista previa no disponible",
       "tooLarge": "El archivo es demasiado grande para obtener una vista previa"
     }

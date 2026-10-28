@@ -251,6 +251,8 @@ export const IPC = {
     fsOpen: "pi-desktop/fs/open",
     fsIndex: "pi-desktop/fs/index",
     fsResolveRef: "pi-desktop/fs/resolveRef",
+    /** Copy one file the app can already read out to a location the user picks (W-14). */
+    fsExport: "pi-desktop/fs/export",
     windowSetWorkPanelReservation:
       "pi-desktop/window/setWorkPanelReservation",
     windowSetWorkPanelChatWidth: "pi-desktop/window/setWorkPanelChatWidth",

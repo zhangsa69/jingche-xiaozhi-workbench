@@ -31,6 +31,7 @@ import type {
   ComposerPastedFile,
   FsChatRefResolveResult,
   FsEntry,
+  FsExportResult,
   FsImageDataUrlResult,
   FsIndexResult,
   FsReadResult,
@@ -942,6 +943,16 @@ export const api = {
   fsReveal: (path: string) => invoke(IPC.invoke.fsReveal, { path }),
   fsOpen: (path: string) => invoke(IPC.invoke.fsOpen, { path }),
   fsIndex: () => invoke<FsIndexResult>(IPC.invoke.fsIndex),
+  /**
+   * Copy a read-able file to a location the user picks in the OS dialog.
+   * The renderer only names the source; the destination stays in the main
+   * process until the dialog returns it.
+   */
+  fsExport: (path: string, suggestedName?: string) =>
+    invoke<FsExportResult>(IPC.invoke.fsExport, {
+      path,
+      ...(suggestedName ? { suggestedName } : {}),
+    }),
   /**
    * Complete a file reference from chat text to a real file (D320 follow-up).
    * The main process owns the root order — project, session scratch,

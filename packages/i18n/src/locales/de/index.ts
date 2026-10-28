@@ -1599,6 +1599,9 @@ sklm: {
       "error": "Dieser Speicherort konnte nicht gelesen werden",
       "back": "Zurück zu Dateien",
       "reveal": "Im Finder anzeigen",
+      "export": "Speichern unter",
+      "exported": "Gespeichert unter {{path}}",
+      "exportError": "Datei konnte nicht gespeichert werden. Bitte erneut versuchen.",
       "binary": "Binärdatei – Vorschau nicht verfügbar",
       "tooLarge": "Datei ist zu groß für die Vorschau"
     }
