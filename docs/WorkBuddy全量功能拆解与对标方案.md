@@ -222,7 +222,7 @@
 | W-12 | **office 插件**：docx / xlsx / pptx 三工具，依赖打进插件包，产物落 `scratch/<sessionId>` | 30/31/32 | `plugin-runtime.ts:993-996`、`runtime.ts:2997`（PluginPack）、`protocol.ts:171-177`。**已实施（形态调整）**：仓库无 `docx`/`exceljs`/`pptxgenjs` 且无离线包，改为零依赖自拼最小 OOXML + store-only ZIP；产物落**工作区**（scratch 里的文件产物标签与文件面板都接不住）；为此新增宿主能力 `pi.fs.writeBase64`（共用 `fs.write` 权限/scope/审计，单次 32 MiB） | L |
 | W-13 | **PDF 生成**：隐藏 BrowserWindow 渲染 HTML → `printToPDF` → scratch | 33 | 复用 `browser-host.ts:60`。**已实施**：`pdf/render` 通道 + `lib/session-pdf.ts` 组文档 + `builtin.session.exportPdf` / `/pdf`；PDF 落 scratch 后走 W-14 的 `fs/export` 出盘 | S |
 | W-14 | **导出 / 另存 RPC**：`fsWrite`、`dialog.showSaveDialog`、`artifactExport` | 34 | `protocol.ts:246-253`（现全只读）、`IPC_WHITELIST:290-293`、`workspace-ipc.ts:744-773`。**已实施（改口径）**：只做 `fs/export` —— 源走 `fs/reveal` 同一条 `resolveRealOpenablePath` 校验，目标是保存对话框返回的路径，renderer 从头到尾说不了目标；`fsWrite` 主动不做（会绕过审阅记录与回滚，把只读证据链撕开一个口子），导出是「出去」，不是「进来」 | M |
-| W-15 | **终端标签页**：先做「命令输出面板」（无交互 PTY），复用 host shell 流式输出；二期再评估 node-pty | 29 | `crates/host-core/src/tools/shell.rs`、`lib/work-panel-tabs.ts:1-11` | L |
+| W-15 | **终端标签页**：先做「命令输出面板」（无交互 PTY），复用 host shell 流式输出；二期再评估 node-pty | 29 | `crates/host-core/src/tools/shell.rs`、`lib/work-panel-tabs.ts:1-11`。**已实施（形态调整）**：不接 host shell 流，直接投影渲染端已有的 run 类工具事件（`tool_start` 参数 / `tool_update.partialResult` / `tool_end` 结果）——零 IPC、零主进程改动、无持久化；单条超 8000 字符从头部裁并对齐整行，界面明说「只显示末尾」；不做命令输入框（ADR 0108 不内置终端） | L |
 | W-16 | **变更追踪增强**：按文件分组、批量回滚、与消息双向定位 | 26 | `workpanel/ReviewTab.tsx:9-47`、`protocol.ts:239`。**已实施**：`lib/review-groups.ts` 分组 + 倒序回滚，`lib/locate-message.ts` 定位；单条回滚保留 | M |
 | W-17 | **运行日志面板**：按会话时间窗过滤、分类、搜索、跟随尾部 | 19 | `logger.ts:236-341`、新 RPC `logTail`。**已实施**：`log/tail` 按 256 KiB 尾部窗口读 NDJSON（丢掉半行），渲染端切通道 / 级别 / 搜索 / 跟随（2s 轮询），未知通道报 `INVALID_ARGUMENT`；截断显式提示 | L |
 | W-18 | **任务历史与重启**：历史任务页（重跑 / 复用输入 / 复用工作空间） | 3/16 | `Sidebar.tsx:1571`、新建 `pages/TasksPage.tsx` | M |
@@ -370,7 +370,7 @@ WorkBuddy 独有的两点这版补上：**每条回复独立计时并定格**（
 | **M1 感知** | W-02 / W-06 / W-07 / W-08 / W-09 | 思考行有计时与呼吸态；回复尾部有定格耗时；工具行 `#n · 1.2s`；静默 20/45/120s 三档且只推一次 | — | S–M |
 | **M2 任务与模式** | W-01 / W-03 / W-04 / W-05 / W-10 | Ask/Plan/Craft 三选一生效（Ask 不写文件）；右上角浮层可用；步骤 `第 3/8 步`；循环确认可暂停 | M1（复用 steps 与计时） | M–L |
 | **M3 交付闭环** | W-11 / W-12 / W-13 / W-14 / W-19 | 产物标签可用；docx/xlsx/pptx 能生成并预览；可另存到用户目录 | M2 | L |
-| **M4 交付收尾** | W-15 / W-16 / W-17 / W-18 / W-20 / W-21 / W-22 | 终端/日志两个新标签；任务历史可重跑；首次授权引导；模板套用 | M3 | M |
+| **M4 交付收尾** | W-15 / W-16 / W-17 / W-18 / W-20 / W-21 / W-22 | 命令（只读）/ 日志两个新标签；任务历史可重跑；首次授权引导；模板套用 | M3 | M |
 | **M5 生态** | W-23 – W-34 | 专家中心 12 预设；资料库可引用；多任务标签；自动选模型 | M4 | L |
 | **M6 本地跨端** | W-35 – W-40（全部可选，按需裁剪） | 手机页可下发任务并取产物；本地备份恢复；定时调度 | M5 | XL |
 

@@ -583,6 +583,11 @@ type AgentEvent =
 > 这些是 **UI 标准化事件**，而不是原始 pi 事件的传递。
 > `packages/agent-runtime` 负责将 pi 事件映射到此模型。
 
+命令视图所需的契约已全部由工具事件构成：`tool_start` 携带参数（run 类工具即命令原文），
+`tool_update` 携带进行中的输出，`tool_end` 携带结果与退出码。因此渲染端的命令标签
+（W-15）只是对已收到帧的投影——它不新增通道、不启动进程、不接受输入，其
+`partialResult` 与对话中实时工具行同源。
+
 `planning_state` 是代理运行时的本地规划投影。其可选的
 提案和执行字段镜像共享 `PlanningStateEvent` 形状
 （`proposal`、`executionId` 和 `executionState`）。完全批准执行

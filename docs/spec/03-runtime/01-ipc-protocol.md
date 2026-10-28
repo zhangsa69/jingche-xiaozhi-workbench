@@ -678,6 +678,13 @@ type AgentEvent =
 > These are **UI-normalized events**, not a pass-through of raw pi events.
 > `packages/agent-runtime` is responsible for mapping pi events to this model.
 
+The tool events are the whole contract a command view needs: `tool_start` carries
+the arguments (a run tool's command), `tool_update` the in-flight output, and
+`tool_end` the result with its exit code. The renderer's Command stream tab
+(W-15) is therefore a projection of frames it already receives — it adds no
+channel, starts no process, and accepts no input, and `partialResult` is the same
+field that feeds the live tool row in the transcript.
+
 Append-only `message_update` frames set `stream: \"delta\"` and omit growing
 `content` / `thinking` from `message`. Consumers apply `deltaText` /
 `deltaThinking` onto the live row (replace instead of append when `resetText`

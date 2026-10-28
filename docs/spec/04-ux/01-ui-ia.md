@@ -91,8 +91,8 @@ destination, chat as the home surface, tools and permissions inline.
   60px right-side safe lane plus separated action rail keep the trigger distinct
   from the viewport-fixed work-panel toggle. Clicking `+` creates and activates
   a unique New launcher tab; its body presents the same data-driven Review,
-  artifact, log-tail, and plugin-view rows as buttons, so the user chooses a
-  destination in the page
+  artifact, log-tail, command-stream, and plugin-view rows as buttons, so the
+  user chooses a destination in the page
   instead of opening a dropdown. Selecting a row replaces that launcher tab with
   the destination or activates an existing singleton. File paths stay distinct
   while plugin views deduplicate by view reference. The viewport-fixed toggle
@@ -116,7 +116,13 @@ destination, chat as the home surface, tools and permissions inline.
   artifacts update only their originating session's retained panel context and
   never open, activate, or resize the visible panel. Startup is closed with no
   retained session contexts, and only the preferred panel width persists across
-  launches.
+  launches. The Command stream tab (W-15) lists the session's run tools in
+  order — command, stdout, stderr, exit code, duration. It is a projection of
+  the transcript, not a terminal: it opens no channel, starts no process, and
+  accepts no input, so a command can be read end to end but never typed into.
+  Long output is clipped from the front and the row says how much was cut
+  instead of dropping the tail silently, and each row locates its call in the
+  conversation.
   The work panel remains a fixed-width in-flow column beside MainChat inside
   the existing client area (ADR 0033 / ADR 0151). MainChat keeps a hard 450px
   minimum; the work panel's effective maximum is the remaining client width
