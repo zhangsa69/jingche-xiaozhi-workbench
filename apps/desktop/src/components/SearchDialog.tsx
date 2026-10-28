@@ -20,6 +20,7 @@ import {
   IconSearch,
   IconSettings,
   IconSliders,
+  IconSparkles,
 } from "./icons";
 
 /** Navigable pages surfaced by the global search alongside sessions. */
@@ -29,6 +30,7 @@ const PAGE_ENTRIES = [
   { page: "tasks", labelKey: "tasks.title", icon: IconClock },
   { page: "templates", labelKey: "templates.title", icon: IconFileText },
   { page: "library", labelKey: "library.title", icon: IconFolder },
+  { page: "experts", labelKey: "experts.title", icon: IconSparkles },
   { page: "plugins", labelKey: "nav.plugins", icon: IconAt },
 ] as const;
 

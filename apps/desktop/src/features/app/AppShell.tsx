@@ -54,6 +54,11 @@ const LibraryPage = lazy(() =>
     default: module.LibraryPage,
   })),
 );
+const ExpertsPage = lazy(() =>
+  import("../../pages/ExpertsPage").then((module) => ({
+    default: module.ExpertsPage,
+  })),
+);
 
 export function AppShell() {
   const {
@@ -269,6 +274,10 @@ export function AppShell() {
               ) : page === "library" ? (
                 <div className="route-surface route-page">
                   <LibraryPage />
+                </div>
+              ) : page === "experts" ? (
+                <div className="route-surface route-page">
+                  <ExpertsPage />
                 </div>
               ) : (
                 <ChatSurface />

@@ -140,6 +140,7 @@ export const ko = {
     "tasks": "작업",
     "templates": "템플릿",
     "library": "자료실",
+    "experts": "전문가 센터",
     openInPanel: "패널에서 열기",
     profileTheme: "테마",
     checkForUpdates: "업데이트 확인",
@@ -1564,6 +1565,93 @@ sklm: {
     pptxDeckDesc: "표지, 문제 / 접근 / 근거, 요청.",
     pptxReview: "회고",
     pptxReviewDesc: "잘한 것, 못한 것, 다음 — 세 줄.",
+  },
+  experts: {
+    title: "전문가 센터",
+    subtitle:
+      "세션에 그대로 넘길 수 있는 분야별 지침 열두 가지입니다. 하나를 고르면 지침이 입력창에 들어갑니다. 넘긴 내용은 언제든 읽고 고칠 수 있습니다.",
+    count: "전문가 {{count}}명",
+    search: "전문가 검색",
+    searchPlaceholder: "이름이나 분야로 검색",
+    clearSearch: "검색 지우기",
+    categories: {
+      all: "전체",
+      writing: "글쓰기",
+      engineering: "엔지니어링",
+      design: "디자인",
+      data: "데이터",
+      ops: "운영",
+    },
+    items: {
+      "proposal-writer": {
+        name: "제안서 작성자",
+        description: "고객의 의사결정 지점을 끝까지 읽히는 제안서로 만듭니다.",
+      },
+      "contract-reviewer": {
+        name: "계약 검토자",
+        description: "조항별로 살피고 금액과 해지 위험 순으로 정렬합니다.",
+      },
+      "report-editor": {
+        name: "보고서 편집자",
+        description: "채우는 말을 덜어내고 두 가지를 담은 문장을 나눕니다. 목소리는 유지합니다.",
+      },
+      architect: {
+        name: "솔루션 아키텍트",
+        description: "앞으로의 기능 두 개를 견디는 가장 작은 구조를 설계합니다.",
+      },
+      "code-reviewer": {
+        name: "코드 리뷰어",
+        description: "테스트가 잡지 못하는 결함을 파일과 줄번호로 짚습니다.",
+      },
+      "test-engineer": {
+        name: "테스트 엔지니어",
+        description: "이 버그를 잡았어야 할 테스트를 작성합니다.",
+      },
+      "ui-designer": {
+        name: "UI 디자이너",
+        description: "기존 디자인 시스템 안에서 빈 상태와 오류 상태까지 그립니다.",
+      },
+      "ux-researcher": {
+        name: "UX 리서처",
+        description: "관찰된 행동과 말로 한 선호를 구분합니다.",
+      },
+      "data-analyst": {
+        name: "데이터 분석가",
+        description: "있는 데이터로 답하고 분모와 기준을 함께 밝힙니다.",
+      },
+      "data-modeler": {
+        name: "데이터 모델러",
+        description: "다른 사람이 이어받아도 유지되는 표 모델을 만듭니다.",
+      },
+      "release-manager": {
+        name: "릴리스 매니저",
+        description: "릴리스 단계를 순서대로 세우고 롤백을 먼저 적습니다.",
+      },
+      "incident-responder": {
+        name: "장애 대응자",
+        description: "먼저 안정화하고 다음에 설명하며, 타임라인을 계속 남깁니다.",
+      },
+    },
+    prefersModel: "선호 모델 {{model}}",
+    noModel: "세션 모델 사용",
+    delegatesTo: "팀 실행 시 {{agent}}에게 위임",
+    use: "이 전문가로 시작",
+    addToTeam: "{{name}}을(를) 전문가 팀에 추가",
+    addToTeamShort: "팀에 추가",
+    inTeam: "팀에 있음",
+    removeFromTeam: "{{name}}을(를) 전문가 팀에서 제거",
+    team: "전문가 팀",
+    teamCount: "{{count}} / {{max}}",
+    teamHint:
+      "최대 {{max}}명을 고르고 할 일을 적으면 병렬로 진행합니다. 보고서 네 개가 아니라 결과물 하나를 받습니다.",
+    teamEmpty: "아직 고른 전문가가 없습니다",
+    instruction: "전문가 팀 지시",
+    instructionPlaceholder: "예: 금요일 통화 전에 가격 변경안을 검토해 주세요",
+    launch: "전문가 팀에 맡기기",
+    needInstruction: "할 일을 먼저 적어 주세요",
+    teamFull: "전문가 팀은 {{max}}명까지입니다. 한 명을 빼 주세요",
+    empty: "맞는 전문가가 없습니다",
+    emptyHint: "다른 낱말을 쓰거나 분류를 바꿔 보세요.",
   },
   library: {
     title: "자료실",

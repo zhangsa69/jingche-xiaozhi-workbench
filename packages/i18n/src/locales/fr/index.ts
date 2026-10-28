@@ -131,6 +131,7 @@ export const fr = {
     "tasks": "Tâches",
     "templates": "Modèles",
     "library": "Bibliothèque",
+    "experts": "Experts",
     "openInPanel": "Ouvrir dans le panneau",
     "profileTheme": "Thème",
     "checkForUpdates": "Vérifier les mises à jour",
@@ -1542,6 +1543,93 @@ sklm: {
     "pptxDeckDesc": "Couverture, problème / approche / preuve et la demande.",
     "pptxReview": "Rétro",
     "pptxReviewDesc": "Réussi, raté, ensuite — trois lignes.",
+  },
+  "experts": {
+    "title": "Experts",
+    "subtitle":
+      "Douze consignes de domaine à confier directement à une session. En choisir une écrit sa consigne dans la zone de saisie — ce qui est confié reste lisible et modifiable.",
+    "count": "{{count}} experts",
+    "search": "Rechercher un expert",
+    "searchPlaceholder": "Rechercher par nom ou domaine",
+    "clearSearch": "Effacer la recherche",
+    "categories": {
+      "all": "Tous",
+      "writing": "Rédaction",
+      "engineering": "Ingénierie",
+      "design": "Design",
+      "data": "Données",
+      "ops": "Exploitation",
+    },
+    "items": {
+      "proposal-writer": {
+        "name": "Rédacteur de propositions",
+        "description": "Transforme une décision client en proposition lue jusqu'au bout.",
+      },
+      "contract-reviewer": {
+        "name": "Relecteur de contrats",
+        "description": "Clause par clause, classées par montant et risque de sortie.",
+      },
+      "report-editor": {
+        "name": "Éditeur de rapports",
+        "description": "Coupe le remplissage et scinde les phrases chargées, sans changer votre voix.",
+      },
+      "architect": {
+        "name": "Architecte de solution",
+        "description": "Conçoit la plus petite structure qui supportera les deux prochaines fonctionnalités.",
+      },
+      "code-reviewer": {
+        "name": "Relecteur de code",
+        "description": "Trouve les défauts qu'un test ne voit pas, avec chemin et ligne.",
+      },
+      "test-engineer": {
+        "name": "Ingénieur tests",
+        "description": "Écrit le test qui aurait attrapé ce bug.",
+      },
+      "ui-designer": {
+        "name": "Designer UI",
+        "description": "Conçoit dans le système existant, états vides et d'erreur compris.",
+      },
+      "ux-researcher": {
+        "name": "Chercheur UX",
+        "description": "Sépare le comportement observé de la préférence déclarée.",
+      },
+      "data-analyst": {
+        "name": "Analyste de données",
+        "description": "Répond avec les données disponibles, dénominateur inclus.",
+      },
+      "data-modeler": {
+        "name": "Modélisateur de données",
+        "description": "Construit le tableur que quelqu'un d'autre devra maintenir.",
+      },
+      "release-manager": {
+        "name": "Responsable de release",
+        "description": "Ordonne les étapes de publication et nomme d'abord le retour arrière.",
+      },
+      "incident-responder": {
+        "name": "Réponse à incident",
+        "description": "Stabilise d'abord, explique ensuite, journalise en continu.",
+      },
+    },
+    "prefersModel": "Préfère {{model}}",
+    "noModel": "Utilise le modèle de la session",
+    "delegatesTo": "En équipe, délègue à {{agent}}",
+    "use": "Démarrer avec cet expert",
+    "addToTeam": "Ajouter {{name}} au panel",
+    "addToTeamShort": "Ajouter au panel",
+    "inTeam": "Dans le panel",
+    "removeFromTeam": "Retirer {{name}} du panel",
+    "team": "Panel d'experts",
+    "teamCount": "{{count}} / {{max}}",
+    "teamHint":
+      "Choisissez jusqu'à {{max}} experts, décrivez la tâche : ils travaillent en parallèle. Vous obtenez un livrable, pas quatre rapports.",
+    "teamEmpty": "Aucun expert sélectionné",
+    "instruction": "Consigne du panel",
+    "instructionPlaceholder": "ex. Relire le changement de tarif avant l'appel de vendredi",
+    "launch": "Confier au panel",
+    "needInstruction": "Décrivez d'abord la tâche",
+    "teamFull": "Le panel accueille {{max}} experts — retirez-en un",
+    "empty": "Aucun expert ne correspond",
+    "emptyHint": "Essayez un autre mot ou changez de catégorie.",
   },
   "library": {
     "title": "Bibliothèque",

@@ -131,6 +131,7 @@ export const de = {
     "tasks": "Aufgaben",
     "templates": "Vorlagen",
     "library": "Bibliothek",
+    "experts": "Experten",
     "openInPanel": "Im Panel öffnen",
     "profileTheme": "Thema",
     "checkForUpdates": "Auf Updates prüfen",
@@ -1542,6 +1543,93 @@ sklm: {
     "pptxDeckDesc": "Titel, Problem / Ansatz / Beleg und die Bitte.",
     "pptxReview": "Rückblick",
     "pptxReviewDesc": "Gut, schlecht, als Nächstes — drei Zeilen.",
+  },
+  "experts": {
+    "title": "Experten",
+    "subtitle":
+      "Zwölf Fachbriefings, die Sie direkt an eine Sitzung übergeben können. Eine Auswahl schreibt das Briefing in den Eingabebereich — was übergeben wurde, bleibt lesbar und änderbar.",
+    "count": "{{count}} Experten",
+    "search": "Experten durchsuchen",
+    "searchPlaceholder": "Nach Name oder Feld suchen",
+    "clearSearch": "Suche löschen",
+    "categories": {
+      "all": "Alle",
+      "writing": "Text",
+      "engineering": "Technik",
+      "design": "Design",
+      "data": "Daten",
+      "ops": "Betrieb",
+    },
+    "items": {
+      "proposal-writer": {
+        "name": "Angebotsautor",
+        "description": "Macht aus einer Kundenentscheidung ein Angebot, das zu Ende gelesen wird.",
+      },
+      "contract-reviewer": {
+        "name": "Vertragsprüfer",
+        "description": "Klausel für Klausel, sortiert nach Geld und Ausstiegsrisiko.",
+      },
+      "report-editor": {
+        "name": "Berichtslektor",
+        "description": "Kürzt Füllwörter und teilt überladene Sätze, Ihre Stimme bleibt.",
+      },
+      "architect": {
+        "name": "Lösungsarchitekt",
+        "description": "Entwirft die kleinste Struktur, die die nächsten zwei Funktionen trägt.",
+      },
+      "code-reviewer": {
+        "name": "Code-Reviewer",
+        "description": "Findet die Fehler, die kein Test fängt — mit Pfad und Zeile.",
+      },
+      "test-engineer": {
+        "name": "Testingenieur",
+        "description": "Schreibt den Test, der diesen Fehler gefunden hätte.",
+      },
+      "ui-designer": {
+        "name": "UI-Designer",
+        "description": "Gestaltet im bestehenden System, inklusive Leer- und Fehlerzustand.",
+      },
+      "ux-researcher": {
+        "name": "UX-Forscher",
+        "description": "Trennt beobachtetes Verhalten von geäußerter Vorliebe.",
+      },
+      "data-analyst": {
+        "name": "Datenanalyst",
+        "description": "Antwortet mit den vorhandenen Daten, Nenner inklusive.",
+      },
+      "data-modeler": {
+        "name": "Datenmodellierer",
+        "description": "Baut die Tabelle, die jemand anderes pflegen muss.",
+      },
+      "release-manager": {
+        "name": "Release-Manager",
+        "description": "Ordnet die Release-Schritte und nennt zuerst den Rollback.",
+      },
+      "incident-responder": {
+        "name": "Incident-Responder",
+        "description": "Stabilisiert zuerst, erklärt danach, protokolliert mit.",
+      },
+    },
+    "prefersModel": "Bevorzugt {{model}}",
+    "noModel": "Nutzt das Sitzungsmodell",
+    "delegatesTo": "Team-Läufe delegieren an {{agent}}",
+    "use": "Mit diesem Experten starten",
+    "addToTeam": "{{name}} zum Panel hinzufügen",
+    "addToTeamShort": "Zum Panel",
+    "inTeam": "Im Panel",
+    "removeFromTeam": "{{name}} aus dem Panel entfernen",
+    "team": "Expertenpanel",
+    "teamCount": "{{count}} / {{max}}",
+    "teamHint":
+      "Wählen Sie bis zu {{max}} Experten, beschreiben Sie die Aufgabe — sie arbeiten parallel. Sie erhalten ein Ergebnis, keine vier Berichte.",
+    "teamEmpty": "Noch keine Experten gewählt",
+    "instruction": "Auftrag an das Panel",
+    "instructionPlaceholder": "z. B. Prüfe die Preisänderung vor dem Freitagstermin",
+    "launch": "Panel beauftragen",
+    "needInstruction": "Beschreiben Sie zuerst die Aufgabe",
+    "teamFull": "Das Panel fasst {{max}} Experten — entfernen Sie zuerst einen",
+    "empty": "Kein Experte passt",
+    "emptyHint": "Anderes Wort versuchen oder Kategorie wechseln.",
   },
   "library": {
     "title": "Bibliothek",

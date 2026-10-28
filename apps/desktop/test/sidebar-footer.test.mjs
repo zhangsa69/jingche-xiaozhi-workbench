@@ -37,6 +37,7 @@ test("footer exposes settings, tasks, templates, library, plugins and notificati
   assert.match(sidebarSource, /data-nav="tasks"/);
   assert.match(sidebarSource, /data-nav="templates"/);
   assert.match(sidebarSource, /data-nav="library"/);
+  assert.match(sidebarSource, /data-nav="experts"/);
   assert.match(sidebarSource, /data-nav="plugins"/);
   const pluginsAction = sidebarSource.match(
     /<TooltipButton[\s\S]*?data-nav="plugins"[\s\S]*?<\/TooltipButton>/,
@@ -53,7 +54,7 @@ test("footer exposes settings, tasks, templates, library, plugins and notificati
   const actions = sidebarSource
     .split("<TooltipButton")
     .filter((chunk) => /className=(?:"footer-action"|\{`footer-action )/.test(chunk));
-  assert.equal(actions.length, 5);
+  assert.equal(actions.length, 6);
   for (const action of actions) {
     const attrs = action.slice(0, action.indexOf(">"));
     assert.match(attrs, /tooltip=/);

@@ -301,7 +301,26 @@ list has a fixed ceiling instead of growing without bound.
 chosen deliberately and remain reachable even when no workspace is open. A path
 already present in the workspace index appears once.
 
-### 3.8 Extensions
+### 3.8 Experts
+
+Twelve domain briefs, browsed by category with a search field over the names the
+user sees. A card shows a monogram, the expert's one-line specialty and the model
+it prefers; clicking it opens a detail strip with the same facts plus the two
+actions — start with this expert, or add it to the panel.
+
+Picking an expert writes its brief into the composer and returns to chat. The
+brief is prompt text, not a hidden session setting, so it can be read and edited
+before sending; and the card's preferred model stays a label, because a page
+click should not move someone onto a different model.
+
+The panel bar holds up to four experts plus the instruction they share. Briefing
+the panel writes one prompt that asks for a single parallel batch of `Task` calls
+— one per expert, each delegated to the subagent preset that carries that
+domain — and then for **one** deliverable: disagreements survive only when they
+change the recommendation, duplicates collapse, and the tail lists what still
+needs a human decision. The prompt is visible in the composer before it is sent.
+
+### 3.9 Extensions
 
 The Extensions destination is a focused plugin surface with a compact header and
 only two tabs: **Installed** and **Marketplace**. Installed groups plugin rows
@@ -314,7 +333,7 @@ marketplace source settings show the source selector without a redundant
 provider explanation or active-source status line. MCP, Skills, and Subagents
 are not tabs or sections of Extensions.
 
-### 3.9 Settings (full-page takeover)
+### 3.10 Settings (full-page takeover)
 Settings replaces the whole shell (D063): back-to-app + search + a grouped
 settings rail with concise, parallel destination labels. The Agent group
 contains independent Skills, MCP, and Subagents destinations alongside

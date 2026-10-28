@@ -81,6 +81,7 @@ import {
   IconSidebar,
   IconSettings,
   IconStar,
+  IconSparkles,
   IconTrash,
   IconX,
 } from "./icons";
@@ -2263,6 +2264,23 @@ export function Sidebar({
               aria-pressed={page === "library"}
             >
               <IconFolder size={14} aria-hidden />
+            </TooltipButton>
+            <TooltipButton
+              type="button"
+              className={`footer-action ${page === "experts" ? "active" : ""}`}
+              data-nav="experts"
+              tooltip={t("nav.experts")}
+              ariaLabel={t("nav.experts")}
+              onClick={() =>
+                page === "experts"
+                  ? canNavBack()
+                    ? navBack()
+                    : setPage("chat")
+                  : setPage("experts")
+              }
+              aria-pressed={page === "experts"}
+            >
+              <IconSparkles size={14} aria-hidden />
             </TooltipButton>
             <TooltipButton
               type="button"

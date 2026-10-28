@@ -133,6 +133,7 @@ export const zhTW = {
     "tasks": "任務",
     "templates": "範本",
     "library": "資料庫",
+    "experts": "專家中心",
     openInPanel: "在面板中開啟",
     profileTheme: "主題",
     checkForUpdates: "檢查更新",
@@ -1546,6 +1547,93 @@ sklm: {
     pptxDeckDesc: "封面、問題 / 方案 / 證據、訴求。",
     pptxReview: "回顧",
     pptxReviewDesc: "做對了、沒做好、下一步——三行。",
+  },
+  experts: {
+    title: "專家中心",
+    subtitle:
+      "十二份可以直接交給會話的領域說明書。選一位，說明會寫進輸入框——交出去的東西你隨時能看、能改。",
+    count: "{{count}} 位專家",
+    search: "搜尋專家",
+    searchPlaceholder: "依名稱或領域搜尋",
+    clearSearch: "清除搜尋",
+    categories: {
+      all: "全部",
+      writing: "寫作",
+      engineering: "工程",
+      design: "設計",
+      data: "資料",
+      ops: "維運",
+    },
+    items: {
+      "proposal-writer": {
+        name: "提案撰寫",
+        description: "把客戶的決策點寫成一份能讀到最後的提案。",
+      },
+      "contract-reviewer": {
+        name: "合約審閱",
+        description: "逐條看過，依金額與退出風險排序。",
+      },
+      "report-editor": {
+        name: "報告編輯",
+        description: "刪掉客套話，拆開塞了兩件事的句子，保留你的語氣。",
+      },
+      architect: {
+        name: "方案架構師",
+        description: "給出能撐住接下來兩個功能的最小結構。",
+      },
+      "code-reviewer": {
+        name: "程式碼審閱",
+        description: "找出測試抓不到的缺陷，指明檔案與行號。",
+      },
+      "test-engineer": {
+        name: "測試工程",
+        description: "寫出本來能抓住這個 bug 的那條測試。",
+      },
+      "ui-designer": {
+        name: "介面設計",
+        description: "在既有設計系統內設計，空態與錯誤態一併給出。",
+      },
+      "ux-researcher": {
+        name: "使用者研究",
+        description: "把觀察到的行為和口頭偏好分開。",
+      },
+      "data-analyst": {
+        name: "資料分析",
+        description: "用現有資料回答，口徑與分母一併說明。",
+      },
+      "data-modeler": {
+        name: "資料建模",
+        description: "做出別人接手也維護得動的表格模型。",
+      },
+      "release-manager": {
+        name: "發佈管理",
+        description: "把發佈步驟排出順序，先寫清楚回滾。",
+      },
+      "incident-responder": {
+        name: "故障應變",
+        description: "先止血、再解釋，全程留時間線。",
+      },
+    },
+    prefersModel: "偏好 {{model}}",
+    noModel: "沿用會話模型",
+    delegatesTo: "組隊時派給 {{agent}}",
+    use: "用這位專家開工",
+    addToTeam: "把{{name}}加入專家團",
+    addToTeamShort: "加入專家團",
+    inTeam: "已在團內",
+    removeFromTeam: "把{{name}}移出專家團",
+    team: "專家團",
+    teamCount: "{{count}} / {{max}}",
+    teamHint:
+      "最多選 {{max}} 位，寫清楚要辦的事，他們並行開工——你拿到一份交付物，不是四份報告。",
+    teamEmpty: "還沒有選中的專家",
+    instruction: "專家團任務",
+    instructionPlaceholder: "例如：在週五電話會議前審一遍調價方案",
+    launch: "交給專家團",
+    needInstruction: "先寫清楚要辦的事，再交給專家團",
+    teamFull: "專家團最多 {{max}} 位——先移出一位",
+    empty: "沒有符合的專家",
+    emptyHint: "換個詞，或切換分類。",
   },
   library: {
     title: "資料庫",

@@ -133,6 +133,7 @@ export const zhCN = {
     "tasks": "任务",
     "templates": "模板",
     "library": "资料库",
+    "experts": "专家中心",
     openInPanel: "在面板中打开",
     profileTheme: "主题",
     checkForUpdates: "检查更新",
@@ -1546,6 +1547,93 @@ sklm: {
     pptxDeckDesc: "封面、问题 / 方案 / 证据、诉求。",
     pptxReview: "复盘",
     pptxReviewDesc: "做对了、没做好、下一步——三行。",
+  },
+  experts: {
+    title: "专家中心",
+    subtitle:
+      "十二份可以直接交给会话的领域说明书。选一位，说明会写进输入框——交出去的东西你随时能看、能改。",
+    count: "{{count}} 位专家",
+    search: "搜索专家",
+    searchPlaceholder: "按名称或领域搜索",
+    clearSearch: "清空搜索",
+    categories: {
+      all: "全部",
+      writing: "写作",
+      engineering: "工程",
+      design: "设计",
+      data: "数据",
+      ops: "运维",
+    },
+    items: {
+      "proposal-writer": {
+        name: "提案写作",
+        description: "把客户的决策点写成一份能读到最后的提案。",
+      },
+      "contract-reviewer": {
+        name: "合同审阅",
+        description: "逐条过，按金额与退出风险排序。",
+      },
+      "report-editor": {
+        name: "报告编辑",
+        description: "删掉套话，拆开塞了两件事的句子，保留你的口吻。",
+      },
+      architect: {
+        name: "方案架构师",
+        description: "给出能撑住接下来两个功能的最小结构。",
+      },
+      "code-reviewer": {
+        name: "代码审阅",
+        description: "找出测试抓不到的缺陷，指明文件与行号。",
+      },
+      "test-engineer": {
+        name: "测试工程",
+        description: "写出本来能抓住这个 bug 的那条测试。",
+      },
+      "ui-designer": {
+        name: "界面设计",
+        description: "在既有设计系统内设计，空态与错误态一并给出。",
+      },
+      "ux-researcher": {
+        name: "用户研究",
+        description: "把观察到的行为和口头偏好分开。",
+      },
+      "data-analyst": {
+        name: "数据分析",
+        description: "用已有数据回答，口径与分母一并说明。",
+      },
+      "data-modeler": {
+        name: "数据建模",
+        description: "做出别人接手也维护得动的表格模型。",
+      },
+      "release-manager": {
+        name: "发布管理",
+        description: "把发布步骤排出顺序，先写清回滚。",
+      },
+      "incident-responder": {
+        name: "故障响应",
+        description: "先止血、再解释，全程留时间线。",
+      },
+    },
+    prefersModel: "偏好 {{model}}",
+    noModel: "沿用会话模型",
+    delegatesTo: "组队时派给 {{agent}}",
+    use: "用这位专家开工",
+    addToTeam: "把{{name}}加入专家团",
+    addToTeamShort: "加入专家团",
+    inTeam: "已在团内",
+    removeFromTeam: "把{{name}}移出专家团",
+    team: "专家团",
+    teamCount: "{{count}} / {{max}}",
+    teamHint:
+      "最多选 {{max}} 位，写清要办的事，他们并行开工——你拿到一份交付物，不是四份报告。",
+    teamEmpty: "还没有选中的专家",
+    instruction: "专家团任务",
+    instructionPlaceholder: "例如：在周五电话会前审一遍调价方案",
+    launch: "交给专家团",
+    needInstruction: "先写清楚要办的事，再交给专家团",
+    teamFull: "专家团最多 {{max}} 位——先移出一位",
+    empty: "没有匹配的专家",
+    emptyHint: "换个词，或者切换分类。",
   },
   library: {
     title: "资料库",

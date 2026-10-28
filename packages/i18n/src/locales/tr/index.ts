@@ -140,6 +140,7 @@ export const tr = {
     "tasks": "Görevler",
     "templates": "Şablonlar",
     "library": "Kitaplık",
+    "experts": "Uzmanlar",
     openInPanel: "Panelde aç",
     profileTheme: "Tema",
     checkForUpdates: "Güncellemeleri denetle",
@@ -1563,6 +1564,93 @@ sklm: {
     pptxDeckDesc: "Kapak, sorun / yaklaşım / kanıt ve talep.",
     pptxReview: "Değerlendirme",
     pptxReviewDesc: "İyi giden, gitmeyen, sıradaki — üç satır.",
+  },
+  experts: {
+    title: "Uzmanlar",
+    subtitle:
+      "Bir oturuma doğrudan verebileceğiniz on iki alan talimatı. Birini seçtiğinizde talimat giriş alanına yazılır — devredilen metin okunabilir ve düzenlenebilir kalır.",
+    count: "{{count}} uzman",
+    search: "Uzman ara",
+    searchPlaceholder: "Ada veya alana göre ara",
+    clearSearch: "Aramayı temizle",
+    categories: {
+      all: "Tümü",
+      writing: "Yazım",
+      engineering: "Mühendislik",
+      design: "Tasarım",
+      data: "Veri",
+      ops: "Operasyon",
+    },
+    items: {
+      "proposal-writer": {
+        name: "Teklif Yazarı",
+        description: "Müşterinin karar noktasını sonuna kadar okunan bir teklife çevirir.",
+      },
+      "contract-reviewer": {
+        name: "Sözleşme İnceleyicisi",
+        description: "Madde madde, parayı ve çıkış riskini öne alarak.",
+      },
+      "report-editor": {
+        name: "Rapor Editörü",
+        description: "Dolgu cümleleri atar, iki fikri taşıyan cümleleri böler; sesiniz sizde kalır.",
+      },
+      architect: {
+        name: "Çözüm Mimarı",
+        description: "Sonraki iki özelliği taşıyan en küçük yapıyı tasarlar.",
+      },
+      "code-reviewer": {
+        name: "Kod İnceleyicisi",
+        description: "Testin yakalayamadığı kusurları dosya ve satırla gösterir.",
+      },
+      "test-engineer": {
+        name: "Test Mühendisi",
+        description: "Bu hatayı yakalayacak testi yazar.",
+      },
+      "ui-designer": {
+        name: "Arayüz Tasarımcısı",
+        description: "Var olan sistemin içinde tasarlar; boş ve hata durumları dahil.",
+      },
+      "ux-researcher": {
+        name: "UX Araştırmacısı",
+        description: "Gözlenen davranışı söylenen tercihten ayırır.",
+      },
+      "data-analyst": {
+        name: "Veri Analisti",
+        description: "Var olan veriyle yanıtlar, paydayı da söyler.",
+      },
+      "data-modeler": {
+        name: "Veri Modelleyicisi",
+        description: "Başkasının sürdürmek zorunda olduğu tabloyu kurar.",
+      },
+      "release-manager": {
+        name: "Sürüm Yöneticisi",
+        description: "Sürüm adımlarını sıraya koyar, geri almayı önce yazar.",
+      },
+      "incident-responder": {
+        name: "Olay Müdahalesi",
+        description: "Önce durumu sabitler, sonra açıklar, boyunca kayıt tutar.",
+      },
+    },
+    prefersModel: "{{model}} tercih eder",
+    noModel: "Oturum modelini kullanır",
+    delegatesTo: "Ekip çalışmasında {{agent}} devralır",
+    use: "Bu uzmanla başla",
+    addToTeam: "{{name}} uzmanını panele ekle",
+    addToTeamShort: "Panele ekle",
+    inTeam: "Panelde",
+    removeFromTeam: "{{name}} uzmanını panelden çıkar",
+    team: "Uzman paneli",
+    teamCount: "{{count}} / {{max}}",
+    teamHint:
+      "En fazla {{max}} uzman seçin, işi anlatın; paralel çalışırlar. Dört rapor değil, tek bir teslimat alırsınız.",
+    teamEmpty: "Henüz uzman seçilmedi",
+    instruction: "Panel görevi",
+    instructionPlaceholder: "örn. Cuma görüşmesinden önce fiyat değişikliğini gözden geçir",
+    launch: "Panele ver",
+    needInstruction: "Önce işi anlatın",
+    teamFull: "Panel {{max}} uzman alır — önce birini çıkarın",
+    empty: "Eşleşen uzman yok",
+    emptyHint: "Başka bir sözcük deneyin veya kategori değiştirin.",
   },
   library: {
     title: "Kitaplık",

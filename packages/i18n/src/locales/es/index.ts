@@ -131,6 +131,7 @@ export const es = {
     "tasks": "Tareas",
     "templates": "Plantillas",
     "library": "Biblioteca",
+    "experts": "Expertos",
     "openInPanel": "Abrir en panel",
     "profileTheme": "Tema",
     "checkForUpdates": "Buscar actualizaciones",
@@ -1542,6 +1543,93 @@ sklm: {
     "pptxDeckDesc": "Portada, problema / enfoque / evidencia y la petición.",
     "pptxReview": "Retrospectiva",
     "pptxReviewDesc": "Bien, mal, siguiente — tres líneas.",
+  },
+  "experts": {
+    "title": "Expertos",
+    "subtitle":
+      "Doce consignas de especialidad que puedes entregar a una sesión. Al elegir una, su consigna se escribe en el compositor: lo entregado sigue visible y editable.",
+    "count": "{{count}} expertos",
+    "search": "Buscar expertos",
+    "searchPlaceholder": "Buscar por nombre o campo",
+    "clearSearch": "Borrar búsqueda",
+    "categories": {
+      "all": "Todos",
+      "writing": "Redacción",
+      "engineering": "Ingeniería",
+      "design": "Diseño",
+      "data": "Datos",
+      "ops": "Operación",
+    },
+    "items": {
+      "proposal-writer": {
+        "name": "Redactor de propuestas",
+        "description": "Convierte una decisión del cliente en una propuesta que se lee hasta el final.",
+      },
+      "contract-reviewer": {
+        "name": "Revisor de contratos",
+        "description": "Cláusula por cláusula, ordenadas por dinero y riesgo de salida.",
+      },
+      "report-editor": {
+        "name": "Editor de informes",
+        "description": "Quita relleno y parte frases sobrecargadas sin cambiar tu voz.",
+      },
+      "architect": {
+        "name": "Arquitecto de solución",
+        "description": "Diseña la estructura más pequeña que aguanta las dos próximas funciones.",
+      },
+      "code-reviewer": {
+        "name": "Revisor de código",
+        "description": "Encuentra los defectos que ninguna prueba detecta, con ruta y línea.",
+      },
+      "test-engineer": {
+        "name": "Ingeniero de pruebas",
+        "description": "Escribe la prueba que habría atrapado este fallo.",
+      },
+      "ui-designer": {
+        "name": "Diseñador de UI",
+        "description": "Diseña dentro del sistema existente, con estados vacío y de error.",
+      },
+      "ux-researcher": {
+        "name": "Investigador UX",
+        "description": "Separa la conducta observada de la preferencia declarada.",
+      },
+      "data-analyst": {
+        "name": "Analista de datos",
+        "description": "Responde con los datos que existen, denominador incluido.",
+      },
+      "data-modeler": {
+        "name": "Modelador de datos",
+        "description": "Construye la hoja que otra persona tendrá que mantener.",
+      },
+      "release-manager": {
+        "name": "Gestor de releases",
+        "description": "Ordena los pasos del despliegue y nombra primero la vuelta atrás.",
+      },
+      "incident-responder": {
+        "name": "Respuesta a incidentes",
+        "description": "Estabiliza primero, explica después, registra sobre la marcha.",
+      },
+    },
+    "prefersModel": "Prefiere {{model}}",
+    "noModel": "Usa el modelo de la sesión",
+    "delegatesTo": "En equipo delega en {{agent}}",
+    "use": "Empezar con este experto",
+    "addToTeam": "Añadir {{name}} al panel",
+    "addToTeamShort": "Añadir al panel",
+    "inTeam": "En el panel",
+    "removeFromTeam": "Quitar {{name}} del panel",
+    "team": "Panel de expertos",
+    "teamCount": "{{count}} / {{max}}",
+    "teamHint":
+      "Elige hasta {{max}} expertos, describe el trabajo y avanzan en paralelo: obtienes un entregable, no cuatro informes.",
+    "teamEmpty": "Aún no hay expertos elegidos",
+    "instruction": "Encargo del panel",
+    "instructionPlaceholder": "p. ej. Revisa el cambio de precios antes de la llamada del viernes",
+    "launch": "Encargar al panel",
+    "needInstruction": "Describe el trabajo antes de encargarlo",
+    "teamFull": "El panel admite {{max}} expertos: quita uno primero",
+    "empty": "Ningún experto coincide",
+    "emptyHint": "Prueba otra palabra o cambia de categoría.",
   },
   "library": {
     "title": "Biblioteca",

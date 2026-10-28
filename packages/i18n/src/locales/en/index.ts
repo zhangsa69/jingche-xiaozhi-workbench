@@ -138,6 +138,7 @@ export const en = {
     "tasks": "Tasks",
     "templates": "Templates",
     "library": "Library",
+    "experts": "Experts",
     openInPanel: "Open in panel",
     profileTheme: "Theme",
     checkForUpdates: "Check for updates",
@@ -1571,6 +1572,93 @@ sklm: {
     pptxDeckDesc: "Cover, problem / approach / evidence, and the ask.",
     pptxReview: "Retro",
     pptxReviewDesc: "Kept, dropped, next — three lines.",
+  },
+  experts: {
+    title: "Experts",
+    subtitle:
+      "Twelve domain briefs you can hand to a session. Picking one writes its brief into the composer — what was handed over stays readable and editable.",
+    count: "{{count}} experts",
+    search: "Search experts",
+    searchPlaceholder: "Search by name or field",
+    clearSearch: "Clear search",
+    categories: {
+      all: "All",
+      writing: "Writing",
+      engineering: "Engineering",
+      design: "Design",
+      data: "Data",
+      ops: "Ops",
+    },
+    items: {
+      "proposal-writer": {
+        name: "Proposal Writer",
+        description: "Turns a customer decision into a proposal they read to the end.",
+      },
+      "contract-reviewer": {
+        name: "Contract Reviewer",
+        description: "Clause by clause, ranked by money and exit risk.",
+      },
+      "report-editor": {
+        name: "Report Editor",
+        description: "Cuts filler and splits overloaded sentences, keeping your voice.",
+      },
+      architect: {
+        name: "Solution Architect",
+        description: "Designs the smallest structure that survives the next two features.",
+      },
+      "code-reviewer": {
+        name: "Code Reviewer",
+        description: "Finds the defects a test would not catch, with path and line.",
+      },
+      "test-engineer": {
+        name: "Test Engineer",
+        description: "Writes the test that would have caught this bug.",
+      },
+      "ui-designer": {
+        name: "UI Designer",
+        description: "Designs inside the existing system, empty and error states included.",
+      },
+      "ux-researcher": {
+        name: "UX Researcher",
+        description: "Separates observed behaviour from stated preference.",
+      },
+      "data-analyst": {
+        name: "Data Analyst",
+        description: "Answers with the data that exists, denominator included.",
+      },
+      "data-modeler": {
+        name: "Data Modeler",
+        description: "Builds the spreadsheet someone else has to maintain.",
+      },
+      "release-manager": {
+        name: "Release Manager",
+        description: "Orders the release steps and names the rollback first.",
+      },
+      "incident-responder": {
+        name: "Incident Responder",
+        description: "Stabilises first, explains second, logs as it goes.",
+      },
+    },
+    prefersModel: "Prefers {{model}}",
+    noModel: "Uses the session model",
+    delegatesTo: "Team runs delegate to {{agent}}",
+    use: "Start with this expert",
+    addToTeam: "Add {{name}} to the panel",
+    addToTeamShort: "Add to panel",
+    inTeam: "In the panel",
+    removeFromTeam: "Remove {{name}} from the panel",
+    team: "Expert panel",
+    teamCount: "{{count}} / {{max}}",
+    teamHint:
+      "Pick up to {{max}} experts, describe the job, and they work in parallel — you get one deliverable, not four reports.",
+    teamEmpty: "No experts picked yet",
+    instruction: "Panel instruction",
+    instructionPlaceholder: "e.g. Review the pricing change before Friday's call",
+    launch: "Brief the panel",
+    needInstruction: "Describe the job before briefing the panel",
+    teamFull: "The panel holds {{max}} experts — remove one first",
+    empty: "No expert matches",
+    emptyHint: "Try another word, or switch category.",
   },
   library: {
     title: "Library",
