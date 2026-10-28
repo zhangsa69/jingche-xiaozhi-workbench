@@ -15,6 +15,7 @@ import { searchMcpMarket } from "../mcp-registry-catalog";
 import { registerNotificationIpc } from "./notification-ipc";
 import { registerPluginIpc } from "./plugin-ipc";
 import { registerPluginUiIpc } from "./plugin-ui-ipc";
+import { registerPreviewIpc } from "./preview-ipc";
 import { registerProviderIpc } from "./provider-ipc";
 import { registerPullsIpc } from "./pulls-ipc";
 import { registerScheduledIpc } from "./scheduled-ipc";
@@ -400,6 +401,8 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
   });
 
   registerLogIpc({ registrar, dataDir });
+
+  registerPreviewIpc({ registrar, getHost, dataDir });
 
 
   return async (channel: string, args: readonly unknown[] = []) => {

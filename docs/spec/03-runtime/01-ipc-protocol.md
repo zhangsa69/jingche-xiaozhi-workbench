@@ -1667,6 +1667,67 @@ Renderer IPC kept for the Plan-safe preview facade and URL fallback:
   which would read as "there are no logs". Renderer-only; not a plugin host
   API.
 
+### preview (read-only)
+
+- `preview/document({path})` → `DocumentPreviewResult`
+  (`{ preview: DocumentPreview, truncated: boolean }`). Parses a `.docx`,
+  `.xlsx`, or `.pptx` file into the flat shapes the work-panel preview tab
+  draws. `path` is a workspace-relative path or an `attachments/<sha256>` blob
+  and uses the containment of `fs/read` (D320): a path outside the allowed
+  roots fails with `PATH_OUTSIDE_WORKSPACE` and a missing file with
+  `NOT_FOUND`, and neither message repeats the path the renderer sent.
+
+```ts
+type DocumentPreviewResult = {
+  preview:
+    | { kind: "docx"; blocks: DocumentPreviewBlock[] }
+    | { kind: "xlsx"; sheets: { name: string; rows: string[][] }[] }
+    | { kind: "pptx"; slides: { title: string; bullets: string[] }[] }
+    | { kind: "unsupported"; reason: "extension" | "corrupt" | "too-large" };
+  truncated: boolean;
+};
+```
+
+Format mapping:
+
+- `.docx` reads `word/document.xml`. Each `w:p` becomes a `heading` when its
+  `w:pStyle` is `Title` or starts with `Heading`, otherwise a `paragraph`; the
+  text is the runs' `w:t` / `w:br` / `w:tab` in document order with XML escapes
+  decoded, and an empty paragraph is dropped as spacing. Each `w:tbl` becomes
+  one `table`, one array per `w:tr` and one string per `w:tc`. A paragraph or
+  table inside a `w:sdt` is read as if it sat at body level, because Word wraps
+  tables of contents, form fields and whole sections that way.
+- `.xlsx` takes sheet order from `xl/workbook.xml` and maps each sheet to its
+  part through `xl/_rels/workbook.xml.rels` before reading
+  `xl/worksheets/sheetN.xml`. Cells are aligned by the column letters in their
+  `r` attribute (`A` through `BL`), so a missing cell is an empty string rather
+  than a shifted row, and rows are placed by their own `r`, so a hole in the
+  file is a blank row. `t="s"` resolves through `xl/sharedStrings.xml`, which is
+  what Excel writes; `t="inlineStr"` reads `is/t`, which is what
+  plugin-generated workbooks write; `t="str"` and an untyped cell read `v` as
+  written.
+- `.pptx` takes slide order from `p:sldIdLst` in `ppt/presentation.xml` and maps
+  each slide to its part through the presentation rels before reading
+  `ppt/slides/slideN.xml`. The title is the `a:t` text of the shape whose `p:ph`
+  is `type="title"` or `ctrTitle`, and an empty string when the slide has none;
+  every non-title `a:p` becomes one bullet with its runs joined, and `a:pPr`
+  levels are flattened because the panel shows a list, not an outline.
+
+Bounds, all exported so a test reads the same numbers:
+
+- `MAX_PREVIEW_BYTES` 16 MiB of file, `MAX_BLOCKS` 2000, `MAX_TABLE_ROWS` 200,
+  `MAX_SHEETS` 20, `MAX_SHEET_ROWS` 500, `MAX_SHEET_COLS` 64, `MAX_SLIDES` 200,
+  and 5000 characters per text block.
+- Any bound that cuts content sets `truncated: true` and still returns the
+  bounded preview, so the panel can say the view is partial.
+- A file larger than `MAX_PREVIEW_BYTES` is refused before it is read and
+  returns `unsupported` / `too-large`; a non-Office extension returns
+  `unsupported` / `extension`; an archive that cannot be read — a missing part,
+  a broken ZIP, an unsupported compression method, or an entry whose size
+  disagrees with the central directory — returns `unsupported` / `corrupt`.
+  None of these is an error: the panel falls back to the plain file view
+  instead of showing a failure. Renderer-only; not a plugin host API.
+
 ## 13b. Desktop Menu and Window APIs
 
 The preload exposes a synchronous, read-only `platform: NodeJS.Platform`

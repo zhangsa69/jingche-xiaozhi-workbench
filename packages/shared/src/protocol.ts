@@ -257,6 +257,8 @@ export const IPC = {
     pdfRender: "pi-desktop/pdf/render",
     /** Read the tail of the NDJSON log files (W-17). */
     logTail: "pi-desktop/log/tail",
+    /** Parse a `.docx` / `.xlsx` / `.pptx` file into a flat preview (W-19). */
+    documentPreview: "pi-desktop/preview/document",
     windowSetWorkPanelReservation:
       "pi-desktop/window/setWorkPanelReservation",
     windowSetWorkPanelChatWidth: "pi-desktop/window/setWorkPanelChatWidth",

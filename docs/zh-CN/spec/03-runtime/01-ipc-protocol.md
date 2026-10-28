@@ -1327,6 +1327,33 @@ Chrome 和代理 CDP 位于随应用打包的 `pi.browser` 插件中，通过 `p
 
 - `log/tail({channel?, level?, sessionId?, limit?})` → `LogTailResult`（`{ records: LogTailRecord[], truncated: boolean }`）。返回某个通道自己那份 NDJSON 文件（`<data_dir>/logs/<channel>/`）里最新的行，按从旧到新排列。`channel` 取 `app`、`host` 或 `agent`（默认 `app`）；`level` 是最低级别（`debug` / `info` / `warn` / `error`）；`sessionId` 把结果收窄到一个会话。`limit` 默认 200，并夹在 1..1000。只读在用的 `<category>.log`：轮转出的 `*.N.log` 是面板没有索要的历史。每个文件都通过 256 KiB 的尾部窗口读取，因此写入进程被杀造成的断行——以及窗口首个换行之前的那段残片——会被丢弃，而不是当作解析错误抛出来。过滤在截断之前生效。窗口截掉了字节、或匹配行数多于 `limit` 时 `truncated` 为真，面板据此说明这是部分视图，而不是暗示已经看到全部。未知的 `channel` 或 `level` 以 `INVALID_ARGUMENT` 失败，而不是返回空列表——空列表会被读成"没有日志"。仅渲染器使用，不是插件宿主 API。
 
+### 预览（只读）
+
+- `preview/document({path})` → `DocumentPreviewResult`（`{ preview: DocumentPreview, truncated: boolean }`）。把 `.docx`、`.xlsx` 或 `.pptx` 解析成工作面板预览页要画的扁平结构。`path` 是工作区相对路径或 `attachments/<sha256>` blob，包含范围与 `fs/read` 相同（D320）：越出允许根以 `PATH_OUTSIDE_WORKSPACE` 失败，文件不存在以 `NOT_FOUND` 失败，两者的错误信息都不回显渲染器传来的路径。
+
+```ts
+type DocumentPreviewResult = {
+  preview:
+    | { kind: "docx"; blocks: DocumentPreviewBlock[] }
+    | { kind: "xlsx"; sheets: { name: string; rows: string[][] }[] }
+    | { kind: "pptx"; slides: { title: string; bullets: string[] }[] }
+    | { kind: "unsupported"; reason: "extension" | "corrupt" | "too-large" };
+  truncated: boolean;
+};
+```
+
+格式映射：
+
+- `.docx` 读 `word/document.xml`。每个 `w:p` 在 `w:pStyle` 为 `Title` 或以 `Heading` 开头时成为 `heading`，其余成为 `paragraph`；文本按文档顺序取各 run 的 `w:t` / `w:br` / `w:tab` 并反转义 XML 实体，空段落只是间距，被丢弃。每个 `w:tbl` 成为一个 `table`，一个 `w:tr` 一行，一个 `w:tc` 一个字符串。`w:sdt` 里的段落或表格按正文层级读取——Word 就用它包住目录、表单域和整节内容。
+- `.xlsx` 从 `xl/workbook.xml` 取 sheet 顺序，再通过 `xl/_rels/workbook.xml.rels` 把每个 sheet 映射到对应部件，然后读 `xl/worksheets/sheetN.xml`。单元格按 `r` 属性里的列字母对齐（`A` 到 `BL`），所以缺格是空串而不是整行左移；行按各自的 `r` 落位，所以文件里的空洞就是一行空白。`t="s"` 走 `xl/sharedStrings.xml`（真实 Excel 就这么写）；`t="inlineStr"` 取 `is/t`（插件生成的工作簿这么写）；`t="str"` 与无 `t` 的单元格都按原文取 `v`。
+- `.pptx` 从 `ppt/presentation.xml` 的 `p:sldIdLst` 取页序，再通过 presentation 的 rels 把每页映射到部件，然后读 `ppt/slides/slideN.xml`。标题取 `p:ph` 为 `type="title"` 或 `ctrTitle` 的形状里 `a:t` 的拼接，该页没有标题时为空串；非标题的每个 `a:p` 拼成一条 bullet，`a:pPr` 的层级被压平——面板要显示的是一份列表，不是大纲。
+
+上限全部导出，测试读的是同一组数字：
+
+- `MAX_PREVIEW_BYTES` 16 MiB 的文件本身、`MAX_BLOCKS` 2000、`MAX_TABLE_ROWS` 200、`MAX_SHEETS` 20、`MAX_SHEET_ROWS` 500、`MAX_SHEET_COLS` 64、`MAX_SLIDES` 200，以及每个文本块 5000 字符。
+- 任一上限截掉内容都会置 `truncated: true`，同时仍返回被裁剪后的预览，面板据此说明这是部分视图。
+- 超过 `MAX_PREVIEW_BYTES` 的文件在读取之前就被拒绝，返回 `unsupported` / `too-large`；非 Office 扩展名返回 `unsupported` / `extension`；读不出内容的压缩包——部件缺失、ZIP 损坏、压缩方式不支持，或条目大小与中央目录不一致——返回 `unsupported` / `corrupt`。这些都不是错误：面板回落到普通文件视图，而不是显示失败。仅渲染器使用，不是插件宿主 API。
+
 ## 13b. 桌面菜单和窗口 API
 
 preload 公开同步、只读 `platform: NodeJS.Platform`

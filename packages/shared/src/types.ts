@@ -21,3 +21,4 @@ export * from "./types/platform.js";
 export * from "./types/workpanel.js";
 export * from "./types/filesystem.js";
 export * from "./types/logs.js";
+export * from "./types/preview.js";
