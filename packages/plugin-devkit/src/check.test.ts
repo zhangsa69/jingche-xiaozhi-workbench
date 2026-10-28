@@ -146,4 +146,23 @@ describe("check", () => {
     expect(called.some((m) => m.includes('"audio.capture.background"'))).toBe(false);
     expect(called.some((m) => m.includes('"net.websocket"'))).toBe(true);
   });
+
+  it("counts a binary write as use of fs.write", async () => {
+    const dir = join(await tempDir(), "binary-write");
+    await scaffold({ dir, template: "full-demo" });
+    // `full-demo` writes its note with `fs.writeText`; a plugin that only
+    // produces bytes (a docx, an image) never calls that, and being told the
+    // permission is unused would push its author to "fix" it by writing the
+    // bytes as text — which corrupts exactly the file it set out to make.
+    await writeFile(
+      join(dir, "main.js"),
+      'export async function onLoad() { await pi.fs.writeBase64("out/note.docx", "AAAA"); }\n',
+      "utf8",
+    );
+
+    const unused = (await check(dir)).warnings
+      .filter((w) => w.code === "permission.unused")
+      .map((w) => w.message);
+    expect(unused.some((m) => m.includes('"fs.write"'))).toBe(false);
+  });
 });

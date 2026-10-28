@@ -290,7 +290,7 @@ const DOC_TOOL = {
 const SHEET_TOOL = {
   name: "OfficeSheet",
   description:
-    "Generate an Excel workbook (.xlsx) and write it into the workspace in one step. " +
+    "Generate an Excel spreadsheet workbook (.xlsx) and write it into the workspace in one step. " +
     'Pass `path` (workspace-relative, ending in .xlsx), `rows` (an array of rows, each row an array of cell values as strings — put the header row in first) and an optional `sheetName`. ' +
     "Cells are written as inline text, so numbers and dates keep the exact string you send. " +
     'Call ToolSearch for "office" or "xlsx" to load this tool. Use OfficeDoc for documents and OfficeSlides for decks.',
