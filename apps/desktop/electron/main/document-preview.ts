@@ -40,6 +40,16 @@ export const MAX_SHEET_COLS = 64;
 export const MAX_SLIDES = 200;
 /** One text block. Longer single paragraphs are cut, not wrapped. */
 export const MAX_BLOCK_CHARS = 5000;
+/**
+ * Table cells per preview, across every table and sheet.
+ *
+ * The per-table limits multiply: 2000 blocks of 200 rows of a few columns is
+ * hundreds of thousands of cells, all of which the renderer mounts at once —
+ * xlsx mounts only the selected sheet, so it stays inside this bound anyway,
+ * but a table-dense report would not. One aggregate budget bounds both formats
+ * with a single number, and `truncated` tells the panel why the tail is gone.
+ */
+export const MAX_TABLE_CELLS = 50_000;
 
 export type PreviewLimits = {
   maxBlocks: number;
@@ -49,6 +59,7 @@ export type PreviewLimits = {
   maxSheetCols: number;
   maxSlides: number;
   maxBlockChars: number;
+  maxCells: number;
 };
 
 /** The shipped limits. Callers only pass their own in tests. */
@@ -60,6 +71,7 @@ export const DEFAULT_PREVIEW_LIMITS: PreviewLimits = {
   maxSheetCols: MAX_SHEET_COLS,
   maxSlides: MAX_SLIDES,
   maxBlockChars: MAX_BLOCK_CHARS,
+  maxCells: MAX_TABLE_CELLS,
 };
 
 /**
@@ -91,6 +103,17 @@ const CENTRAL_SIGNATURE = 0x02014b50;
 const LOCAL_SIGNATURE = 0x04034b50;
 /** EOCD is 22 bytes plus a comment of at most 64 KiB. */
 const EOCD_MAX_SCAN = 22 + 0xffff;
+/**
+ * Ceiling on one inflated part.
+ *
+ * XML compresses far better than the archive holding it — a 16 MiB report can
+ * legitimately expand to well over 100 MiB — so this cannot be the file cap.
+ * It exists because the declared size is part of the archive: without a ceiling
+ * a few kilobytes of deflate can claim to expand into gigabytes, and the
+ * decompressor would try to produce exactly that. Anything above the ceiling is
+ * refused before a byte is expanded.
+ */
+export const MAX_INFLATED_BYTES = 64 * 1024 * 1024;
 
 /**
  * Read the central directory. Returns null for anything this reader cannot
@@ -159,8 +182,13 @@ export function readZipEntry(buffer: Buffer, entry: ZipEntry): Buffer | null {
     return entry.compressedSize === entry.size ? payload : null;
   }
   if (entry.method !== 8) return null;
+  // The declared size is the archive's claim, so it is bounded before it is
+  // used as an allocation: a zip bomb is exactly a small payload whose claim is
+  // huge. `maxOutputLength` then holds the decompressor to the same number, in
+  // case the claim and the bytes still disagree in the other direction.
+  if (entry.size > MAX_INFLATED_BYTES) return null;
   try {
-    const inflated = inflateRawSync(payload);
+    const inflated = inflateRawSync(payload, { maxOutputLength: entry.size + 1 });
     return inflated.length === entry.size ? inflated : null;
   } catch {
     return null;
@@ -322,12 +350,28 @@ function partText(buffer: Buffer, entries: Map<string, ZipEntry>, name: string):
 // Budget helpers
 // ---------------------------------------------------------------------------
 
-type Budget = { limits: PreviewLimits; truncated: boolean };
+type Budget = { limits: PreviewLimits; truncated: boolean; cellsLeft: number };
 
 function capText(budget: Budget, text: string): string {
   if (text.length <= budget.limits.maxBlockChars) return text;
   budget.truncated = true;
   return text.slice(0, budget.limits.maxBlockChars);
+}
+
+/**
+ * Charge `count` cells against the aggregate budget; false when it cannot pay.
+ *
+ * A table row is kept whole or dropped whole: half a row would misalign the
+ * columns the renderer lays out, and the flag already says the tail is missing.
+ */
+function takeCells(budget: Budget, count: number): boolean {
+  if (count <= budget.cellsLeft) {
+    budget.cellsLeft -= count;
+    return true;
+  }
+  budget.cellsLeft = 0;
+  budget.truncated = true;
+  return false;
 }
 
 // ---------------------------------------------------------------------------
@@ -365,17 +409,20 @@ function tableRows(node: XmlNode, budget: Budget): string[][] {
       budget.truncated = true;
       break;
     }
-    const cells = children(row, "tc").map((cell) =>
-      // A cell may hold several paragraphs; they are kept on separate lines so a
-      // multi-line cell does not read as one run-on sentence.
-      capText(
-        budget,
-        children(cell, "p")
-          .map((paragraph) => runText(paragraph))
-          .join("\n"),
+    const declared = children(row, "tc");
+    if (!takeCells(budget, declared.length)) break;
+    rows.push(
+      declared.map((cell) =>
+        // A cell may hold several paragraphs; they are kept on separate lines so a
+        // multi-line cell does not read as one run-on sentence.
+        capText(
+          budget,
+          children(cell, "p")
+            .map((paragraph) => runText(paragraph))
+            .join("\n"),
+        ),
       ),
     );
-    rows.push(cells);
   }
   return rows;
 }
@@ -514,6 +561,10 @@ function parseSheet(
   const rows: string[][] = [];
   let sequential = 0;
   for (const row of children(data, "row")) {
+    if (budget.cellsLeft <= 0) {
+      budget.truncated = true;
+      break;
+    }
     if (rows.length >= budget.limits.maxSheetRows) {
       budget.truncated = true;
       break;
@@ -530,6 +581,7 @@ function parseSheet(
 
     const values: string[] = [];
     let column = -1;
+    let spent = false;
     for (const cell of children(row, "c")) {
       const reference = cell.attrs.r ?? "";
       const index = reference ? columnIndex(reference) : column + 1;
@@ -539,6 +591,12 @@ function parseSheet(
         budget.truncated = true;
         continue;
       }
+      if (!takeCells(budget, 1)) {
+        // The row stops where the budget ran out; the caller then drops the
+        // remaining rows, so no further part is inflated for nothing.
+        spent = true;
+        break;
+      }
       // A skipped cell is absent from the file, not empty in the sheet.
       while (values.length < index) values.push("");
       values[index] = capText(budget, cellText(cell, strings));
@@ -546,6 +604,7 @@ function parseSheet(
     // Rows are numbered, so a hole in the file is a blank row in the sheet.
     while (rows.length < at) rows.push([]);
     rows[at] = values;
+    if (spent) break;
   }
 
   const width = Math.min(
@@ -575,6 +634,10 @@ function parseXlsx(buffer: Buffer, entries: Map<string, ZipEntry>, budget: Budge
 
   const sheets: { name: string; rows: string[][] }[] = [];
   for (const [index, sheet] of declared.entries()) {
+    if (budget.cellsLeft <= 0) {
+      budget.truncated = true;
+      break;
+    }
     if (sheets.length >= budget.limits.maxSheets) {
       budget.truncated = true;
       break;
@@ -682,7 +745,7 @@ export function parseDocumentPreview(
   buffer: Buffer,
   limits: PreviewLimits = DEFAULT_PREVIEW_LIMITS,
 ): DocumentPreviewResult {
-  const budget: Budget = { limits, truncated: false };
+  const budget: Budget = { limits, truncated: false, cellsLeft: limits.maxCells };
   const kind = EXTENSION_KIND[extname(path).toLowerCase()];
   // Anything else is the renderer's cue to show the plain file view.
   if (!kind) return { preview: { kind: "unsupported", reason: "extension" }, truncated: false };

@@ -8,9 +8,12 @@ import { deflateRawSync } from "node:zlib";
 import {
   DEFAULT_PREVIEW_LIMITS,
   MAX_BLOCKS,
+  MAX_INFLATED_BYTES,
   MAX_SLIDES,
+  MAX_TABLE_CELLS,
   MAX_TABLE_ROWS,
   readDocumentPreview,
+  readZipEntry,
 } from "../electron/main/document-preview.ts";
 
 /**
@@ -417,6 +420,79 @@ test("a long paragraph is cut at the block budget", async () => {
 
   assert.equal(result.blocks[0].text.length, 10);
   assert.equal(truncated, true);
+});
+
+test("the cell budget is shared by every table and sheet", async () => {
+  const root = await workspace();
+  const row = (value) =>
+    `<w:tr><w:tc><w:p><w:r><w:t>${value}</w:t></w:r></w:p></w:tc></w:tr>`;
+  await fixture(root, "three-row.docx", docx(`<w:tbl>${row(1)}${row(2)}${row(3)}</w:tbl>`));
+  await fixture(
+    root,
+    "two-by-two.xlsx",
+    xlsx({
+      sheets: [
+        {
+          name: "One",
+          xml: sheetXml(
+            `<row r="1"><c r="A1"><v>1</v></c><c r="B1"><v>2</v></c></row><row r="2"><c r="A2"><v>3</v></c><c r="B2"><v>4</v></c></row>`,
+          ),
+        },
+        {
+          name: "Two",
+          xml: sheetXml(`<row r="1"><c r="A1"><v>5</v></c></row>`),
+        },
+      ],
+    }),
+  );
+
+  // Two cells buy exactly two rows of a one-column table: the third is dropped
+  // whole rather than half-written, and the flag explains the missing tail.
+  const table = await preview(root, "three-row.docx", {
+    ...DEFAULT_PREVIEW_LIMITS,
+    maxCells: 2,
+  });
+  assert.equal(table.preview.blocks[0].rows.length, 2);
+  assert.deepEqual(table.preview.blocks[0].rows, [["1"], ["2"]]);
+  assert.equal(table.truncated, true);
+
+  const sheets = await preview(root, "two-by-two.xlsx", {
+    ...DEFAULT_PREVIEW_LIMITS,
+    maxCells: 3,
+  });
+  const kept = sheets.preview.sheets.flatMap((sheet) => sheet.rows).flat().filter(Boolean);
+  assert.deepEqual(kept, ["1", "2", "3"]);
+  assert.equal(sheets.truncated, true);
+  // The second sheet is never parsed: no part is inflated for a result that
+  // cannot be shown.
+  assert.equal(sheets.preview.sheets.length, 1);
+
+  assert.equal(DEFAULT_PREVIEW_LIMITS.maxCells, MAX_TABLE_CELLS);
+  assert.equal(MAX_TABLE_CELLS, 50_000);
+});
+
+test("an entry claiming to expand past the ceiling is refused unexpanded", () => {
+  const plain = Buffer.from("fits easily".repeat(100), "utf8");
+  const payload = deflateRawSync(plain);
+  const local = Buffer.alloc(30);
+  local.writeUInt32LE(0x04034b50, 0);
+  local.writeUInt16LE(8, 8);
+  local.writeUInt32LE(payload.length, 18);
+  local.writeUInt32LE(plain.length, 22);
+  const buffer = Buffer.concat([local, payload]);
+  const entry = (size) => ({
+    name: "word/document.xml",
+    method: 8,
+    compressedSize: payload.length,
+    size,
+    offset: 0,
+  });
+
+  // The same bytes: an honest claim inflates, an inflated one is refused.
+  assert.deepEqual(readZipEntry(buffer, entry(plain.length)), plain);
+  // The declared size is the bomb's lever — a few kilobytes of deflate claiming
+  // to expand past the ceiling must be refused before anything is inflated.
+  assert.equal(readZipEntry(buffer, entry(MAX_INFLATED_BYTES + 1)), null);
 });
 
 test("a path that leaves the workspace is refused, without echoing it", async () => {

@@ -1350,9 +1350,10 @@ type DocumentPreviewResult = {
 
 上限全部导出，测试读的是同一组数字：
 
-- `MAX_PREVIEW_BYTES` 16 MiB 的文件本身、`MAX_BLOCKS` 2000、`MAX_TABLE_ROWS` 200、`MAX_SHEETS` 20、`MAX_SHEET_ROWS` 500、`MAX_SHEET_COLS` 64、`MAX_SLIDES` 200，以及每个文本块 5000 字符。
+- `MAX_PREVIEW_BYTES` 16 MiB 的文件本身、`MAX_BLOCKS` 2000、`MAX_TABLE_ROWS` 200、`MAX_SHEETS` 20、`MAX_SHEET_ROWS` 500、`MAX_SHEET_COLS` 64、`MAX_SLIDES` 200、`MAX_TABLE_CELLS` 50000，以及每个文本块 5000 字符。
+- `MAX_TABLE_CELLS` 是所有表格与所有 sheet 共用的一个预算，因为按表的上限会相乘：2000 个块 × 200 行远超面板能挂载的格数，而渲染端自己不截断——它只画宿主返回的内容，所以截断只能由宿主标注。
 - 任一上限截掉内容都会置 `truncated: true`，同时仍返回被裁剪后的预览，面板据此说明这是部分视图。
-- 超过 `MAX_PREVIEW_BYTES` 的文件在读取之前就被拒绝，返回 `unsupported` / `too-large`；非 Office 扩展名返回 `unsupported` / `extension`；读不出内容的压缩包——部件缺失、ZIP 损坏、压缩方式不支持，或条目大小与中央目录不一致——返回 `unsupported` / `corrupt`。这些都不是错误：面板回落到普通文件视图，而不是显示失败。仅渲染器使用，不是插件宿主 API。
+- 超过 `MAX_PREVIEW_BYTES` 的文件在读取之前就被拒绝，返回 `unsupported` / `too-large`；非 Office 扩展名返回 `unsupported` / `extension`；读不出内容的压缩包——部件缺失、ZIP 损坏、压缩方式不支持、条目大小与中央目录不一致，或条目声明解压后超过 `MAX_INFLATED_BYTES`（64 MiB）——返回 `unsupported` / `corrupt`。这些都不是错误：面板回落到普通文件视图，而不是显示失败。仅渲染器使用，不是插件宿主 API。
 
 ## 13b. 桌面菜单和窗口 API
 

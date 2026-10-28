@@ -1717,14 +1717,19 @@ Bounds, all exported so a test reads the same numbers:
 
 - `MAX_PREVIEW_BYTES` 16 MiB of file, `MAX_BLOCKS` 2000, `MAX_TABLE_ROWS` 200,
   `MAX_SHEETS` 20, `MAX_SHEET_ROWS` 500, `MAX_SHEET_COLS` 64, `MAX_SLIDES` 200,
-  and 5000 characters per text block.
+  `MAX_TABLE_CELLS` 50,000, and 5000 characters per text block.
+- `MAX_TABLE_CELLS` is one budget shared by every table and sheet, because the
+  per-table bounds multiply: 2000 blocks of 200 rows is far more cells than the
+  panel can mount, and the renderer does not truncate on its own — it draws what
+  the host returned, so the host is the only place a cut can be flagged.
 - Any bound that cuts content sets `truncated: true` and still returns the
   bounded preview, so the panel can say the view is partial.
 - A file larger than `MAX_PREVIEW_BYTES` is refused before it is read and
   returns `unsupported` / `too-large`; a non-Office extension returns
   `unsupported` / `extension`; an archive that cannot be read — a missing part,
-  a broken ZIP, an unsupported compression method, or an entry whose size
-  disagrees with the central directory — returns `unsupported` / `corrupt`.
+  a broken ZIP, an unsupported compression method, an entry whose size
+  disagrees with the central directory, or an entry claiming to inflate past
+  `MAX_INFLATED_BYTES` (64 MiB) — returns `unsupported` / `corrupt`.
   None of these is an error: the panel falls back to the plain file view
   instead of showing a failure. Renderer-only; not a plugin host API.
 
