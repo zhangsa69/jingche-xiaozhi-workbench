@@ -189,6 +189,11 @@ pi.fs.readPreview(pathFromRoot: string): Promise<{
 pi.fs.openDefault(pathFromRoot: string): Promise<void>
 pi.fs.reveal(pathFromRoot: string): Promise<void>
 pi.fs.writeText(pathFromRoot: string, content: string): Promise<void>
+pi.fs.writeBase64(pathFromRoot: string, dataBase64: string): Promise<{
+  ok: true
+  bytes: number        // bytes written to disk
+  path: string         // root-relative path that was written
+}>
 pi.fs.glob(pattern: string): Promise<string[]>
 pi.fs.list(pathFromRoot: string): Promise<Array<{
   name: string;
@@ -239,6 +244,20 @@ scope, consent, and audit gates as `fs.readText`; offsets and lengths are
 non-negative safe integers. An offset at or beyond EOF returns an empty byte
 array. A `grantId` is only valid for a host-issued dropped-file grant and then
 requires the matching absolute path.
+
+`fs.writeBase64` is the binary counterpart of `fs.writeText`: it decodes a
+strict base64 payload, writes the resulting bytes (creating missing parent
+directories), and resolves to `{ ok, bytes, path }` — the count that reached the
+disk and the root-relative path that was written. It passes the same `fs.write`
+root, symlink, protected-path, deny-list, scope, and consent gates, records the
+file in the plugin's write ledger so a later `fs.delete` with `own` can remove
+it, and audits `fs.writeBase64` with the byte count. The payload is refused with
+`INVALID_ARGUMENT` when it is not a string, is not canonical base64 (a character
+outside the alphabet, a length that is not a whole four-character group,
+padding anywhere but the end), decodes to zero bytes, or exceeds the 32 MiB
+per-call cap. A docx, xlsx, pptx, image, or archive must go through this call:
+those formats are not UTF-8 text, and `fs.writeText` would store an unopenable
+file instead of a document.
 
 Paths are relative to the mode's root — the workspace, or the directory the user
 picked through `requestDirectory()` when the mode declares
@@ -920,7 +939,7 @@ The host-owned preload forwards only fixed channels to the plugin runtime:
 | `app.setTheme`, `themes.upsert`, `themes.remove`, `themes.list` | `ui.theme` |
 | `models.list` | `models.list` |
 | `fs.readText`, `fs.stat`, `fs.readRange`, `fs.readPreview`, `fs.openDefault`, `fs.reveal`, `fs.glob`, `fs.list` | `fs.read` |
-| `fs.writeText` | `fs.write` |
+| `fs.writeText`, `fs.writeBase64` | `fs.write` |
 | `clipboard.readText`, `clipboard.getHistory` | `clipboard.read` |
 | `clipboard.writeText` | `clipboard.write` |
 | `shell.openExternal` | `shell.openExternal` |
@@ -957,6 +976,7 @@ Delivered today:
 Any of the following calls must be logged for audit:
 
 - fs.writeText
+- fs.writeBase64 (with the decoded byte count)
 - fs.stat, fs.readRange, fs.remove, fs.requestDirectory, and every refused fs call (with its path and
   `errorCode`), plus each consent answer and why it was asked (`scope` / `rate`)
 - fs.openDefault (with its root-relative path and whether the OS open succeeded)
@@ -995,7 +1015,7 @@ The desktop plugin runtime now implements the MVP host API surface used by local
 
 - `app.*`, `plugin.*`, `commands.*`, `ui.*`, `workspace.*`
 - `fs.readText` / `fs.stat` / `fs.readRange` / `fs.readPreview` / `fs.openDefault` / `fs.reveal` /
-  `fs.writeText` / `fs.glob` / `fs.list` / `fs.remove` / `fs.requestDirectory`,
+  `fs.writeText` / `fs.writeBase64` / `fs.glob` / `fs.list` / `fs.remove` / `fs.requestDirectory`,
   bounded by `manifest.fs` (ADR 0088)
 - `agent.registerTool` / `unregisterTool` / `agent.complete`
 - `models.list`, `session.getLlmContext`

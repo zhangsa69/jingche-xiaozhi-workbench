@@ -382,7 +382,7 @@ These APIs require explicit permissions:
 | Permission | Plugin-process API | Panel bridge channel |
 |---|---|---|
 | `fs.read` | `pi.fs.readText`, `pi.fs.glob`, `pi.fs.list`, `pi.fs.requestDirectory` | `fs.readText`, `fs.glob`, `fs.list` |
-| `fs.write` | `pi.fs.writeText` | `fs.writeText` |
+| `fs.write` | `pi.fs.writeText`, `pi.fs.writeBase64` | `fs.writeText`, `fs.writeBase64` |
 | `fs.delete` | `pi.fs.remove` | Not exposed |
 | `clipboard.read` | `pi.clipboard.readText`, `pi.clipboard.getHistory` | `clipboard.readText`, `clipboard.getHistory` |
 | `clipboard.write` | `pi.clipboard.writeText` | `clipboard.writeText` |
@@ -394,6 +394,21 @@ Use `fs.list` rather than `fs.glob` when you are showing a tree: it returns one
 directory at a time (name-sorted, directories included), so the user expands
 what they want instead of waiting on a whole-repo walk that is capped at 500
 matches. Both obey the same read scope.
+
+Binary output has its own call: `pi.fs.writeBase64(path, base64)` writes the
+bytes encoded in `base64` and resolves to `{ ok, bytes, path }`, where `bytes` is
+the number of bytes that reached the disk and `path` is the root-relative path
+you passed in. It needs `fs.write` and obeys `manifest.fs.write` exactly like
+`fs.writeText`, creates missing parent directories, and records the file in the
+plugin's write ledger so `fs.delete` with `own` can remove it later. Use it for
+anything that is not UTF-8 text — a docx, xlsx, pptx, image, or archive — and
+keep `fs.writeText` for text: a zip container written as text is not a slightly
+broken document but an unopenable one. The payload is checked before anything
+touches the disk: a non-string, a character outside the base64 alphabet, a
+length that is not a whole group, or a payload that decodes to nothing is
+rejected with `INVALID_ARGUMENT` rather than being decoded into a truncated
+file. One call may write at most 32 MiB. The panel bridge exposes the same call
+as `fs.writeBase64` with a `{ path, base64 }` payload.
 
 A file permission is only half the declaration: `manifest.fs` says which paths
 each mode may touch (see §6.5). Paths are relative to the mode's root. Absolute

@@ -701,6 +701,15 @@ export type PluginFsRange = {
   totalSize: number;
 };
 
+/** What one `fs.writeBase64` call actually wrote. */
+export type PluginFsWriteResult = {
+  ok: true;
+  /** Bytes written to disk, after base64 decoding. */
+  bytes: number;
+  /** Root-relative path that was written, usable with later fs calls. */
+  path: string;
+};
+
 export type PluginDesktopOperation = {
   id: string;
   description: string;
@@ -966,6 +975,16 @@ export type PluginHostApi = {
     /** Reveal an existing readable file in the operating system's file manager. */
     reveal: (pathFromRoot: string) => Promise<void>;
     writeText: (pathFromRoot: string, content: string) => Promise<void>;
+    /**
+     * Write binary bytes encoded as base64 — the only sane way to produce a
+     * docx, xlsx, pptx, image or archive, since `writeText` is UTF-8 and would
+     * rewrite a zip container into an unopenable file. Honors the same
+     * `fs.write` permission and scope, creates missing parent directories, and
+     * records the file so `fs.delete` with `own` may remove it without asking.
+     * Invalid base64 is rejected instead of being decoded to a short file, and
+     * one call may write at most 32 MiB.
+     */
+    writeBase64: (pathFromRoot: string, dataBase64: string) => Promise<PluginFsWriteResult>;
     glob: (pattern: string) => Promise<string[]>;
     /**
      * One directory's entries, sorted by name. Lets a plugin walk a tree lazily

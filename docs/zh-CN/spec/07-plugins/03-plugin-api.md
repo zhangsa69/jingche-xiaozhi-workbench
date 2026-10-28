@@ -159,6 +159,11 @@ pi.fs.readPreview(pathFromRoot: string): Promise<{
 pi.fs.openDefault(pathFromRoot: string): Promise<void>
 pi.fs.reveal(pathFromRoot: string): Promise<void>
 pi.fs.writeText(pathFromRoot: string, content: string): Promise<void>
+pi.fs.writeBase64(pathFromRoot: string, dataBase64: string): Promise<{
+  ok: true
+  bytes: number        // 真正落盘的字节数
+  path: string         // 被写入的 root 相对路径
+}>
 pi.fs.glob(pattern: string): Promise<string[]>
 pi.fs.list(pathFromRoot: string): Promise<Array<{
   name: string;
@@ -190,6 +195,17 @@ pi.fs.requestDirectory(): Promise<{ path: string; name: string } | null>
 `fs.reveal` 在操作系统文件管理器中显示一个已存在且可读取的文件，并在平台支持时选中它。
 它使用相同的 `fs.read` 检查，拒绝目录，并记录成功和失败。路径的接受方式与 `fs.openDefault`
 完全一致：默认相对根目录，落在本项目另一个已注册文件夹根之内时可以是绝对路径（ADR 0264）。
+
+`fs.writeBase64` 是 `fs.writeText` 的二进制对应物：它解码严格 base64 载荷，
+把得到的字节写入磁盘（自动创建缺失的父目录），返回 `{ ok, bytes, path }`——
+真正落盘的字节数与被写入的 root 相对路径。它经过与 `fs.writeText` 相同的
+root、软链、受保护路径、deny-list、范围与同意检查，把该文件记入插件的写入台账，
+使之后带 `own` 的 `fs.delete` 可以删除它，并以字节数审计 `fs.writeBase64`。
+载荷在以下情况以 `INVALID_ARGUMENT` 拒绝：不是字符串、不是规范 base64
+（字母表之外的字符、长度不是完整的四字符分组、填充符出现在结尾之外）、
+解码后为零字节，或者超过单次 32 MiB 的上限。docx、xlsx、pptx、图片或压缩包
+必须走这个调用：这些格式不是 UTF-8 文本，用 `fs.writeText` 存下来的是
+打不开的文件，而不是文档。
 
 路径相对于该模式的 root —— 工作区，或者当该模式声明
 `root: "userSelected"` 时，用户通过 `requestDirectory()` 选中的目录。
@@ -763,7 +779,7 @@ window.pluginBridge.on(event, handler)
 | `app.setTheme`、`themes.upsert`、`themes.remove`、`themes.list` | `ui.theme` |
 | `models.list` | `models.list` |
 | `fs.readText`、`fs.readPreview`、`fs.openDefault`、`fs.reveal`、`fs.glob`、`fs.list` | `fs.read` |
-| `fs.writeText` | `fs.write` |
+| `fs.writeText`、`fs.writeBase64` | `fs.write` |
 | `clipboard.readText`、`clipboard.getHistory` | `clipboard.read` |
 | `clipboard.writeText` | `clipboard.write` |
 | `shell.openExternal` | `shell.openExternal` |
@@ -796,6 +812,7 @@ window.pluginBridge.on(event, handler)
 必须记录以下任何调用以供审核：
 
 - fs.writeText
+- fs.writeBase64（含解码后的字节数）
 - fs.remove、fs.requestDirectory，以及每一次被拒绝的 fs 调用（连同路径与
   `errorCode`），还有每一次同意的答复及其被问的原因（`scope` / `rate`）
 - fs.openDefault（记录 root-relative 路径以及系统打开是否成功）
@@ -834,7 +851,7 @@ window.pluginBridge.on(event, handler)
 
 - `app.*`、`plugin.*`、`commands.*`、`ui.*`、`workspace.*`
 - `fs.readText` / `fs.readPreview` / `fs.openDefault` / `fs.reveal` /
-  `fs.writeText` / `fs.glob` / `fs.list` / `fs.remove` / `fs.requestDirectory`，
+  `fs.writeText` / `fs.writeBase64` / `fs.glob` / `fs.list` / `fs.remove` / `fs.requestDirectory`，
   范围由 `manifest.fs` 限定（ADR 0088）
 - `agent.registerTool` / `unregisterTool` / `agent.complete`
 - `models.list`、`session.getLlmContext`

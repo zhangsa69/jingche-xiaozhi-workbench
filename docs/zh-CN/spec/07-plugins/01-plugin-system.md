@@ -274,6 +274,7 @@ Host Main (PI-Desktop)
 - `pi.fs.openDefault(path)` // 使用系统关联应用打开选中的文件
 - `pi.fs.reveal(path)` // 在系统文件管理器中显示选中的文件
 - `pi.fs.writeText(path, content)` // 高风险
+- `pi.fs.writeBase64(path, base64)` // 二进制产物：docx/xlsx/pptx、图片、压缩包；单次 32 MiB
 - `pi.fs.glob(pattern)`
 
 ### Agent（需要许可）

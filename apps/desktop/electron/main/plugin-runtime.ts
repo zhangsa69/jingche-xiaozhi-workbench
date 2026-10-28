@@ -454,6 +454,7 @@ const HOST_API_ALLOWLIST = new Set([
   "fs.openDefault",
   "fs.reveal",
   "fs.writeText",
+  "fs.writeBase64",
   "fs.glob",
   "fs.list",
   "fs.remove",
@@ -588,6 +589,14 @@ const MAX_GLOB_MATCHES = 500;
 const MAX_LIST_ENTRIES = 1000;
 /** Maximum bytes one plugin range call may cross the broker with. */
 const MAX_FS_READ_RANGE_BYTES = 8 * 1024 * 1024;
+/**
+ * Maximum bytes one `fs.writeBase64` call may hand the host.
+ *
+ * A document-writing plugin legitimately produces a few megabytes; 32 MiB
+ * leaves room for a rich deck while keeping a single call from pinning the main
+ * process's heap. Larger artifacts belong in several files, not one frame.
+ */
+export const MAX_FS_WRITE_BYTES = 32 * 1024 * 1024;
 /** Directories `pi.fs.glob` never walks into; they are noise and are denied anyway. */
 const GLOB_SKIP_DIRS = new Set([".git", "node_modules", ".venv", "__pycache__"]);
 /** Entries in one plugin's write ledger; oldest are dropped past this. */
@@ -637,6 +646,72 @@ function apiError(code: string, message: string): PluginApiError {
   const err = new Error(message) as PluginApiError;
   err.code = code;
   return err;
+}
+
+/**
+ * Strict base64 for `fs.writeBase64`.
+ *
+ * `Buffer.from(value, "base64")` is forgiving by design: it drops characters it
+ * does not recognize and stops at the first malformed group, so a corrupted
+ * payload decodes to a short buffer and the docx/xlsx/pptx the plugin just
+ * "wrote" fails to open somewhere far from the call that caused it. Refusing at
+ * the boundary is the cheaper failure. The size check runs on the encoded
+ * length first so an oversized payload is rejected before its bytes are
+ * materialized.
+ */
+function decodeBase64Write(value: unknown): Buffer {
+  if (typeof value !== "string") {
+    throw apiError("INVALID_ARGUMENT", "dataBase64 must be a base64 string");
+  }
+  if (value.length % 4 !== 0) {
+    throw apiError("INVALID_ARGUMENT", "dataBase64 is not valid base64");
+  }
+  // Four characters carry three bytes; anything longer cannot be under the cap,
+  // and rejecting it here also keeps the alphabet scan below off huge inputs.
+  if (value.length > Math.ceil(MAX_FS_WRITE_BYTES / 3) * 4) {
+    throw apiError("INVALID_ARGUMENT", `dataBase64 exceeds the ${MAX_FS_WRITE_BYTES}-byte write limit`);
+  }
+  if (!isStrictBase64(value)) {
+    throw apiError("INVALID_ARGUMENT", "dataBase64 is not valid base64");
+  }
+  const buffer = Buffer.from(value, "base64");
+  if (buffer.length === 0) {
+    throw apiError("INVALID_ARGUMENT", "dataBase64 decodes to an empty file");
+  }
+  if (buffer.length > MAX_FS_WRITE_BYTES) {
+    throw apiError("INVALID_ARGUMENT", `dataBase64 exceeds the ${MAX_FS_WRITE_BYTES}-byte write limit`);
+  }
+  return buffer;
+}
+
+/**
+ * Canonical base64: alphabet characters only, with any padding confined to the
+ * final one or two characters. The caller has already required a whole number
+ * of four-character groups.
+ *
+ * A character loop, not a regular expression: a 30 MiB payload blows the
+ * regexp engine's backtracking stack, and a stack overflow here would surface
+ * as an uncoded crash instead of a refusal.
+ */
+function isStrictBase64(value: string): boolean {
+  let end = value.length;
+  let padding = 0;
+  while (end > 0 && value.charCodeAt(end - 1) === 0x3d) {
+    padding += 1;
+    end -= 1;
+    if (padding > 2) return false;
+  }
+  for (let i = 0; i < end; i += 1) {
+    const code = value.charCodeAt(i);
+    const isAlphabet =
+      (code >= 0x41 && code <= 0x5a) || // A-Z
+      (code >= 0x61 && code <= 0x7a) || // a-z
+      (code >= 0x30 && code <= 0x39) || // 0-9
+      code === 0x2b || // +
+      code === 0x2f; // /
+    if (!isAlphabet) return false;
+  }
+  return true;
 }
 
 function pluginActionEnum(schema: unknown): readonly string[] | null {
@@ -1747,6 +1822,10 @@ export class PluginRuntime {
       case "fs.writeText":
         await api.fs.writeText(String(payload?.path ?? ""), String(payload?.content ?? ""));
         return { ok: true };
+      case "fs.writeBase64":
+        // The payload is passed through uncoerced: a non-string has to reach the
+        // write path as the bad argument it is, not as the string "undefined".
+        return api.fs.writeBase64(String(payload?.path ?? ""), payload?.base64 as string);
       case "fs.glob":
         return api.fs.glob(String(payload?.pattern ?? "*"));
       case "fs.list":
@@ -4856,6 +4935,42 @@ export class PluginRuntime {
             ts: Date.now(),
             path: rel,
           });
+        },
+        /**
+         * The binary half of `writeText`: a docx/xlsx/pptx is a zip archive, and
+         * any text round trip rewrites its bytes into an unopenable file. The
+         * payload is base64 because the broker frame is JSON.
+         */
+        writeBase64: async (pathFromRoot: string, dataBase64: string) => {
+          const { full, rel } = await this.resolveFsRequest(
+            loaded,
+            "write",
+            pathFromRoot,
+            { create: true },
+          );
+          let bytes: Buffer;
+          try {
+            bytes = decodeBase64Write(dataBase64);
+          } catch (error) {
+            // The path is already cleared at this point, so the refusal is
+            // audited against it like every other argument failure.
+            this.auditFs(loaded, "write", rel, "INVALID_ARGUMENT");
+            throw error;
+          }
+          mkdirSync(dirname(full), { recursive: true });
+          writeFileSync(full, bytes);
+          // Same ledger as `writeText`, so `fs.delete` with `own` can remove a
+          // generated document without asking.
+          this.recordWrite(loaded, full);
+          this.services.audit?.({
+            pluginId,
+            api: "fs.writeBase64",
+            ok: true,
+            ts: Date.now(),
+            path: rel,
+            data: { bytes: bytes.length },
+          });
+          return { ok: true, bytes: bytes.length, path: rel };
         },
         glob: async (pattern: string) => {
           this.assertPermission(loaded, "fs.read");

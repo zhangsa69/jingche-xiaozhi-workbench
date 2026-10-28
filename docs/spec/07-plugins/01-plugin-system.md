@@ -288,6 +288,7 @@ Namespace: `pi.plugin.*`
 - `pi.fs.openDefault(path)` // open the selected file with the OS-associated app
 - `pi.fs.reveal(path)` // show the selected file in the OS file manager
 - `pi.fs.writeText(path, content)` // high risk
+- `pi.fs.writeBase64(path, base64)` // binary output: docx/xlsx/pptx, images, archives; 32 MiB per call
 - `pi.fs.glob(pattern)`
 
 ### Agent (requires permission)

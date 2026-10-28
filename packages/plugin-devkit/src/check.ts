@@ -55,7 +55,7 @@ const PERMISSION_API_HINTS: Record<string, string[]> = {
     "fs.list",
     "fs.requestDirectory",
   ],
-  "fs.write": ["fs.writeText"],
+  "fs.write": ["fs.writeText", "fs.writeBase64"],
   "fs.delete": ["fs.remove"],
   "agent.tool.register": ["agent.registerTool"],
   "net.fetch": ["net.fetch"],

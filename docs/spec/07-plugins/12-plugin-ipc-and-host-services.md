@@ -189,7 +189,7 @@ Panel bridge file channels are permission-gated as follows:
 |---|---|
 | `fs.readText`, `fs.stat`, `fs.readRange`, `fs.readPreview`, `fs.openDefault`, `fs.reveal`, `fs.glob`, `fs.list` | `fs.read` |
 | `fs.registerDropped` | `fs.read` plus a real drop gesture |
-| `fs.writeText` | `fs.write` |
+| `fs.writeText`, `fs.writeBase64` (payload `{ path, base64 }`) | `fs.write` |
 
 ## 8. Failure isolation
 

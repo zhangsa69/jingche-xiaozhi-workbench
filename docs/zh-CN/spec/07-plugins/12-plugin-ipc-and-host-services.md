@@ -171,7 +171,7 @@ plugin runtime
 |---|---|
 | `fs.readText`、`fs.stat`、`fs.readRange`、`fs.readPreview`、`fs.openDefault`、`fs.reveal`、`fs.glob`、`fs.list` | `fs.read` |
 | `fs.registerDropped` | `fs.read` 加真实拖拽手势 |
-| `fs.writeText` | `fs.write` |
+| `fs.writeText`、`fs.writeBase64`（载荷为 `{ path, base64 }`） | `fs.write` |
 
 ## 8. 故障隔离
 

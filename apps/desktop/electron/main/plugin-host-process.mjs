@@ -238,6 +238,10 @@ function buildApi() {
       openDefault: (path) => call("fs.openDefault", [path]),
       reveal: (path) => call("fs.reveal", [path]),
       writeText: (path, content) => call("fs.writeText", [path, content]),
+      // Binary output (docx, xlsx, pptx, images) crosses the broker as base64
+      // because the frame is JSON: a Buffer would arrive as a plain object and
+      // `writeText` would corrupt the archive.
+      writeBase64: (path, dataBase64) => call("fs.writeBase64", [path, dataBase64]),
       glob: (pattern) => call("fs.glob", [pattern]),
       list: (path) => call("fs.list", [path]),
       remove: (path) => call("fs.remove", [path]),

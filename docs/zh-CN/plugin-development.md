@@ -378,13 +378,24 @@ const dataPath = await pi.plugin.getDataPath();
 | 许可 | 插件进程 API | 面板桥通道 |
 |---|---|---|
 | `fs.read` | `pi.fs.readText`、`pi.fs.glob`、`pi.fs.requestDirectory` | `fs.readText`、`fs.glob` |
-| `fs.write` | `pi.fs.writeText` | `fs.writeText` |
+| `fs.write` | `pi.fs.writeText`、`pi.fs.writeBase64` | `fs.writeText`、`fs.writeBase64` |
 | `fs.delete` | `pi.fs.remove` | 没有暴露 |
 | `clipboard.read` | `pi.clipboard.readText`、`pi.clipboard.getHistory` | `clipboard.readText`、`clipboard.getHistory` |
 | `clipboard.write` | `pi.clipboard.writeText` | `clipboard.writeText` |
 | `net.fetch` | `pi.net.fetch` | `net.fetch` |
 | `shell.openExternal` | `pi.shell.openExternal` | `shell.openExternal` |
 | `notify` | `pi.ui.notify`、`pi.ui.getNotificationPermission`、`pi.ui.requestNotificationPermission`、`pi.ui.showNativeNotification` | `ui.notify`、`ui.getNotificationPermission`、`ui.requestNotificationPermission`、`ui.showNativeNotification` |
+
+二进制产物有自己的调用：`pi.fs.writeBase64(path, base64)` 写出 `base64` 编码的字节，
+返回 `{ ok, bytes, path }`，其中 `bytes` 是真正落盘的字节数，`path` 是传入的
+root 相对路径。它需要 `fs.write`，并且和 `fs.writeText` 一样受
+`manifest.fs.write` 约束，会自动创建缺失的父目录，并把该文件记进插件的写入台账，
+因此之后带 `own` 的 `fs.delete` 可以删除它。凡是不是 UTF-8 文本的产物——docx、
+xlsx、pptx、图片或压缩包——都用它，文本才用 `fs.writeText`：把 zip 容器当文本
+写出来不是「稍微有点坏的文档」，而是打不开的文档。载荷在落盘之前就会校验：
+非字符串、base64 字母表之外的字符、长度不是完整分组，以及解码后为空的载荷，
+都会以 `INVALID_ARGUMENT` 拒绝，而不是被解码成一个被截断的文件。单次调用最多写
+32 MiB。面板桥以 `fs.writeBase64` 暴露同一个调用，载荷为 `{ path, base64 }`。
 
 文件权限只是声明的一半：`manifest.fs` 说明每种模式可以触碰哪些路径
 （见 §6.5）。路径相对于该模式的 root。绝对路径、`..` 逃逸，以及离开 root
