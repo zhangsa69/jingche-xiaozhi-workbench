@@ -226,7 +226,7 @@
 | W-16 | **变更追踪增强**：按文件分组、批量回滚、与消息双向定位 | 26 | `workpanel/ReviewTab.tsx:9-47`、`protocol.ts:239`。**已实施**：`lib/review-groups.ts` 分组 + 倒序回滚，`lib/locate-message.ts` 定位；单条回滚保留 | M |
 | W-17 | **运行日志面板**：按会话时间窗过滤、分类、搜索、跟随尾部 | 19 | `logger.ts:236-341`、新 RPC `logTail`。**已实施**：`log/tail` 按 256 KiB 尾部窗口读 NDJSON（丢掉半行），渲染端切通道 / 级别 / 搜索 / 跟随（2s 轮询），未知通道报 `INVALID_ARGUMENT`；截断显式提示 | L |
 | W-18 | **任务历史与重启**：历史任务页（重跑 / 复用输入 / 复用工作空间） | 3/16 | `Sidebar.tsx:1571`、新建 `pages/TasksPage.tsx` | M |
-| W-19 | **富格式预览**：docx/xlsx/pptx 转 HTML 交给内嵌浏览器；PDF 用 Electron 自带 viewer | 27/33 | `browser-host.ts:60`、`protocol.ts:240-245` | M |
+| W-19 | **富格式预览**：docx/xlsx/pptx 转 HTML 交给内嵌浏览器；PDF 用 Electron 自带 viewer | 27/33 | `browser-host.ts:60`、`protocol.ts:240-245`。**已实施（形态调整）**：不走「转 HTML 交内嵌浏览器」——仓库无 `mammoth`/SheetJS 且无离线包，且 HTML 通道要额外做注入清洗；改为主进程零依赖解析成结构化 JSON（ZIP 支持 store/deflate、xlsx 认 `sharedStrings`），渲染端用 `<table>`/`<p>`/`<li>` 画。失败回落 `unsupported{extension,corrupt,too-large}` + 「用系统程序打开」，超限置 `truncated` 提示。PDF 仍走既有 `PdfView` | M |
 | W-20 | **首次授权引导 + 空间概念**：新任务时选择/授权工作目录，展示文件落点 | 5/49 | `workspace-roots.ts:44-82`、`plugin-fs-consent.ts:21-51` | M |
 | W-21 | **应用内隐私说明页**：明确哪些内容上行、哪些只在本机 | 50 | `docs/privacy-policy.md`、`features/settings/SettingsPage.tsx` | S |
 | W-22 | **模板体系**：文档/PPT 模板目录 + 变量 + 批量套用（先文件模板，后可视化编辑） | 36 | `workspace-ipc.ts:66`（现有模板加载）、`agent-runtime/src/prompt-templates.ts` | M |
