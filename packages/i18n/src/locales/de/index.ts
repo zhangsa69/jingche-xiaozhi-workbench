@@ -232,6 +232,20 @@ export const de = {
     referenceUnavailable: "Sitzung nicht verfügbar",
     sessionMissing: "Diese Sitzung existiert nicht mehr",
   },
+  "contextPins": {
+    "title": "Angehefteter Kontext",
+    "open": "Frühere Beiträge anheften",
+    "hint": "Angehakte Beiträge werden wörtlich mit der nächsten Nachricht gesendet, damit auch eine komprimierte Unterhaltung exakt zitiert werden kann.",
+    "budget": "{{used}} / {{total}} Zeichen",
+    "empty": "Noch nichts zum Anheften",
+    "selected": "{{count}} ausgewählt",
+    "clear": "Leeren",
+    "role": {
+      "user": "du",
+      "assistant": "Assistent",
+      "system": "Notiz",
+    },
+  },
   "chat": {
     "contextRefMenu": "Unterhaltung referenzieren",
     "contextRefEmpty": "Keine passende Unterhaltung",

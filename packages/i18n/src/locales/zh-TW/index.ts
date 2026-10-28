@@ -234,6 +234,20 @@ export const zhTW = {
     referenceUnavailable: "對話無法使用",
     sessionMissing: "該對話已不存在",
   },
+  contextPins: {
+    title: "已固定的上下文",
+    open: "固定前面的對話",
+    hint: "勾選的對話會隨下一則訊息原樣送出，長對話被壓縮後仍能精確引用。",
+    budget: "{{used}} / {{total}} 字元",
+    empty: "還沒有可固定的內容",
+    selected: "已勾選 {{count}} 段",
+    clear: "清空",
+    role: {
+      user: "你",
+      assistant: "助手",
+      system: "備註",
+    },
+  },
   chat: {
     contextRefMenu: "引用一條對話",
     contextRefEmpty: "沒有符合的對話",

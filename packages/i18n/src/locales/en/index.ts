@@ -239,6 +239,20 @@ export const en = {
     referenceUnavailable: "Session unavailable",
     sessionMissing: "That session no longer exists",
   },
+  contextPins: {
+    title: "Pinned context",
+    open: "Pin earlier turns",
+    hint: "Ticked turns are sent verbatim with your next message, so even a compacted conversation can still be quoted exactly.",
+    budget: "{{used}} / {{total}} characters",
+    empty: "Nothing to pin yet",
+    selected: "{{count}} ticked",
+    clear: "Clear",
+    role: {
+      user: "you",
+      assistant: "assistant",
+      system: "note",
+    },
+  },
   chat: {
     contextRefMenu: "Reference a conversation",
     contextRefEmpty: "No conversation matches",

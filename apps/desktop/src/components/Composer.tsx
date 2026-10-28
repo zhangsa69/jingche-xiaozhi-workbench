@@ -11,11 +11,16 @@ import type {
   PermissionMode,
 } from "@pi-desktop/shared";
 import {
+  buildContextPinBlock,
   buildContextReferenceBlock,
+  contextPinCandidates,
+  contextPinUsage,
   findContextReferences,
   initialThinkingLevelForBinding,
+  MAX_CONTEXT_PIN_CHARS,
   modelIdsMatch,
   normalizeLargePasteThreshold,
+  selectContextPins,
   stripContextReferenceTokens,
   stripInlineComposerFileReferenceTokens,
 } from "@pi-desktop/shared";
@@ -38,6 +43,7 @@ import {
 } from "../hooks/use-composer-autocomplete";
 import { usePromptLibrary } from "../hooks/use-prompt-library";
 import { ComposerAutocomplete } from "./ComposerAutocomplete";
+import type { ContextPickerController } from "./ContextPickerSheet";
 import { AskToolCard } from "./AskToolCard";
 import { PlanApprovalBar } from "./PlanApprovalBar";
 import {
@@ -441,7 +447,58 @@ export function Composer({
   const stripContextReferences = contextReferences.strip;
 
   /**
-   * The quoted block is attached at the store boundary rather than inside the
+   * Pinned turns (W-33). Ticks live in the composer and are sent as a quoted
+   * block, never merged into the draft — the box keeps showing the sentence the
+   * user is writing, not a wall of replayed history.
+   */
+  const transcriptMessages = useAppStore((state) => state.messages);
+  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
+  const [pinsOpen, setPinsOpen] = useState(false);
+  const pinCandidates = useMemo(
+    () =>
+      contextPinCandidates(
+        // Tool payloads are not turns a person can point at; pins quote the
+        // conversation, not the machinery under it.
+        transcriptMessages
+          .filter(
+            (message): message is typeof message & { role: "user" | "assistant" | "system" } =>
+              message.role !== "tool",
+          )
+          .map((message) => ({
+            id: message.id,
+            role: message.role,
+            text: message.content,
+          })),
+      ),
+    [transcriptMessages],
+  );
+  const pinSelection = useMemo(
+    () => selectContextPins(pinCandidates, pinnedIds),
+    [pinCandidates, pinnedIds],
+  );
+  // Ticks reference message ids of one transcript; carrying them across a
+  // session switch would pin turns the user never saw.
+  useEffect(() => {
+    setPinnedIds([]);
+    setPinsOpen(false);
+  }, [activeSessionId]);
+  const contextPicker: ContextPickerController = {
+    open: pinsOpen,
+    toggleOpen: () => setPinsOpen((open) => !open),
+    close: () => setPinsOpen(false),
+    candidates: pinCandidates,
+    selected: pinnedIds,
+    toggle: (id: string) =>
+      setPinnedIds((current) =>
+        current.includes(id) ? current.filter((entry) => entry !== id) : [...current, id],
+      ),
+    clear: () => setPinnedIds([]),
+    used: contextPinUsage(pinSelection.pins),
+    budget: MAX_CONTEXT_PIN_CHARS,
+  };
+
+  /**
+   * The quoted blocks are attached at the store boundary rather than inside the
    * submit path, so the draft that gets restored, cleared and measured is still
    * exactly what the user typed.
    */
@@ -449,7 +506,18 @@ export function Composer({
     content: string,
     draft?: ComposerDraftSnapshot,
     sessionId?: string,
-  ) => sendPromptRaw(contextReferences.decorate(content), draft, sessionId);
+  ) => {
+    const pinBlock = buildContextPinBlock(pinSelection.pins);
+    const withPins = pinBlock ? `${content}\n\n${pinBlock}` : content;
+    return sendPromptRaw(contextReferences.decorate(withPins), draft, sessionId).then(
+      (accepted) => {
+        // Pins were delivered with this turn; keeping them ticked would quietly
+        // resend the same history on the next message.
+        if (accepted) setPinnedIds([]);
+        return accepted;
+      },
+    );
+  };
 
   useEffect(() => {
     if (!controlsBlocked) return;
@@ -677,6 +745,7 @@ export function Composer({
             runActive={runActive}
             hasDraftContent={hasDraftContent}
             promptLibrary={promptLibrary}
+            contextPicker={contextPicker}
             abort={abort}
             submit={submit}
           />

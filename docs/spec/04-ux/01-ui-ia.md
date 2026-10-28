@@ -371,7 +371,23 @@ looked closest. References never target the conversation being written in, and o
 draft cites at most six. The prompt library records the cleaned sentence, not the
 `#"Title"` syntax.
 
-### 3.12 Extensions
+### 3.12 Pinned context
+
+The toolbar's tick button opens a list of this conversation's turns. Ticking one
+pins it; the number on the button is how many are pinned.
+
+Pinned turns are **not** pasted into the box. The draft keeps showing the sentence
+being written, and at send time the ticks become a quoted block placed above the
+prompt: role, verbatim text, and a line saying the live transcript may no longer
+carry them. After compaction that is the difference between quoting an agreement
+and asking the model to remember one it can no longer see.
+
+The footer counts characters, not tokens, because this is the number the user
+actually controls. Eight turns and 1,600 characters per prompt; a turn that does
+not fit is dropped rather than cut in half, and the ticks clear once the message
+is accepted so the same history is not quietly resent.
+
+### 3.13 Extensions
 
 The Extensions destination is a focused plugin surface with a compact header and
 only two tabs: **Installed** and **Marketplace**. Installed groups plugin rows
@@ -384,7 +400,7 @@ marketplace source settings show the source selector without a redundant
 provider explanation or active-source status line. MCP, Skills, and Subagents
 are not tabs or sections of Extensions.
 
-### 3.13 Settings (full-page takeover)
+### 3.14 Settings (full-page takeover)
 Settings replaces the whole shell (D063): back-to-app + search + a grouped
 settings rail with concise, parallel destination labels. The Agent group
 contains independent Skills, MCP, and Subagents destinations alongside

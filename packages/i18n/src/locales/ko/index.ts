@@ -241,6 +241,20 @@ export const ko = {
     referenceUnavailable: "세션을 사용할 수 없음",
     sessionMissing: "해당 세션이 더 이상 존재하지 않습니다",
   },
+  contextPins: {
+    title: "고정된 컨텍스트",
+    open: "이전 대화 고정",
+    hint: "체크한 대화는 다음 메시지와 함께 원문 그대로 전송되어, 압축된 대화도 정확히 인용할 수 있습니다.",
+    budget: "{{used}} / {{total}}자",
+    empty: "아직 고정할 내용이 없습니다",
+    selected: "{{count}}개 선택됨",
+    clear: "지우기",
+    role: {
+      user: "나",
+      assistant: "어시스턴트",
+      system: "메모",
+    },
+  },
   chat: {
     contextRefMenu: "대화 참조",
     contextRefEmpty: "일치하는 대화 없음",

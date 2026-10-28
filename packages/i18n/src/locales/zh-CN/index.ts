@@ -234,6 +234,20 @@ export const zhCN = {
     referenceUnavailable: "会话不可用",
     sessionMissing: "该会话已不存在",
   },
+  contextPins: {
+    title: "已固定的上下文",
+    open: "固定前面的对话",
+    hint: "勾选的对话会随下一条消息原样发出，长对话被压缩后仍能精确引用。",
+    budget: "{{used}} / {{total}} 字符",
+    empty: "还没有可固定的内容",
+    selected: "已勾选 {{count}} 段",
+    clear: "清空",
+    role: {
+      user: "你",
+      assistant: "助手",
+      system: "备注",
+    },
+  },
   chat: {
     contextRefMenu: "引用一条对话",
     contextRefEmpty: "没有匹配的对话",

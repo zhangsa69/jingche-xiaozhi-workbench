@@ -10,6 +10,10 @@ import {
 import type { AppState } from "../../../stores/app-store";
 import type { PromptLibraryController } from "../../../hooks/use-prompt-library";
 import { PromptLibrarySheet } from "../../../components/PromptLibrarySheet";
+import {
+  ContextPickerSheet,
+  type ContextPickerController,
+} from "../../../components/ContextPickerSheet";
 import { AnchoredMenu } from "../../../components/settings/AnchoredMenu";
 import { ContextUsageInspector } from "../../../components/ContextUsageInspector";
 import { TooltipButton } from "../../../components/ui";
@@ -65,6 +69,8 @@ export type ComposerToolbarProps = {
   runActive: boolean;
   hasDraftContent: boolean;
   promptLibrary: PromptLibraryController;
+  /** Ticked turns replayed verbatim with the next prompt (W-33). */
+  contextPicker: ContextPickerController;
   abort: AppState["abort"];
   submit: () => Promise<void>;
 };
@@ -101,6 +107,7 @@ export function ComposerToolbar({
   runActive,
   hasDraftContent,
   promptLibrary,
+  contextPicker,
   abort,
   submit,
 }: ComposerToolbarProps) {
@@ -242,6 +249,7 @@ export function ComposerToolbar({
             </button>
           ))}
         </AnchoredMenu>
+        <ContextPickerSheet t={t} controller={contextPicker} />
         <PromptLibrarySheet t={t} controller={promptLibrary} />
       </div>
 

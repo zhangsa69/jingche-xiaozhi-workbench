@@ -51,8 +51,10 @@ test("the composer decorates at the store boundary, leaving the submit path inta
   assert.match(composer, /buildContextReferenceBlock\(withExcerpts\)/);
   assert.match(
     composer,
-    /sendPromptRaw\(contextReferences\.decorate\(content\), draft, sessionId\)/,
+    /sendPromptRaw\(contextReferences\.decorate\(withPins\), draft, sessionId\)/,
   );
+  // Pinned turns (W-33) ride ahead of the reference block, both outside the draft.
+  assert.match(composer, /const withPins = pinBlock \? `\$\{content\}\\n\\n\$\{pinBlock\}` : content;/);
   // Restore, clear and measurement still see exactly what the user typed.
   assert.doesNotMatch(submit, /contextReferences/);
   assert.doesNotMatch(submit, /decorate\(/);

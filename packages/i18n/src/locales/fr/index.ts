@@ -232,6 +232,20 @@ export const fr = {
     referenceUnavailable: "Session indisponible",
     sessionMissing: "Cette session n'existe plus",
   },
+  "contextPins": {
+    "title": "Contexte épinglé",
+    "open": "Épingler des tours précédents",
+    "hint": "Les tours cochés sont envoyés mot pour mot avec le message suivant, pour qu'une conversation compactée reste citable à l'identique.",
+    "budget": "{{used}} / {{total}} caractères",
+    "empty": "Rien à épingler pour l'instant",
+    "selected": "{{count}} cochés",
+    "clear": "Vider",
+    "role": {
+      "user": "vous",
+      "assistant": "assistant",
+      "system": "note",
+    },
+  },
   "chat": {
     "contextRefMenu": "Référencer une conversation",
     "contextRefEmpty": "Aucune conversation ne correspond",

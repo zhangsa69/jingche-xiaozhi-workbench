@@ -232,6 +232,20 @@ export const es = {
     referenceUnavailable: "Sesión no disponible",
     sessionMissing: "Esa sesión ya no existe",
   },
+  "contextPins": {
+    "title": "Contexto fijado",
+    "open": "Fijar turnos anteriores",
+    "hint": "Los turnos marcados se envían literalmente con el siguiente mensaje, para que una conversación compactada aún pueda citarse con exactitud.",
+    "budget": "{{used}} / {{total}} caracteres",
+    "empty": "Aún no hay nada que fijar",
+    "selected": "{{count}} marcados",
+    "clear": "Limpiar",
+    "role": {
+      "user": "tú",
+      "assistant": "asistente",
+      "system": "nota",
+    },
+  },
   "chat": {
     "contextRefMenu": "Referenciar una conversación",
     "contextRefEmpty": "Ninguna conversación coincide",

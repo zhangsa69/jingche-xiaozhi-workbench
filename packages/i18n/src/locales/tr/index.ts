@@ -241,6 +241,20 @@ export const tr = {
     referenceUnavailable: "Oturum kullanılamıyor",
     sessionMissing: "Bu oturum artık mevcut değil",
   },
+  contextPins: {
+    title: "Sabitlenen bağlam",
+    open: "Önceki turları sabitle",
+    hint: "İşaretlenen turlar bir sonraki mesajla birebir gönderilir; sıkıştırılmış bir konuşma bile tam olarak alıntılanabilir.",
+    budget: "{{used}} / {{total}} karakter",
+    empty: "Henüz sabitlenecek içerik yok",
+    selected: "{{count}} seçili",
+    clear: "Temizle",
+    role: {
+      user: "sen",
+      assistant: "asistan",
+      system: "not",
+    },
+  },
   chat: {
     contextRefMenu: "Bir konuşmaya başvur",
     contextRefEmpty: "Eşleşen konuşma yok",

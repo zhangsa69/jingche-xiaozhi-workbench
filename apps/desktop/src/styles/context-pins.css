@@ -1,0 +1,199 @@
+/* Pinned-context picker — tick turns, send them verbatim. */
+
+.context-pins-anchor {
+  display: inline-flex;
+}
+
+.context-pins-trigger {
+  position: relative;
+}
+
+.context-pins-trigger.is-on {
+  color: var(--ds-text-primary);
+}
+
+.context-pins-count {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  min-width: 13px;
+  padding: 0 3px;
+  border-radius: var(--radius-full);
+  background: var(--ds-text-primary);
+  color: var(--ds-bg-base);
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--text-sm);
+  text-align: center;
+}
+
+.context-pins-menu {
+  width: 380px;
+  max-height: 440px;
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow: hidden;
+}
+
+.context-pins-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-1) 0;
+}
+
+.context-pins-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--ds-text-primary);
+}
+
+.context-pins-budget {
+  margin-inline-start: auto;
+  font-size: var(--text-2xs);
+  color: var(--ds-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.context-pins-close {
+  flex: none;
+}
+
+.context-pins-hint {
+  margin: 0;
+  padding: 0 var(--space-2);
+  font-size: var(--text-2xs);
+  color: var(--ds-text-faint);
+}
+
+.context-pins-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.context-pins-row {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ds-text-secondary);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--motion-duration-fast) var(--motion-ease-standard),
+    border-color var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.context-pins-row:hover {
+  background: var(--ds-tile-hover);
+  border-color: var(--ds-border-subtle);
+}
+
+.context-pins-row[data-checked="true"] {
+  background: var(--ds-tile);
+  border-color: var(--ds-border-strong);
+  color: var(--ds-text-primary);
+}
+
+.context-pins-box {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ds-border-strong);
+  border-radius: var(--radius-xs);
+  color: var(--ds-bg-base);
+}
+
+.context-pins-row[data-checked="true"] .context-pins-box {
+  background: var(--ds-text-primary);
+  border-color: var(--ds-text-primary);
+}
+
+.context-pins-role {
+  flex: none;
+  width: 62px;
+  font-size: var(--text-2xs);
+  color: var(--ds-text-muted);
+  text-transform: lowercase;
+}
+
+.context-pins-excerpt {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: var(--line-height-snug);
+}
+
+.context-pins-empty {
+  margin: 0;
+  padding: var(--space-3) var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--ds-text-faint);
+  text-align: center;
+}
+
+.context-pins-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-1) 0;
+  border-top: 1px solid var(--ds-border-subtle);
+}
+
+.context-pins-selected {
+  font-size: var(--text-2xs);
+  color: var(--ds-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.context-pins-clear {
+  margin-inline-start: auto;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--ds-text-secondary);
+  font-family: inherit;
+  font-size: var(--text-2xs);
+  cursor: pointer;
+  transition: color var(--motion-duration-fast) var(--motion-ease-standard),
+    border-color var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.context-pins-clear:hover:not(:disabled) {
+  color: var(--ds-text-primary);
+  border-color: var(--ds-border-strong);
+}
+
+.context-pins-clear:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .context-pins-row,
+  .context-pins-clear {
+    transition: none;
+  }
+}
