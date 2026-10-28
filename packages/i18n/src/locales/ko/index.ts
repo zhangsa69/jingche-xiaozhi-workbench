@@ -625,6 +625,17 @@ export const ko = {
     statusExpired: "목표 만료됨",
     statusInterrupted: "목표 중단됨",
   },
+  workspaceBrief: {
+    title: "시작하기 전에",
+    subtitleProject: "이 작업이 쓰는 파일은 모두 {{path}}에 저장됩니다.",
+    subtitleNone: "아직 폴더가 연결되지 않았습니다. 결과가 놓일 폴더를 먼저 고르세요.",
+    writesProject: "쓰기는 {{path}} 안에서만 일어나며, 범위를 벗어나면 먼저 묻습니다.",
+    writesNone: "폴더가 없으면 결과는 이 기기의 앱 데이터에 남습니다. 폴더를 고르면 작업 파일과 함께 보관됩니다.",
+    reads: "읽기는 이 폴더에서 시작하고, 범위를 벗어나면 매번 묻습니다.",
+    keeps: "대화 기록, 로그, 사용량 집계는 이 기기에 남습니다. 보낸 내용만 모델 제공자에게 전달됩니다.",
+    choose: "폴더 선택",
+    dismiss: "확인",
+  },
   onboarding: {
     title: "시작하기",
     addProvider: "AI 프로바이더 추가",

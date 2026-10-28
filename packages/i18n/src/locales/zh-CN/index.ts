@@ -618,6 +618,17 @@ export const zhCN = {
     statusExpired: "目标已过期",
     statusInterrupted: "目标已中断",
   },
+  workspaceBrief: {
+    title: "开工前先说明",
+    subtitleProject: "这个任务写出的文件都会落在 {{path}}。",
+    subtitleNone: "还没有绑定文件夹。先选一个，让产物有地方可落。",
+    writesProject: "写入都在 {{path}} 内；越界写入会先问过你。",
+    writesNone: "没有文件夹时，产物留在本机应用数据目录。选个文件夹，文件才会和你的工作放一起。",
+    reads: "读取默认从该文件夹开始；越出这个范围时每次都会问你。",
+    keeps: "转录、日志与用量统计都留在本机；只有你发出去的内容会到达模型服务商。",
+    choose: "选择文件夹",
+    dismiss: "知道了",
+  },
   onboarding: {
     title: "开始使用",
     addProvider: "添加 AI 模型服务",

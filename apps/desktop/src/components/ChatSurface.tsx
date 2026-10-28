@@ -6,6 +6,7 @@ import { HomeProjectSwitcher } from "./HomeProjectSwitcher";
 import { IconX } from "./icons";
 import { TooltipButton } from "./ui";
 import { OnboardingChecklist } from "./OnboardingChecklist";
+import { WorkspaceBriefCard } from "./WorkspaceBriefCard";
 import { ResponseAnnotationDialog } from "./ResponseAnnotationDialog";
 import { SessionPane } from "./SessionPane";
 import { useAppStore } from "../stores/app-store";
@@ -163,6 +164,7 @@ export const ChatSurface = memo(function ChatSurface() {
                 </h1>
               </div>
               <OnboardingChecklist />
+              <WorkspaceBriefCard />
             </div>
           </div>
           <div className="home-composer-wrap">

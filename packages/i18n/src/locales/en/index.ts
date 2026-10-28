@@ -623,6 +623,21 @@ export const en = {
     statusExpired: "Goal expired",
     statusInterrupted: "Goal interrupted",
   },
+  workspaceBrief: {
+    title: "Before you start here",
+    subtitleProject: "Everything this task writes goes into {{path}}.",
+    subtitleNone: "No folder is bound yet. Pick one so the output has somewhere to land.",
+    writesProject:
+      "Writes land in {{path}}. Nothing outside it is written without asking first.",
+    writesNone:
+      "Without a folder, output stays in this machine's app data. Pick a folder to keep files with your work.",
+    reads:
+      "Reads start inside the folder; reaching outside it asks you every time.",
+    keeps:
+      "Transcripts, logs and usage counters stay on this machine. Only what you send reaches the model provider.",
+    choose: "Choose folder",
+    dismiss: "Got it",
+  },
   onboarding: {
     title: "Get started",
     addProvider: "Add an AI provider",

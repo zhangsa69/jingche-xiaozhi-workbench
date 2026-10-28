@@ -618,6 +618,17 @@ export const zhTW = {
     statusExpired: "目標已過期",
     statusInterrupted: "目標已中斷",
   },
+  workspaceBrief: {
+    title: "開工前先說明",
+    subtitleProject: "這個任務寫出的檔案都會落在 {{path}}。",
+    subtitleNone: "還沒有綁定資料夾。先選一個，讓產物有地方可落。",
+    writesProject: "寫入都在 {{path}} 內；越界寫入會先問過你。",
+    writesNone: "沒有資料夾時，產物留在本機應用程式資料目錄。選個資料夾，檔案才會和你的工作放一起。",
+    reads: "讀取預設從該資料夾開始；越出這個範圍時每次都會問你。",
+    keeps: "轉錄、日誌與用量統計都留在本機；只有你送出的內容會到達模型服務商。",
+    choose: "選擇資料夾",
+    dismiss: "知道了",
+  },
   onboarding: {
     title: "開始使用",
     addProvider: "新增 AI 模型服務",

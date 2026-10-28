@@ -616,6 +616,21 @@ export const de = {
     "statusExpired": "Ziel abgelaufen",
     "statusInterrupted": "Ziel unterbrochen"
   },
+  "workspaceBrief": {
+    "title": "Bevor du hier startest",
+    "subtitleProject": "Alles, was diese Aufgabe schreibt, landet in {{path}}.",
+    "subtitleNone": "Noch kein Ordner gebunden. Wähle einen, damit die Ausgabe einen Platz hat.",
+    "writesProject":
+      "Schreibzugriffe bleiben in {{path}}; außerhalb wird vorher gefragt.",
+    "writesNone":
+      "Ohne Ordner bleibt die Ausgabe in den App-Daten dieser Maschine. Mit Ordner liegen die Dateien bei deiner Arbeit.",
+    "reads":
+      "Gelesen wird zuerst in diesem Ordner; außerhalb wird jedes Mal gefragt.",
+    "keeps":
+      "Verlauf, Protokolle und Nutzungszähler bleiben auf dieser Maschine. Nur was du sendest, erreicht den Modellanbieter.",
+    "choose": "Ordner wählen",
+    "dismiss": "Verstanden",
+  },
   "onboarding": {
     "title": "Erste Schritte",
     "addProvider": "Fügen Sie einen KI-Anbieter hinzu",

@@ -616,6 +616,21 @@ export const fr = {
     "statusExpired": "Objectif expiré",
     "statusInterrupted": "Objectif interrompu"
   },
+  "workspaceBrief": {
+    "title": "Avant de commencer ici",
+    "subtitleProject": "Tout ce que cette tâche écrit atterrit dans {{path}}.",
+    "subtitleNone": "Aucun dossier n'est encore lié. Choisissez-en un pour que la sortie ait un emplacement.",
+    "writesProject":
+      "Les écritures restent dans {{path}} ; au-delà, la question est posée avant.",
+    "writesNone":
+      "Sans dossier, la sortie reste dans les données de l'application de cette machine. Avec un dossier, les fichiers vivent à côté de votre travail.",
+    "reads":
+      "La lecture commence dans ce dossier ; au-delà, la question est posée à chaque fois.",
+    "keeps":
+      "Transcriptions, journaux et compteurs d'usage restent sur cette machine. Seul ce que vous envoyez atteint le fournisseur du modèle.",
+    "choose": "Choisir un dossier",
+    "dismiss": "Compris",
+  },
   "onboarding": {
     "title": "Commencer",
     "addProvider": "Ajouter un fournisseur d'IA",

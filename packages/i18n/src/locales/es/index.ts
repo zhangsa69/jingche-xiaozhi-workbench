@@ -616,6 +616,21 @@ export const es = {
     "statusExpired": "Objetivo caducado",
     "statusInterrupted": "Objetivo interrumpido"
   },
+  "workspaceBrief": {
+    "title": "Antes de empezar aquí",
+    "subtitleProject": "Todo lo que escriba esta tarea va a {{path}}.",
+    "subtitleNone": "Aún no hay carpeta vinculada. Elige una para que la salida tenga dónde quedar.",
+    "writesProject":
+      "Las escrituras se quedan en {{path}}; fuera de ahí se pregunta antes.",
+    "writesNone":
+      "Sin carpeta, la salida queda en los datos de la app de esta máquina. Con carpeta, los archivos viven junto a tu trabajo.",
+    "reads":
+      "La lectura empieza dentro de la carpeta; fuera de ella se pregunta cada vez.",
+    "keeps":
+      "Transcripciones, registros y contadores de uso se quedan en esta máquina. Solo lo que envías llega al proveedor del modelo.",
+    "choose": "Elegir carpeta",
+    "dismiss": "Entendido",
+  },
   "onboarding": {
     "title": "Comenzar",
     "addProvider": "Agregar un proveedor de IA",

@@ -624,6 +624,17 @@ export const tr = {
     statusExpired: "Hedefin süresi doldu",
     statusInterrupted: "Hedef kesildi",
   },
+  workspaceBrief: {
+    title: "Burada başlamadan önce",
+    subtitleProject: "Bu görevin yazdığı her dosya {{path}} içine gider.",
+    subtitleNone: "Henüz klasör bağlı değil. Çıktının bir yere düşmesi için bir klasör seç.",
+    writesProject: "Yazma işlemleri {{path}} içinde kalır; dışına çıkmadan önce sorulur.",
+    writesNone: "Klasör yokken çıktı bu makinenin uygulama verisinde kalır. Klasör seçersen dosyalar işinle birlikte durur.",
+    reads: "Okuma bu klasörden başlar; dışına çıkıldığında her seferinde sorulur.",
+    keeps: "Kayıtlar, günlükler ve kullanım sayaçları bu makinede kalır. Yalnızca gönderdiğin içerik sağlayıcıya ulaşır.",
+    choose: "Klasör seç",
+    dismiss: "Anladım",
+  },
   onboarding: {
     title: "Başlayın",
     addProvider: "AI servisi ekleyin",
