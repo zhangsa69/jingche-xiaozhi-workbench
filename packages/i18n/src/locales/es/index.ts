@@ -233,6 +233,9 @@ export const es = {
     sessionMissing: "Esa sesión ya no existe",
   },
   "chat": {
+    "sessionTabs": "Tareas abiertas",
+    "sessionTabClose": "Cerrar la pestaña {{title}}",
+    "sessionTabOverflow": "{{count}} más en la barra lateral",
     "stepsProgress": "Paso {{current}}/{{total}}",
     "stepsPending": "{{total}} pasos, sin empezar",
     "stepsGoTo": "Ir al paso {{step}}: {{title}}",

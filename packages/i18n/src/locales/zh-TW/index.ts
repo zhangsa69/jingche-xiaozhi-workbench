@@ -235,6 +235,9 @@ export const zhTW = {
     sessionMissing: "該對話已不存在",
   },
   chat: {
+    sessionTabs: "開啟的任務",
+    sessionTabClose: "關閉「{{title}}」標籤",
+    sessionTabOverflow: "還有 {{count}} 個在側欄",
     stepsProgress: "第 {{current}}/{{total}} 步",
     stepsPending: "共 {{total}} 步，待開始",
     stepsGoTo: "定位到第 {{step}} 步：{{title}}",

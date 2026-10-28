@@ -141,6 +141,11 @@ export type AppState = {
   retainedSessionIds: string[];
   /** Last transcript each retained pane painted. */
   retainedTranscripts: Record<string, UiMessage[]>;
+  /**
+   * Conversations kept one click away in the chat tab bar, oldest first.
+   * A tab is a view: closing one never deletes the session behind it.
+   */
+  sessionTabs: string[];
   /** Renderer-owned range metadata for the lazily loaded active transcript. */
   sessionHistory: Record<string, SessionHistoryWindow>;
   /** Reading ranges are separate from the live/runtime transcript projection. */
@@ -218,6 +223,13 @@ export type AppState = {
     opts?: { record?: boolean } & NavigationOptions,
   ) => Promise<void>;
   newSession: (options?: { projectPath?: string | null }) => Promise<void>;
+  /** Keep a conversation in the tab bar; opening an already-open one is a no-op. */
+  openSessionTab: (id: string) => void;
+  /**
+   * Drop a conversation from the tab bar. The session itself is untouched —
+   * when it was the visible one, the neighbouring tab takes over.
+   */
+  closeSessionTab: (id: string) => Promise<void>;
   forkSession: (id: string) => Promise<void>;
   forkAssistantMessage: (messageId: string) => Promise<void>;
   configureActiveSession: (config: {

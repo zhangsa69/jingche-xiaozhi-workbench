@@ -233,6 +233,9 @@ export const de = {
     sessionMissing: "Diese Sitzung existiert nicht mehr",
   },
   "chat": {
+    "sessionTabs": "Offene Aufgaben",
+    "sessionTabClose": "Tab „{{title}}“ schließen",
+    "sessionTabOverflow": "{{count}} weitere in der Seitenleiste",
     "stepsProgress": "Schritt {{current}}/{{total}}",
     "stepsPending": "{{total}} Schritte, nicht begonnen",
     "stepsGoTo": "Zu Schritt {{step}}: {{title}}",

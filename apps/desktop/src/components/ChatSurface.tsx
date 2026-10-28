@@ -9,6 +9,7 @@ import { OnboardingChecklist } from "./OnboardingChecklist";
 import { WorkspaceBriefCard } from "./WorkspaceBriefCard";
 import { ResponseAnnotationDialog } from "./ResponseAnnotationDialog";
 import { SessionPane } from "./SessionPane";
+import { SessionTabBar } from "./SessionTabBar";
 import { useAppStore } from "../stores/app-store";
 import { headPermission } from "../lib/pending-permissions";
 import { headAsk } from "../lib/pending-asks";
@@ -126,6 +127,7 @@ export const ChatSurface = memo(function ChatSurface() {
       className={`chat-surface route-surface${sessionSwitching ? " session-switching" : ""}`}
       aria-busy={sessionSwitching}
     >
+      <SessionTabBar />
       {sessionSwitching ? (
         <div className="session-switch-progress" aria-hidden>
           <span />

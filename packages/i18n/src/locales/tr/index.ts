@@ -242,6 +242,9 @@ export const tr = {
     sessionMissing: "Bu oturum artık mevcut değil",
   },
   chat: {
+    sessionTabs: "Açık görevler",
+    sessionTabClose: "{{title}} sekmesini kapat",
+    sessionTabOverflow: "Kenar çubuğunda {{count}} tane daha",
     stepsProgress: "Adım {{current}}/{{total}}",
     stepsPending: "{{total}} adım, başlanmadı",
     stepsGoTo: "{{step}}. adıma git: {{title}}",

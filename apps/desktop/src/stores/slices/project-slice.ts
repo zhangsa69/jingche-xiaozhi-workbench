@@ -1,6 +1,7 @@
 import { removeSideChatsForSessions, sideChatSessionIds, sideChatWorkPanelTab } from "../../lib/side-chat";
 import type { WorkPanelTab } from "../../lib/work-panel-tabs";
 import i18n from "i18next";
+import { pruneSessionTabs } from "@pi-desktop/shared";
 import type {
   ProjectWorkspace,
   SessionSummary,
@@ -115,6 +116,11 @@ function clearLocalSessionState(
       retainedNav.length > 0 ? retainedNav : [{ page: "chat" as const }];
     return {
       ...releaseSessionPane(state, id),
+      // A tab that outlived its session would offer a view of nothing.
+      sessionTabs: pruneSessionTabs(
+        state.sessionTabs,
+        sessions.map((session) => session.id),
+      ),
       sessionMeta,
       sessions,
       runningSessions,

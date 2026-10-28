@@ -9,6 +9,11 @@ import type {
   UiMessage,
 } from "@pi-desktop/shared";
 import {
+  activeSessionTabAfterClose,
+  closeSessionTab,
+  openSessionTab,
+} from "@pi-desktop/shared";
+import {
   isActivePlanExecution,
   isPendingPlan,
   latestPlanProposal,
@@ -108,6 +113,8 @@ export function createSessionSlice({
   | "refreshPlanCheckpoints"
   | "prefetchSession"
   | "selectSession"
+  | "openSessionTab"
+  | "closeSessionTab"
   | "newSession"
   | "forkSession"
   | "forkAssistantMessage"
@@ -218,6 +225,28 @@ export function createSessionSlice({
       });
     },
 
+    openSessionTab: (id) => {
+      if (!id) return;
+      set((state) => {
+        const sessionTabs = openSessionTab(state.sessionTabs, id);
+        const unchanged =
+          sessionTabs.length === state.sessionTabs.length &&
+          sessionTabs.every((tab, index) => tab === state.sessionTabs[index]);
+        return unchanged ? {} : { sessionTabs };
+      });
+    },
+
+    closeSessionTab: async (id) => {
+      if (!id) return;
+      const active = get().activeSessionId;
+      const nextActive = activeSessionTabAfterClose(get().sessionTabs, id, active);
+      set((state) => ({ sessionTabs: closeSessionTab(state.sessionTabs, id) }));
+      // Closing the visible tab means the bar owes the user another view; the
+      // session list still holds every other conversation, so this never
+      // fabricates state.
+      if (active === id && nextActive) await get().selectSession(nextActive);
+    },
+
     selectSession: async (id, opts) => {
       const intent = opts?.navigationIntent ?? runtime.beginNavigationIntent();
       const selection = runtime.beginSessionSelection(id, intent);
@@ -246,6 +275,7 @@ export function createSessionSlice({
         const commit = (state: AppState) => ({
           ...(state.activeSessionId === id ? {} : switchWorkPanelSession(state, id)),
           ...retainSessionPane(state, id, messages),
+          sessionTabs: openSessionTab(state.sessionTabs, id),
           activeSessionId: id,
           selectingSessionId: revalidating ? id : undefined,
           messages,

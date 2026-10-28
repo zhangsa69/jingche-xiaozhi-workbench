@@ -235,6 +235,9 @@ export const zhCN = {
     sessionMissing: "该会话已不存在",
   },
   chat: {
+    sessionTabs: "打开的任务",
+    sessionTabClose: "关闭「{{title}}」标签",
+    sessionTabOverflow: "还有 {{count}} 个在侧栏",
     stepsProgress: "第 {{current}}/{{total}} 步",
     stepsPending: "共 {{total}} 步，待开始",
     stepsGoTo: "定位到第 {{step}} 步：{{title}}",

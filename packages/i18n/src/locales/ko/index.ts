@@ -242,6 +242,9 @@ export const ko = {
     sessionMissing: "해당 세션이 더 이상 존재하지 않습니다",
   },
   chat: {
+    sessionTabs: "열린 작업",
+    sessionTabClose: "{{title}} 탭 닫기",
+    sessionTabOverflow: "사이드바에 {{count}}개 더 있음",
     stepsProgress: "{{current}}/{{total}} 단계",
     stepsPending: "{{total}}단계, 아직 시작하지 않음",
     stepsGoTo: "{{step}}단계로 이동: {{title}}",

@@ -339,7 +339,21 @@ sit outside that click target so a pin can never be mistaken for an insert.
 oldest entry, and it also stops the moment the recalled text is edited: stepping
 further from a rewritten prompt would throw the edit away without asking.
 
-### 3.10 Extensions
+### 3.10 Session tab bar
+
+A 32px strip above the transcript, and only from two open tasks onwards: one tab
+would cost a row of vertical space on every chat to say "you are here".
+
+Tabs come from the session list, so a conversation that no longer exists can
+never keep a tab. The active tab carries a 2px underline; a running task shows a
+live dot plus the same `3/8` step count the sidebar row and the transcript bar
+use, since all three read one derived value.
+
+Closing a tab drops the shortcut, not the session — the conversation stays in the
+sidebar. When the visible tab closes, its right neighbour takes over, then its
+left; an empty pane is never left behind without a replacement.
+
+### 3.11 Extensions
 
 The Extensions destination is a focused plugin surface with a compact header and
 only two tabs: **Installed** and **Marketplace**. Installed groups plugin rows
@@ -352,7 +366,7 @@ marketplace source settings show the source selector without a redundant
 provider explanation or active-source status line. MCP, Skills, and Subagents
 are not tabs or sections of Extensions.
 
-### 3.11 Settings (full-page takeover)
+### 3.12 Settings (full-page takeover)
 Settings replaces the whole shell (D063): back-to-app + search + a grouped
 settings rail with concise, parallel destination labels. The Agent group
 contains independent Skills, MCP, and Subagents destinations alongside

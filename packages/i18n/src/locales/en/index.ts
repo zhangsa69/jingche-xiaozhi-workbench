@@ -240,6 +240,9 @@ export const en = {
     sessionMissing: "That session no longer exists",
   },
   chat: {
+    sessionTabs: "Open tasks",
+    sessionTabClose: "Close the {{title}} tab",
+    sessionTabOverflow: "{{count}} more in the sidebar",
     stepsProgress: "Step {{current}}/{{total}}",
     stepsPending: "{{total}} steps, not started",
     stepsGoTo: "Go to step {{step}}: {{title}}",
