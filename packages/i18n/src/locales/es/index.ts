@@ -707,6 +707,37 @@ sklm: {
     "groupAgent": "Agente",
     "groupWorkspace": "Espacio de trabajo",
     "groupSystem": "Sistema",
+    "privacy": "Privacidad",
+    "privacyIntro": "Esta página responde a una pregunta: qué sale de este equipo al pulsar enviar. Las dos respuestas están una al lado de la otra abajo; no es un resumen comercial de la política.",
+    "privacyTopicColumn": "Datos",
+    "privacyUpstreamColumn": "Sale de este equipo",
+    "privacyLocalColumn": "Se queda en este equipo",
+    "privacyTopic": {
+      "prompt": "Tu mensaje",
+      "tools": "Resultados de herramientas",
+      "files": "Archivos del espacio de trabajo",
+      "credentials": "Claves de API",
+      "usage": "Uso y errores",
+      "telemetry": "Telemetría de la app"
+    },
+    "privacyUpstream": {
+      "prompt": "El texto que escribes, los adjuntos, los fragmentos citados y las instrucciones cargadas para el turno van al proveedor que elegiste.",
+      "tools": "Lo que una herramienta leyó o devolvió —texto de archivos, salida de comandos, resultados de plugins y MCP— se envía con la siguiente petición para que el modelo pueda actuar.",
+      "files": "Solo rutas dentro de una carpeta que autorizaste, y solo los fragmentos que una herramienta leyó de verdad. Abrir un archivo en el panel no envía nada.",
+      "credentials": "Se usa como cabecera Authorization para el proveedor al que pertenece. Una clave nunca se reenvía a otro proveedor.",
+      "usage": "Los recuentos de tokens y el texto de error del proveedor vuelven a este equipo; la app no los comunica a ningún otro sitio.",
+      "telemetry": "Nada. No hay analítica remota ni canal de informes de fallos."
+    },
+    "privacyLocal": {
+      "prompt": "Transcripción de la sesión, borradores sin enviar y etiquetas por sesión.",
+      "tools": "Registros de revisión, historial de comandos y el registro de herramientas.",
+      "files": "Rutas del proyecto, el índice de archivos y archivos temporales en la carpeta de datos de la app.",
+      "credentials": "Cifradas con una clave que solo tiene este equipo; el renderer y los plugins nunca ven el texto plano.",
+      "usage": "Contadores de uso locales, historial de errores y el plan de reintento automático pendiente.",
+      "telemetry": "Registros de ejecución y fallos más la auditoría, ambos en disco; la auditoría se depura a los 90 días."
+    },
+    "privacyPolicyNote": "Esta es la versión corta. El documento de política del repositorio dice los mismos hechos con los nombres exactos de archivo y campo.",
+    "privacyOpenLogs": "Abrir carpeta de registros",
     "groupExtensions": "Extensiones",
     "nav": {
       "general": "General",
@@ -719,6 +750,7 @@ sklm: {
       "subagents": "Subagentes",
       "import": "Importar",
       "projects": "Proyectos",
+      "privacy": "Privacidad",
       "info": "Información"
     },
     "general": "General",

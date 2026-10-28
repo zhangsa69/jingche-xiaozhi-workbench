@@ -708,6 +708,43 @@ sklm: {
     groupAgent: "智能体",
     groupWorkspace: "工作区",
     groupSystem: "系统",
+    privacy: "隐私说明",
+    privacyIntro:
+      "这一页只回答一个问题：按下发送之后，什么会离开这台电脑。两个答案并排放在下面，它不是隐私政策的市场化摘要。",
+    privacyTopicColumn: "数据",
+    privacyUpstreamColumn: "会离开这台电脑",
+    privacyLocalColumn: "只留在这台电脑",
+    privacyTopic: {
+      prompt: "你发的消息",
+      tools: "工具结果",
+      files: "工作区文件",
+      credentials: "API 密钥",
+      usage: "用量与错误",
+      telemetry: "应用遥测",
+    },
+    privacyUpstream: {
+      prompt:
+        "你输入的文字、附件、引用片段，以及本轮加载的指令，都会发给你选择的模型服务商。",
+      tools:
+        "工具读到或返回的内容——文件内容、命令输出、插件与 MCP 的结果——会随下一次请求一起发出，模型才能接着处理。",
+      files:
+        "只在你授权过的目录内，而且只有工具真正读过的片段。在面板里打开文件不会发出任何内容。",
+      credentials:
+        "只作为 Authorization 请求头发给它所属的服务商，不会转给别的服务商。",
+      usage: "服务商返回的 token 计数与错误文本会回到这台电脑，应用不会把它们上报到别处。",
+      telemetry: "没有。当前不存在远程分析或崩溃上报管道。",
+    },
+    privacyLocal: {
+      prompt: "会话记录、未发送的草稿、会话标签。",
+      tools: "审阅记录、命令历史、工具日志。",
+      files: "项目路径、文件索引，以及应用数据目录下的临时文件。",
+      credentials: "加密保存，密钥只在这台电脑上；渲染端与插件都拿不到明文。",
+      usage: "本机用量统计、错误历史，以及待执行的自动重试计划。",
+      telemetry: "运行与崩溃日志、审计记录，都在本地磁盘；审计记录 90 天后清理。",
+    },
+    privacyPolicyNote:
+      "这是短版本。仓库里的隐私政策文档写的是同一批事实，附具体文件名与字段名。",
+    privacyOpenLogs: "打开日志目录",
     groupExtensions: "扩展",
     nav: {
       general: "常规",
@@ -720,6 +757,7 @@ sklm: {
       subagents: "子智能体",
       import: "导入",
       projects: "项目",
+      privacy: "隐私说明",
       info: "信息",
     },
     general: "常规",

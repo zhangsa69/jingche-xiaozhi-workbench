@@ -708,6 +708,43 @@ sklm: {
     groupAgent: "智慧體",
     groupWorkspace: "工作區",
     groupSystem: "系統",
+    privacy: "隱私說明",
+    privacyIntro:
+      "這一頁只回答一個問題：按下送出之後，什麼會離開這台電腦。兩個答案並排放在下面，它不是隱私政策的行銷摘要。",
+    privacyTopicColumn: "資料",
+    privacyUpstreamColumn: "會離開這台電腦",
+    privacyLocalColumn: "只留在這台電腦",
+    privacyTopic: {
+      prompt: "你送的訊息",
+      tools: "工具結果",
+      files: "工作區檔案",
+      credentials: "API 金鑰",
+      usage: "用量與錯誤",
+      telemetry: "應用遙測",
+    },
+    privacyUpstream: {
+      prompt:
+        "你輸入的文字、附件、引用片段，以及本輪載入的指令，都會送給你選擇的模型服務商。",
+      tools:
+        "工具讀到或回傳的內容——檔案內容、指令輸出、外掛與 MCP 的結果——會隨下一次請求一起送出，模型才能接著處理。",
+      files:
+        "只在你授權過的目錄內，而且只有工具真正讀過的片段。在面板裡開啟檔案不會送出任何內容。",
+      credentials:
+        "只作為 Authorization 請求標頭送給它所屬的服務商，不會轉給別的服務商。",
+      usage: "服務商回傳的 token 計數與錯誤文字會回到這台電腦，應用不會把它們回報到別處。",
+      telemetry: "沒有。目前不存在遠端分析或崩潰回報管道。",
+    },
+    privacyLocal: {
+      prompt: "工作階段記錄、未送出的草稿、工作階段標籤。",
+      tools: "審閱記錄、指令歷史、工具日誌。",
+      files: "專案路徑、檔案索引，以及應用資料目錄下的暫存檔。",
+      credentials: "加密保存，金鑰只在這一台電腦上；渲染端與外掛都拿不到明文。",
+      usage: "本機用量統計、錯誤歷史，以及待執行的自動重試計畫。",
+      telemetry: "執行與崩潰日誌、稽核記錄，都在本機磁碟；稽核記錄 90 天後清理。",
+    },
+    privacyPolicyNote:
+      "這是短版本。倉庫裡的隱私政策文件寫的是同一批事實，附具體檔名與欄位名。",
+    privacyOpenLogs: "開啟日誌目錄",
     groupExtensions: "擴充功能",
     nav: {
       general: "常規",
@@ -720,6 +757,7 @@ sklm: {
       subagents: "子智慧體",
       import: "匯入",
       projects: "專案",
+      privacy: "隱私說明",
       info: "資訊",
     },
     general: "常規",

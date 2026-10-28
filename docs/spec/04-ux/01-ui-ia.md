@@ -310,6 +310,13 @@ shared capability contract:
   state rather than capability files. Loading and project changes render
   skeleton rows with the same anatomy and disable competing controls until the
   host refresh completes.
+- Privacy is a System-group destination beside Info. It answers one question —
+  what leaves this machine on send — with a two-column table (leaves / stays
+  local) over six rows: prompt, tool results, workspace files, API keys, usage
+  and errors, and app telemetry. Rows come from `lib/privacy-manifest`, so the
+  columns cannot drift and every key is resolved against all shipped locales.
+  The page carries no legal prose: one intro sentence, the table, and a footer
+  that links to the log directory instead of a marketing page.
 
 ## 4. Overlays
 

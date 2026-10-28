@@ -716,6 +716,46 @@ sklm: {
     groupAgent: "에이전트",
     groupWorkspace: "작업 공간",
     groupSystem: "시스템",
+    privacy: "개인정보",
+    privacyIntro:
+      "이 페이지는 한 가지 질문에 답합니다. 전송을 누르면 무엇이 이 컴퓨터를 떠나는가. 두 답을 아래에 나란히 두었고, 정책 문서를 요약한 홍보 문구가 아닙니다.",
+    privacyTopicColumn: "데이터",
+    privacyUpstreamColumn: "이 컴퓨터를 떠남",
+    privacyLocalColumn: "이 컴퓨터에 남음",
+    privacyTopic: {
+      prompt: "입력한 메시지",
+      tools: "도구 결과",
+      files: "작업 공간 파일",
+      credentials: "API 키",
+      usage: "사용량과 오류",
+      telemetry: "앱 텔레메트리",
+    },
+    privacyUpstream: {
+      prompt:
+        "입력한 텍스트, 첨부 파일, 인용한 조각, 그리고 해당 턴에 불러온 지시문이 선택한 제공자에게 전송됩니다.",
+      tools:
+        "도구가 읽거나 돌려준 내용 — 파일 텍스트, 명령 출력, 플러그인과 MCP 결과 — 은 다음 요청에 함께 전송되어 모델이 이어서 판단할 수 있습니다.",
+      files:
+        "권한을 준 폴더 안의 경로만, 그리고 도구가 실제로 읽은 부분만 전송됩니다. 패널에서 파일을 여는 것은 아무것도 보내지 않습니다.",
+      credentials:
+        "해당 제공자에게 Authorization 헤더로만 사용됩니다. 키는 다른 제공자에게 전달되지 않습니다.",
+      usage:
+        "제공자가 돌려준 토큰 수와 오류 텍스트는 이 컴퓨터로 돌아오며, 앱은 이를 다른 곳에 보고하지 않습니다.",
+      telemetry: "없습니다. 원격 분석이나 충돌 보고 파이프라인이 없습니다.",
+    },
+    privacyLocal: {
+      prompt: "세션 기록, 보내지 않은 초안, 세션별 태그.",
+      tools: "검토 기록, 명령 기록, 도구 로그.",
+      files: "프로젝트 경로, 파일 인덱스, 앱 데이터 폴더의 임시 파일.",
+      credentials:
+        "이 컴퓨터만 보유한 키로 암호화되며, 렌더러와 플러그인은 평문을 볼 수 없습니다.",
+      usage: "로컬 사용량 카운터, 오류 이력, 대기 중인 자동 재시도 계획.",
+      telemetry:
+        "실행 및 충돌 로그와 감사 기록. 모두 디스크에 있으며 감사 기록은 90일 후 정리됩니다.",
+    },
+    privacyPolicyNote:
+      "짧은 버전입니다. 저장소의 정책 문서가 같은 사실을 정확한 파일·필드 이름과 함께 설명합니다.",
+    privacyOpenLogs: "로그 폴더 열기",
     groupExtensions: "확장 기능",
     nav: {
       general: "일반",
@@ -728,6 +768,7 @@ sklm: {
       subagents: "서브에이전트",
       import: "가져오기",
       projects: "프로젝트",
+      privacy: "개인정보",
       info: "정보",
     },
     general: "일반",

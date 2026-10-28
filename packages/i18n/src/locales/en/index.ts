@@ -715,6 +715,49 @@ sklm: {
     groupAgent: "Agent",
     groupWorkspace: "Workspace",
     groupSystem: "System",
+    privacy: "Privacy",
+    privacyIntro:
+      "This page answers one question: what leaves this machine when you press send. Both answers sit side by side below; it is not a marketing summary of the policy document.",
+    privacyTopicColumn: "Data",
+    privacyUpstreamColumn: "Leaves this machine",
+    privacyLocalColumn: "Stays on this machine",
+    privacyTopic: {
+      prompt: "Your message",
+      tools: "Tool results",
+      files: "Workspace files",
+      credentials: "API keys",
+      usage: "Usage and errors",
+      telemetry: "App telemetry",
+    },
+    privacyUpstream: {
+      prompt:
+        "The text you type, attachments, quoted snippets, and the instructions loaded for the turn go to the provider you selected.",
+      tools:
+        "What a tool read or returned — file text, command output, plugin and MCP results — is sent with the next request so the model can act on it.",
+      files:
+        "Only paths inside a folder you granted, and only the fragments a tool actually read. Opening a file in the panel sends nothing.",
+      credentials:
+        "Used as the Authorization header for the provider it belongs to. A key is never forwarded to another provider.",
+      usage:
+        "The provider's token counts and error text come back to this machine; the app does not report them anywhere else.",
+      telemetry:
+        "Nothing. There is no remote analytics or crash-reporting pipeline.",
+    },
+    privacyLocal: {
+      prompt: "Session transcript, unsent drafts, and per-session tags.",
+      tools: "Review records, the command history, and the tool log.",
+      files:
+        "Project paths, the file index, and scratch files under the app data folder.",
+      credentials:
+        "Encrypted with a key only this machine holds; the renderer and plugins never see plaintext.",
+      usage:
+        "Local usage counters, error history, and the pending auto-retry plan.",
+      telemetry:
+        "Run and crash logs plus the audit trail, both on disk; audit records are pruned after 90 days.",
+    },
+    privacyPolicyNote:
+      "This is the short version. The policy document in the repository states the same facts with exact file and field names.",
+    privacyOpenLogs: "Open log folder",
     groupExtensions: "Extensions",
     nav: {
       general: "General",
@@ -727,6 +770,7 @@ sklm: {
       subagents: "Subagents",
       import: "Import",
       projects: "Projects",
+      privacy: "Privacy",
       info: "Info",
     },
     general: "General",

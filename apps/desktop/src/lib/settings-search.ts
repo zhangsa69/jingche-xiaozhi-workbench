@@ -16,6 +16,7 @@ export type SettingsTabId =
   | "subagents"
   | "import"
   | "projects"
+  | "privacy"
   | "about";
 
 export type SettingsNavGroupId =
@@ -217,6 +218,23 @@ export const SETTINGS_NAV: SettingsNavEntry[] = [
       "project.archive",
       "project.restore",
       "project.delete",
+    ],
+  },
+  {
+    id: "privacy",
+    labelKey: "settings.nav.privacy",
+    titleKey: "settings.privacy",
+    group: "system",
+    keywordKeys: [
+      "settings.privacyTopicColumn",
+      "settings.privacyUpstreamColumn",
+      "settings.privacyLocalColumn",
+      "settings.privacyTopic.prompt",
+      "settings.privacyTopic.tools",
+      "settings.privacyTopic.files",
+      "settings.privacyTopic.credentials",
+      "settings.privacyTopic.usage",
+      "settings.privacyTopic.telemetry",
     ],
   },
   {

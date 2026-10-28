@@ -715,6 +715,46 @@ sklm: {
     groupAgent: "Ajan",
     groupWorkspace: "Çalışma alanı",
     groupSystem: "Sistem",
+    privacy: "Gizlilik",
+    privacyIntro:
+      "Bu sayfa tek bir soruyu yanıtlar: gönder'e bastığında bu makineden ne çıkıyor. İki yanıt aşağıda yan yana duruyor; bu, politika belgesinin pazarlama özeti değil.",
+    privacyTopicColumn: "Veri",
+    privacyUpstreamColumn: "Bu makineden çıkar",
+    privacyLocalColumn: "Bu makinede kalır",
+    privacyTopic: {
+      prompt: "Mesajın",
+      tools: "Araç sonuçları",
+      files: "Çalışma alanı dosyaları",
+      credentials: "API anahtarları",
+      usage: "Kullanım ve hatalar",
+      telemetry: "Uygulama telemetrisi",
+    },
+    privacyUpstream: {
+      prompt:
+        "Yazdığın metin, ekler, alıntılanan parçalar ve o tur için yüklenen talimatlar seçtiğin sağlayıcıya gider.",
+      tools:
+        "Bir aracın okuduğu veya döndürdüğü şeyler — dosya metni, komut çıktısı, eklenti ve MCP sonuçları — modelin üzerine gidebilmesi için bir sonraki istekle birlikte gönderilir.",
+      files:
+        "Yalnızca izin verdiğin klasördeki yollar ve yalnızca aracın gerçekten okuduğu parçalar. Panelde bir dosyayı açmak hiçbir şey göndermez.",
+      credentials:
+        "Ait olduğu sağlayıcıya Authorization başlığı olarak gider. Anahtar başka bir sağlayıcıya aktarılmaz.",
+      usage:
+        "Sağlayıcının token sayıları ve hata metni bu makineye döner; uygulama bunları başka bir yere bildirmez.",
+      telemetry: "Hiçbir şey. Uzak analiz veya çökme bildirimi hattı yok.",
+    },
+    privacyLocal: {
+      prompt: "Oturum kaydı, gönderilmemiş taslaklar ve oturum etiketleri.",
+      tools: "İnceleme kayıtları, komut geçmişi ve araç günlüğü.",
+      files: "Proje yolları, dosya dizini ve uygulama veri klasöründeki geçici dosyalar.",
+      credentials:
+        "Yalnızca bu makinenin tuttuğu bir anahtarla şifrelenir; renderer ve eklentiler düz metni görmez.",
+      usage: "Yerel kullanım sayaçları, hata geçmişi ve bekleyen otomatik yeniden deneme planı.",
+      telemetry:
+        "Çalışma ve çökme günlükleri ile denetim kaydı, ikisi de diskte; denetim kayıtları 90 gün sonra temizlenir.",
+    },
+    privacyPolicyNote:
+      "Bu kısa sürüm. Depodaki politika belgesi aynı olguları tam dosya ve alan adlarıyla anlatır.",
+    privacyOpenLogs: "Günlük klasörünü aç",
     groupExtensions: "Uzantılar",
     nav: {
       general: "Genel",
@@ -727,6 +767,7 @@ sklm: {
       subagents: "Alt ajanlar",
       import: "İçe aktar",
       projects: "Projeler",
+      privacy: "Gizlilik",
       info: "Bilgi",
     },
     general: "Genel",

@@ -707,6 +707,37 @@ sklm: {
     "groupAgent": "Agent",
     "groupWorkspace": "Arbeitsbereich",
     "groupSystem": "System",
+    "privacy": "Datenschutz",
+    "privacyIntro": "Diese Seite beantwortet eine Frage: Was verlässt diesen Rechner, wenn du auf Senden drückst? Beide Antworten stehen unten nebeneinander; es ist keine Werbezusammenfassung der Richtlinie.",
+    "privacyTopicColumn": "Daten",
+    "privacyUpstreamColumn": "Verlässt diesen Rechner",
+    "privacyLocalColumn": "Bleibt auf diesem Rechner",
+    "privacyTopic": {
+      "prompt": "Deine Nachricht",
+      "tools": "Tool-Ergebnisse",
+      "files": "Dateien im Arbeitsbereich",
+      "credentials": "API-Schlüssel",
+      "usage": "Nutzung und Fehler",
+      "telemetry": "App-Telemetrie"
+    },
+    "privacyUpstream": {
+      "prompt": "Der eingegebene Text, Anhänge, zitierte Ausschnitte und die für den Durchlauf geladenen Anweisungen gehen an den gewählten Anbieter.",
+      "tools": "Was ein Tool gelesen oder zurückgegeben hat – Dateitext, Befehlsausgabe, Plugin- und MCP-Ergebnisse – wird mit der nächsten Anfrage gesendet, damit das Modell darauf reagieren kann.",
+      "files": "Nur Pfade in einem von dir freigegebenen Ordner und nur die Abschnitte, die ein Tool tatsächlich gelesen hat. Eine Datei im Panel zu öffnen sendet nichts.",
+      "credentials": "Wird als Authorization-Header an den zugehörigen Anbieter gesendet. Ein Schlüssel wird nie an einen anderen Anbieter weitergegeben.",
+      "usage": "Token-Zahlen und Fehlertexte des Anbieters kommen auf diesen Rechner zurück; die App meldet sie nirgendwo sonst.",
+      "telemetry": "Nichts. Es gibt keine entfernte Analyse- oder Absturzmelde-Pipeline."
+    },
+    "privacyLocal": {
+      "prompt": "Sitzungsprotokoll, ungesendete Entwürfe und sitzungsbezogene Tags.",
+      "tools": "Review-Einträge, Befehlsverlauf und das Tool-Protokoll.",
+      "files": "Projektpfade, der Dateiindex und temporäre Dateien im App-Datenordner.",
+      "credentials": "Verschlüsselt mit einem Schlüssel, den nur dieser Rechner hält; Renderer und Plugins sehen keinen Klartext.",
+      "usage": "Lokale Nutzungszähler, Fehlerhistorie und der geplante automatische Neuversuch.",
+      "telemetry": "Lauf- und Absturzprotokolle sowie das Audit-Log, beides auf der Platte; Audit-Einträge werden nach 90 Tagen bereinigt."
+    },
+    "privacyPolicyNote": "Das ist die Kurzfassung. Das Richtlinien-Dokument im Repository nennt dieselben Fakten mit exakten Datei- und Feldnamen.",
+    "privacyOpenLogs": "Protokollordner öffnen",
     "groupExtensions": "Erweiterungen",
     "nav": {
       "general": "Allgemein",
@@ -719,6 +750,7 @@ sklm: {
       "subagents": "Subagenten",
       "import": "Importieren Sie",
       "projects": "Projekte",
+      "privacy": "Datenschutz",
       "info": "Informationen"
     },
     "general": "Allgemein",

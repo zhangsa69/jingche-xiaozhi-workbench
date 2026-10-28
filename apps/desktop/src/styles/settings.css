@@ -305,6 +305,119 @@
   gap: 14px;
 }
 
+/* W-21: the privacy view is a comparison, so it is a real table — a screen
+   reader announces each cell against its row header, and the two sides stay
+   locked to the same baseline instead of drifting apart as two separate lists. */
+.privacy-intro {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--ds-text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.privacy-panel {
+  padding: 4px 18px 10px;
+}
+
+.privacy-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.privacy-table th,
+.privacy-table td {
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid var(--ds-hairline);
+  text-align: left;
+  vertical-align: top;
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  overflow-wrap: anywhere;
+}
+
+.privacy-table thead th {
+  padding-top: 12px;
+  color: var(--ds-text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.privacy-table tbody th {
+  width: 21%;
+  color: var(--ds-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.privacy-table tbody td {
+  width: 39.5%;
+  color: var(--ds-text-secondary);
+}
+
+/* The leaving side is the one that deserves attention, so it keeps full
+   contrast while the local side stays quiet. */
+.privacy-table tbody td:first-of-type {
+  color: var(--ds-text-primary);
+}
+
+.privacy-table tbody tr:last-child th,
+.privacy-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.privacy-footnote {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ds-text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+}
+
+.privacy-footnote > span {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 860px) {
+  .privacy-panel {
+    padding: 10px 14px;
+  }
+
+  .privacy-table,
+  .privacy-table thead,
+  .privacy-table tbody,
+  .privacy-table tr,
+  .privacy-table th,
+  .privacy-table td {
+    display: block;
+    width: auto;
+  }
+
+  .privacy-table thead {
+    /* The pairing is still labelled per row below, so the shared header would
+       only repeat itself on every stacked block. */
+    display: none;
+  }
+
+  .privacy-table tbody th {
+    padding-bottom: 2px;
+    color: var(--ds-text-primary);
+  }
+
+  .privacy-table tbody td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+
+  .privacy-table tbody tr {
+    padding: 6px 0 10px;
+    border-bottom: 1px solid var(--ds-hairline);
+  }
+}
+
 /* D297: a panel is one soft tile. No ring in either theme; tone does the work. */
 .settings-panel {
   display: flex;

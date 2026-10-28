@@ -707,6 +707,37 @@ sklm: {
     "groupAgent": "Agent",
     "groupWorkspace": "Espace de travail",
     "groupSystem": "Système",
+    "privacy": "Confidentialité",
+    "privacyIntro": "Cette page répond à une question : qu'est-ce qui quitte cette machine quand vous envoyez ? Les deux réponses sont côte à côte ci-dessous ; ce n'est pas un résumé marketing de la politique.",
+    "privacyTopicColumn": "Données",
+    "privacyUpstreamColumn": "Quitte cette machine",
+    "privacyLocalColumn": "Reste sur cette machine",
+    "privacyTopic": {
+      "prompt": "Votre message",
+      "tools": "Résultats d'outils",
+      "files": "Fichiers de l'espace de travail",
+      "credentials": "Clés d'API",
+      "usage": "Usage et erreurs",
+      "telemetry": "Télémétrie de l'app"
+    },
+    "privacyUpstream": {
+      "prompt": "Le texte saisi, les pièces jointes, les extraits cités et les instructions chargées pour le tour partent vers le fournisseur choisi.",
+      "tools": "Ce qu'un outil a lu ou renvoyé — texte de fichier, sortie de commande, résultats de plugins et MCP — est envoyé avec la requête suivante pour que le modèle puisse agir.",
+      "files": "Uniquement des chemins dans un dossier que vous avez autorisé, et uniquement les fragments réellement lus par un outil. Ouvrir un fichier dans le panneau n'envoie rien.",
+      "credentials": "Utilisées comme en-tête Authorization pour le fournisseur concerné. Une clé n'est jamais transmise à un autre fournisseur.",
+      "usage": "Les compteurs de jetons et le texte d'erreur du fournisseur reviennent sur cette machine ; l'app ne les remonte nulle part ailleurs.",
+      "telemetry": "Rien. Aucun pipeline d'analyse distant ni de remontée de plantages."
+    },
+    "privacyLocal": {
+      "prompt": "Transcription de la session, brouillons non envoyés et étiquettes par session.",
+      "tools": "Enregistrements de revue, historique des commandes et journal des outils.",
+      "files": "Chemins du projet, index des fichiers et fichiers temporaires dans le dossier de données de l'app.",
+      "credentials": "Chiffrées avec une clé détenue par cette machine ; le renderer et les plugins ne voient jamais le clair.",
+      "usage": "Compteurs d'usage locaux, historique des erreurs et relance automatique planifiée.",
+      "telemetry": "Journaux d'exécution et de plantage plus la piste d'audit, tous sur disque ; l'audit est purgé après 90 jours."
+    },
+    "privacyPolicyNote": "Ceci est la version courte. Le document de politique du dépôt énonce les mêmes faits avec les noms exacts de fichiers et de champs.",
+    "privacyOpenLogs": "Ouvrir le dossier des journaux",
     "groupExtensions": "Extensions",
     "nav": {
       "general": "Général",
@@ -719,6 +750,7 @@ sklm: {
       "subagents": "Sous-agents",
       "import": "Importation",
       "projects": "Projets",
+      "privacy": "Confidentialité",
       "info": "Informations"
     },
     "general": "Général",
