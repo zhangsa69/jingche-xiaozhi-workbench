@@ -1605,6 +1605,15 @@ Renderer IPC kept for the Plan-safe preview facade and URL fallback:
   containment as `fs/read`. Never returns non-image bytes. Renderer-only;
   not a plugin host API.
 - `fs/reveal({path})` → reveal in Finder. Same containment as `fs/read`.
+- `fs/export({path, suggestedName?})` → `FsExportResult`
+  (`{ canceled: boolean, path?: string }`). Copies a file the app can already
+  read to a destination the user picks in the OS save dialog. The source uses
+  the same containment as `fs/reveal`; the destination is never supplied by the
+  renderer, so this grants no write authority — it cannot place a file anywhere
+  the user did not point at, and it cannot create content the app could not
+  already open. `suggestedName` is reduced to a bare file name before it reaches
+  the dialog. Saving onto the source is a no-op, and a canceled dialog is not an
+  error. Renderer-only; not a plugin host API.
 - `fs/open({path})` → open with the OS default application. Same lexical
   containment as `fs/read` (without the extra realpath step used by reads).
 - `fs/resolveRef({ref, sessionId?})` → `FsChatRefResolveResult`
