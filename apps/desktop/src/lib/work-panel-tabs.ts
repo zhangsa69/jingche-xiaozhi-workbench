@@ -12,6 +12,12 @@ export type WorkPanelTabKind =
    * transcript resource: it describes the process, not this conversation (W-17).
    */
   | "log"
+  /**
+   * The session's commands and what they printed, as one stream. Read-only by
+   * design: it projects calls the renderer already holds, so it needs no
+   * process, no channel, and nothing persisted of its own (W-15).
+   */
+  | "terminal"
   | "file"
   | "plugin"
   /**
@@ -176,8 +182,8 @@ export function isKnownWorkPanelTab(tab: WorkPanelTab): boolean {
     Boolean(tab) &&
     (tab.kind === "new" || tab.kind === "review" ||
       tab.kind === "artifact" || tab.kind === "log" ||
-      tab.kind === "file" || tab.kind === "plugin" ||
-      tab.kind === "sidechat")
+      tab.kind === "terminal" || tab.kind === "file" ||
+      tab.kind === "plugin" || tab.kind === "sidechat")
   );
 }
 
@@ -204,12 +210,15 @@ export function sanitizeWorkPanelTabsState(
 }
 
 /**
- * Plugin-contributed views and the log tail are launchable tools. Review,
- * artifact, and file tabs are transcript resources even though their tab ids
- * are singleton-shaped, so they remain visible in the opened-resource section.
+ * Plugin-contributed views, the log tail, and the command stream are launchable
+ * tools. Review, artifact, and file tabs are transcript resources even though
+ * their tab ids are singleton-shaped, so they remain visible in the
+ * opened-resource section.
  */
 export function isToolWorkPanelTab(tab: WorkPanelTab): boolean {
-  return tab.kind === "plugin" || tab.kind === "log";
+  return (
+    tab.kind === "plugin" || tab.kind === "log" || tab.kind === "terminal"
+  );
 }
 
 export function normalizeWorkPanelFilePath(path: string): string {

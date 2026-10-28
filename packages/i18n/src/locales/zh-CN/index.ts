@@ -1531,6 +1531,7 @@ sklm: {
       review: "审阅",
       artifact: "产物",
       log: "日志",
+      terminal: "命令",
       browser: "浏览器",
       file: "文件",
       plugin: "插件视图",
@@ -1568,6 +1569,22 @@ sklm: {
       count: "{{count}} 条",
       counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
       details: "详情",
+    },
+    terminal: {
+      empty: "还没有执行过命令",
+      emptyHint:
+        "智能体在这个会话里执行的命令会连同输出一起出现在这里。",
+      count: "{{commands}} 条命令",
+      copyAll: "复制全部",
+      openInChat: "在对话中查看",
+      jump: "跳到最新一条命令",
+      stderr: "stderr",
+      exit: "退出码 {{code}}",
+      running: "运行中",
+      failed: "失败",
+      denied: "已拒绝",
+      clipped:
+        "这条输出的开头被截去了 {{chars}} 个字符。在对话中打开可查看完整内容。",
     },
     review: {
       noWorkspace: "打开项目后即可查看改动",

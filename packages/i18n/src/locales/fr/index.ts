@@ -1529,6 +1529,7 @@ sklm: {
       "review": "Réviser",
       "artifact": "Livrables",
       "log": "Journal",
+      "terminal": "Commandes",
       "browser": "Navigateur",
       "file": "Fichiers",
       "plugin": "Vue du plugin"
@@ -1566,6 +1567,20 @@ sklm: {
       "count": "{{count}} lignes",
       "counts": "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
       "details": "Détails",
+    },
+    "terminal": {
+      "empty": "Aucune commande pour l'instant",
+      "emptyHint": "Les commandes exécutées par l'agent dans cette conversation apparaissent ici, avec leur sortie.",
+      "count": "{{commands}} commandes",
+      "copyAll": "Tout copier",
+      "openInChat": "Voir dans la conversation",
+      "jump": "Aller à la commande la plus récente",
+      "stderr": "stderr",
+      "exit": "code {{code}}",
+      "running": "en cours",
+      "failed": "échec",
+      "denied": "refusée",
+      "clipped": "{{chars}} caractères ont été coupés au début de cette sortie. Ouvrez-la dans la conversation pour tout lire.",
     },
     "review": {
       "noWorkspace": "Ouvrir un projet pour voir les modifications",

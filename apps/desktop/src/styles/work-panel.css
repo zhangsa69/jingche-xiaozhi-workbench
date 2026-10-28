@@ -1212,6 +1212,190 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* W-15: the session's commands. A row is a command line plus what it printed;
+   the output sits on the tool-row plate so it reads as the same object as an
+   expanded tool row in the transcript, not as page copy. */
+.terminal-tab {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.terminal-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+}
+
+.terminal-count {
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.terminal-copy {
+  margin-left: auto;
+  height: 26px;
+  padding: 0 var(--space-2);
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+  background: transparent;
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.terminal-copy:hover {
+  color: var(--ds-text-primary);
+  background: var(--ds-bg-hover);
+}
+
+.terminal-copy:focus-visible {
+  outline: 2px solid var(--ds-focus);
+  outline-offset: 1px;
+}
+
+.terminal-body {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.terminal-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 var(--space-3) var(--space-3);
+  scrollbar-gutter: stable;
+}
+
+.terminal-entries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.terminal-entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.terminal-command {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-relaxed);
+}
+
+.terminal-prompt {
+  color: var(--ds-text-faint);
+  user-select: none;
+}
+
+.terminal-command-text {
+  min-width: 0;
+  color: var(--ds-text-primary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminal-state {
+  font-size: var(--text-3xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.terminal-state.is-running {
+  color: var(--ds-text-muted);
+  animation: terminal-pulse 1.4s ease-in-out infinite;
+}
+
+.terminal-state.is-failed,
+.terminal-state.is-denied {
+  color: var(--ds-error);
+}
+
+.terminal-exit {
+  color: var(--ds-error);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.terminal-duration {
+  color: var(--ds-text-faint);
+  font-size: var(--text-3xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Always present, faint until the row is looked at: a hover-only affordance
+   does not exist on touch. */
+.terminal-open {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ds-text-faint);
+}
+
+.terminal-entry:hover .terminal-open {
+  color: var(--ds-text-secondary);
+}
+
+.terminal-output {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  background: var(--ds-tool-row-bg);
+  border-radius: var(--radius-sm);
+  color: var(--ds-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-prose);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Brighter than stdout, not red: a failing command usually writes both, and a
+   wall of coloured text hides the one line that matters. The label says which
+   stream this is; colour would only add alarm. */
+.terminal-output.is-stderr {
+  color: var(--ds-text-primary);
+}
+
+.terminal-stream-label {
+  color: var(--ds-text-faint);
+  font-size: var(--text-3xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.terminal-notice {
+  margin: 0;
+  color: var(--ds-text-muted);
+  font-size: var(--text-3xs);
+}
+
+.terminal-body > .jump-latest-btn {
+  bottom: var(--space-3);
+  z-index: 1;
+}
+
+@keyframes terminal-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-state.is-running {
+    animation: none;
+  }
+}
+
 /* Hunks are set apart by a gap; each opens with its own tinted header line. */
 .diff-hunk + .diff-hunk {
   margin-top: 8px;

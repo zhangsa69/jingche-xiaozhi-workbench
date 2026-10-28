@@ -96,7 +96,8 @@ test("the host no longer bundles the old Files plugin", () => {
 test("the host no longer offers Files or Browser as built-in tools", () => {
   assert.doesNotMatch(panelSource, /const HEADER_TOOLS/);
   assert.doesNotMatch(panelSource, /kind: "browser"/);
-  assert.doesNotMatch(panelSource, /kind: "terminal"/);
+  // `kind: "terminal"` is now the read-only command stream projection (W-15),
+  // not a shell tool, so it is deliberately not part of this assertion.
   // Review and file remain artifact/resource surfaces the conversation opens.
   assert.match(panelSource, /activeTab\?\.kind === "file"/);
   assert.match(panelSource, /activeTab\?\.kind === "review"/);

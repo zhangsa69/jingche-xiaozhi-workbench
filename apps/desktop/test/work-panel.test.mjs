@@ -380,9 +380,12 @@ test("Electron enforces the responsive shell minimum", () => {
   assert.match(mainSource, /minHeight:\s*windowMinHeight/);
 });
 
-test("built-in terminal is absent while the work panel keeps its other surfaces", () => {
-  assert.doesNotMatch(panelSource, /TerminalTab|terminalOpen|kind: "terminal"/);
-  assert.doesNotMatch(panelSource, /work-panel-surface-terminal|activeTab\?\.kind !== "terminal"/);
+test("the work panel gains a read-only command stream rather than a terminal", () => {
+  // W-15 projects tool events the renderer already holds: no pty, no input.
+  assert.match(panelSource, /import \{ TerminalTab \} from "\.\/TerminalTab"/);
+  assert.match(panelSource, /toolWorkPanelTab\("terminal"\)/);
+  assert.match(panelSource, /activeTab\?\.kind === "terminal"/);
+  assert.doesNotMatch(panelSource, /terminalOpen|xterm|node-pty/);
   assert.match(panelSource, /activeTab\?\.kind === "review"/);
   assert.match(panelSource, /activeTab\?\.kind === "plugin"/);
   assert.match(panelSource, /activeTab\?\.kind === "file"/);

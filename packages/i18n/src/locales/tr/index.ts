@@ -1546,6 +1546,7 @@ sklm: {
       review: "İnceleme",
       artifact: "Çıktılar",
       log: "Günlük",
+      terminal: "Komutlar",
       browser: "Tarayıcı",
       file: "Dosyalar",
       plugin: "Eklenti görünümü",
@@ -1583,6 +1584,22 @@ sklm: {
       count: "{{count}} satır",
       counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
       details: "Ayrıntılar",
+    },
+    terminal: {
+      empty: "Henüz komut çalıştırılmadı",
+      emptyHint:
+        "Aracının bu konuşmada çalıştırdığı komutlar ve çıktıları burada görünür.",
+      count: "{{commands}} komut",
+      copyAll: "Tümünü kopyala",
+      openInChat: "Konuşmada göster",
+      jump: "En yeni komuta git",
+      stderr: "stderr",
+      exit: "çıkış kodu {{code}}",
+      running: "çalışıyor",
+      failed: "başarısız",
+      denied: "reddedildi",
+      clipped:
+        "Bu çıktının başından {{chars}} karakter kesildi. Tamamını okumak için konuşmada açın.",
     },
     review: {
       noWorkspace: "Değişiklikleri görmek için bir proje açın",

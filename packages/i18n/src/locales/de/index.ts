@@ -1529,6 +1529,7 @@ sklm: {
       "review": "Überprüfen",
       "artifact": "Artefakte",
       "log": "Protokoll",
+      "terminal": "Befehle",
       "browser": "Browser",
       "file": "Dateien",
       "plugin": "Plugin-Ansicht"
@@ -1566,6 +1567,20 @@ sklm: {
       "count": "{{count}} Zeilen",
       "counts": "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
       "details": "Details",
+    },
+    "terminal": {
+      "empty": "Noch keine Befehle",
+      "emptyHint": "Befehle, die der Agent in diesem Gespräch ausführt, erscheinen hier – mit ihrer Ausgabe.",
+      "count": "{{commands}} Befehle",
+      "copyAll": "Alles kopieren",
+      "openInChat": "Im Gespräch anzeigen",
+      "jump": "Zum neuesten Befehl springen",
+      "stderr": "stderr",
+      "exit": "Exit-Code {{code}}",
+      "running": "läuft",
+      "failed": "fehlgeschlagen",
+      "denied": "abgelehnt",
+      "clipped": "Am Anfang dieser Ausgabe wurden {{chars}} Zeichen abgeschnitten. Öffnen Sie sie im Gespräch, um alles zu lesen.",
     },
     "review": {
       "noWorkspace": "Öffnen Sie ein Projekt, um Änderungen anzuzeigen",

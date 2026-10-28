@@ -1529,6 +1529,7 @@ sklm: {
       "review": "Revisar",
       "artifact": "Artefactos",
       "log": "Registro",
+      "terminal": "Comandos",
       "browser": "Navegador",
       "file": "Archivos",
       "plugin": "Vista de complemento"
@@ -1566,6 +1567,20 @@ sklm: {
       "count": "{{count}} filas",
       "counts": "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
       "details": "Detalles",
+    },
+    "terminal": {
+      "empty": "Aún no hay comandos",
+      "emptyHint": "Los comandos que el agente ejecuta en esta conversación aparecen aquí, con lo que imprimieron.",
+      "count": "{{commands}} comandos",
+      "copyAll": "Copiar todo",
+      "openInChat": "Ver en la conversación",
+      "jump": "Ir al comando más reciente",
+      "stderr": "stderr",
+      "exit": "código {{code}}",
+      "running": "en ejecución",
+      "failed": "falló",
+      "denied": "rechazado",
+      "clipped": "Se cortaron {{chars}} caracteres del inicio de esta salida. Ábrala en la conversación para leerla completa.",
     },
     "review": {
       "noWorkspace": "Abrir un proyecto para ver los cambios",

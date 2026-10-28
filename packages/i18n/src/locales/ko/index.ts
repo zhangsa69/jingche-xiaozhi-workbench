@@ -1547,6 +1547,7 @@ sklm: {
       review: "검토",
       artifact: "산출물",
       log: "로그",
+      terminal: "명령",
       browser: "브라우저",
       file: "파일",
       plugin: "플러그인 화면",
@@ -1584,6 +1585,22 @@ sklm: {
       count: "{{count}}개",
       counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
       details: "자세히",
+    },
+    terminal: {
+      empty: "아직 실행한 명령이 없습니다",
+      emptyHint:
+        "에이전트가 이 대화에서 실행한 명령과 그 출력이 여기에 표시됩니다.",
+      count: "명령 {{commands}}개",
+      copyAll: "모두 복사",
+      openInChat: "대화에서 보기",
+      jump: "가장 최근 명령으로 이동",
+      stderr: "stderr",
+      exit: "종료 코드 {{code}}",
+      running: "실행 중",
+      failed: "실패",
+      denied: "거부됨",
+      clipped:
+        "이 출력의 앞부분 {{chars}}자가 잘렸습니다. 대화에서 열면 전체를 볼 수 있습니다.",
     },
     review: {
       noWorkspace: "변경 사항을 보려면 프로젝트를 여세요",

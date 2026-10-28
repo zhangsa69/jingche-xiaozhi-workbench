@@ -4,8 +4,8 @@ import {
   getToolAction,
   getToolSummaryKey,
   type ToolAction,
-} from "./tool-display";
-import { reviewChangeFromMessage } from "./workspace-review";
+} from "./tool-display.ts";
+import { reviewChangeFromMessage } from "./workspace-review.ts";
 
 /*
  * Structured presentation of one tool call (D192).

@@ -1531,6 +1531,7 @@ sklm: {
       review: "審閱",
       artifact: "產物",
       log: "日誌",
+      terminal: "命令",
       browser: "瀏覽器",
       file: "檔案",
       plugin: "外掛檢視",
@@ -1568,6 +1569,22 @@ sklm: {
       count: "{{count}} 筆",
       counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
       details: "詳情",
+    },
+    terminal: {
+      empty: "還沒有執行過命令",
+      emptyHint:
+        "代理在這個工作階段中執行的命令會連同輸出一起出現在這裡。",
+      count: "{{commands}} 條命令",
+      copyAll: "複製全部",
+      openInChat: "在對話中查看",
+      jump: "跳到最新一則命令",
+      stderr: "stderr",
+      exit: "結束碼 {{code}}",
+      running: "執行中",
+      failed: "失敗",
+      denied: "已拒絕",
+      clipped:
+        "這則輸出的開頭被截去了 {{chars}} 個字元。在對話中開啟可查看完整內容。",
     },
     review: {
       noWorkspace: "開啟專案後即可檢視改動",

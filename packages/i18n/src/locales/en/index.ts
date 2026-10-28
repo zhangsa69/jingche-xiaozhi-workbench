@@ -1545,6 +1545,7 @@ sklm: {
       review: "Review",
       artifact: "Artifacts",
       log: "Log",
+      terminal: "Commands",
       browser: "Browser",
       file: "Files",
       plugin: "Plugin view",
@@ -1583,6 +1584,22 @@ sklm: {
       count: "{{count}} rows",
       counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
       details: "Details",
+    },
+    terminal: {
+      empty: "No commands yet",
+      emptyHint:
+        "Commands the agent runs in this conversation show up here, with what they printed.",
+      count: "{{commands}} commands",
+      copyAll: "Copy all",
+      openInChat: "Show in conversation",
+      jump: "Jump to the newest command",
+      stderr: "stderr",
+      exit: "exit {{code}}",
+      running: "running",
+      failed: "failed",
+      denied: "declined",
+      clipped:
+        "{{chars}} characters were cut from the start of this output. Open it in the conversation to read all of it.",
     },
     review: {
       noWorkspace: "Open a project to see changes",
