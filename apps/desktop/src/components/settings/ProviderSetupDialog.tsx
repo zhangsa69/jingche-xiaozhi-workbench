@@ -166,11 +166,14 @@ export function ProviderSetupDialog({
   const requestBaseUrl = normalizeBaseUrlInput(resolvedBaseUrl, resolvedApiStyle);
   // Named add-path waits for a key so picking a vendor does not 401-probe.
   // Editing reuses the stored secret. Custom still probes a valid URL alone.
+  // A loopback runtime (`authKind: "none"`) has no key to wait for, so its
+  // probe starts as soon as the preset is picked.
+  const keylessPreset = namedPreset?.authKind === "none";
   const discoveryActive =
     Boolean(service) &&
     !requiresApiStyleChoice &&
     !baseUrlIssue &&
-    (custom || Boolean(apiKey.trim()) || Boolean(provider));
+    (custom || keylessPreset || Boolean(apiKey.trim()) || Boolean(provider));
   const headers = pairsToRecord(headerPairs);
   const discovery = useProviderModels(
     discoveryActive,
@@ -292,7 +295,7 @@ export function ProviderSetupDialog({
           type: "openai_compatible",
           protocol: "openai_compatible",
           baseUrl: providerBaseUrl,
-          authKind: "api_key_and_base_url",
+          authKind: namedPreset?.authKind ?? "api_key_and_base_url",
           defaultModelId: persisted[0]?.id,
           models: persisted,
           secretValue: apiKey || undefined,
@@ -403,21 +406,25 @@ export function ProviderSetupDialog({
                 </div>
 
                 {named ? (
-                  <Field
-                    label={t("settings.apiKey")}
-                    hint={editing ? t("settings.apiKeyKeepHint") : undefined}
-                  >
-                    <Input
-                      ref={apiKeyRef}
-                      type="password"
-                      value={apiKey}
-                      placeholder="sk-…"
-                      className="font-mono text-sm-plus"
-                      autoComplete="off"
-                      autoFocus
-                      onChange={(event) => setApiKey(event.target.value)}
-                    />
-                  </Field>
+                  keylessPreset ? (
+                    <p className="provider-setup-note">{t("settings.localNoKey")}</p>
+                  ) : (
+                    <Field
+                      label={t("settings.apiKey")}
+                      hint={editing ? t("settings.apiKeyKeepHint") : undefined}
+                    >
+                      <Input
+                        ref={apiKeyRef}
+                        type="password"
+                        value={apiKey}
+                        placeholder="sk-…"
+                        className="font-mono text-sm-plus"
+                        autoComplete="off"
+                        autoFocus
+                        onChange={(event) => setApiKey(event.target.value)}
+                      />
+                    </Field>
+                  )
                 ) : null}
               </div>
 

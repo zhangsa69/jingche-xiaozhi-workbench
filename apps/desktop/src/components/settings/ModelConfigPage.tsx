@@ -37,6 +37,7 @@ import {
   displayedDefaultModelId,
 } from "./default-model";
 import { copyProviderConfiguration, type ProviderCopyDraft } from "./provider-copy";
+import { LocalModelSection } from "./LocalModelSection";
 import { ProviderSetupDialog } from "./ProviderSetupDialog";
 import { VendorAccountsSection } from "./VendorAccountsSection";
 
@@ -673,6 +674,8 @@ export function ModelConfigPage() {
           )}
         </div>
       </section>
+
+      <LocalModelSection />
 
       <VendorAccountsSection />
 

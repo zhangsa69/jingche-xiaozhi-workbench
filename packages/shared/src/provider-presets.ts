@@ -18,6 +18,12 @@ export type NamedEndpointPreset = {
   aliases?: readonly string[];
   /** Completions thinking/tool-stream flags for Zhipu / Z.AI hosts. */
   zhipuCompat?: boolean;
+  /**
+   * How the endpoint authenticates. `none` marks a loopback runtime the user
+   * runs themselves: it has no key to paste, so the add path must not wait for
+   * one before probing and must persist the row without a secret.
+   */
+  authKind?: "none";
 };
 
 export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
@@ -221,7 +227,33 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     labelKey: "settings.presetKimiCoding",
     aliases: ["kimi-coding", "kimi"],
   },
+  {
+    // Loopback runtimes: the user starts the server, so the row needs a URL and
+    // nothing else. Ports are the upstream defaults and stay editable.
+    id: "ollama",
+    vendorKey: "ollama",
+    name: "Ollama",
+    baseUrl: "http://127.0.0.1:11434/v1",
+    apiStyle: "chat_completions",
+    labelKey: "settings.presetOllama",
+    aliases: ["local-ollama"],
+    authKind: "none",
+  },
+  {
+    id: "lmstudio",
+    vendorKey: "lmstudio",
+    name: "LM Studio",
+    baseUrl: "http://127.0.0.1:1234/v1",
+    apiStyle: "chat_completions",
+    labelKey: "settings.presetLmStudio",
+    aliases: ["lm-studio", "lmstudio-local"],
+    authKind: "none",
+  },
 ];
+
+/** Loopback presets: no API key, usually no outbound network either. */
+export const LOCAL_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] =
+  NAMED_ENDPOINT_PRESETS.filter((preset) => preset.authKind === "none");
 
 /** Canonical form of a configured endpoint for preset matching. */
 export function normalizeEndpointUrl(value: string | undefined): string | undefined {

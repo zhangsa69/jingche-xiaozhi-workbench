@@ -1687,3 +1687,128 @@
     transition: none;
   }
 }
+
+/* Local runtimes: two rows that add themselves, so the panel stays quiet. */
+.local-model-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.local-model-desc {
+  margin: 0;
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-relaxed);
+}
+
+.local-model-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.local-model-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--ds-tile);
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.local-model-row:hover {
+  transform: translateY(-1px);
+  border-color: var(--ds-border-strong);
+}
+
+.local-model-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: var(--radius-sm);
+  background: var(--ds-bg-chip);
+  color: var(--ds-text-muted);
+}
+
+.local-model-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.local-model-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.local-model-name {
+  color: var(--ds-text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.local-model-url {
+  overflow: hidden;
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.local-model-status {
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+}
+
+.local-model-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+/* A keyless runtime says so in place of the key field, not as an empty input. */
+.provider-setup-note {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--ds-tile);
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-relaxed);
+}
+
+@media (max-width: 720px) {
+  .local-model-row {
+    flex-wrap: wrap;
+  }
+
+  .local-model-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .local-model-row {
+    transition: none;
+  }
+
+  .local-model-row:hover {
+    transform: none;
+  }
+}

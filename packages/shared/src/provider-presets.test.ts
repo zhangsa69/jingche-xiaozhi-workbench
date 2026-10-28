@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  LOCAL_ENDPOINT_PRESETS,
   NAMED_ENDPOINT_PRESETS,
   deepseekRequestCompat,
   DEEPSEEK_REASONING_REPLAY_PLACEHOLDER,
@@ -193,5 +194,34 @@ describe("named endpoint presets", () => {
         baseUrl: "https://opencode.ai/zen/go/v1",
       })?.id,
     ).toBe("opencode_go");
+  });
+});
+
+describe("loopback presets", () => {
+  it("offers Ollama and LM Studio as keyless presets on their default ports", () => {
+    expect(LOCAL_ENDPOINT_PRESETS.map((preset) => preset.id)).toEqual([
+      "ollama",
+      "lmstudio",
+    ]);
+    expect(
+      matchNamedPreset({ baseUrl: "http://127.0.0.1:11434/v1/" }),
+    ).toMatchObject({
+      id: "ollama",
+      authKind: "none",
+      apiStyle: "chat_completions",
+    });
+    expect(matchNamedPreset({ vendorKey: "lm-studio" })?.baseUrl).toBe(
+      "http://127.0.0.1:1234/v1",
+    );
+  });
+
+  it("only marks loopback URLs as keyless", () => {
+    for (const preset of LOCAL_ENDPOINT_PRESETS) {
+      expect(preset.baseUrl).toMatch(/^http:\/\/(127\.0\.0\.1|localhost)/);
+    }
+    expect(
+      NAMED_ENDPOINT_PRESETS.filter((preset) => preset.id !== "ollama" && preset.id !== "lmstudio")
+        .every((preset) => preset.authKind === undefined),
+    ).toBe(true);
   });
 });

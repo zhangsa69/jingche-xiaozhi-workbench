@@ -56,7 +56,10 @@ test("the service list is a flat vendor menu with custom first", () => {
 test("named add-path discovery waits for a key and does not flash loading", () => {
   assert.match(setupSource, /discoveryActive/);
   assert.match(setupSource, /Boolean\(apiKey\.trim\(\)\)/);
-  assert.match(setupSource, /custom \|\| Boolean\(apiKey\.trim\(\)\) \|\| Boolean\(provider\)/);
+  assert.match(
+    setupSource,
+    /custom \|\| keylessPreset \|\| Boolean\(apiKey\.trim\(\)\) \|\| Boolean\(provider\)/,
+  );
   // Loading is painted inside the debounced run, not when the effect starts.
   const runAt = hookSource.indexOf("const run = async");
   const loadingAt = hookSource.indexOf('status: "loading"');
@@ -64,4 +67,17 @@ test("named add-path discovery waits for a key and does not flash loading", () =
   assert.ok(runAt < loadingAt, "loading must start inside the debounced run");
   assert.match(hookSource, /endpointChanged/);
   assert.match(hookSource, /FETCH_DEBOUNCE_MS/);
+});
+
+test("a loopback preset probes without a key and saves as keyless", () => {
+  // The gate names the exception instead of loosening it: a cloud vendor still
+  // waits for a key, a runtime the user starts does not.
+  assert.match(setupSource, /const keylessPreset = namedPreset\?\.authKind === "none"/);
+  assert.match(setupSource, /keylessPreset \? \(/);
+  assert.match(setupSource, /settings\.localNoKey/);
+  assert.match(setupSource, /authKind: namedPreset\?\.authKind \?\? "api_key_and_base_url"/);
+  assert.doesNotMatch(
+    setupSource,
+    /authKind: "api_key_and_base_url",\s*\n\s*defaultModelId: persisted\[0\]\?\.id,\s*\n\s*models: persisted,\s*\n\s*secretValue: apiKey \|\| undefined/,
+  );
 });
