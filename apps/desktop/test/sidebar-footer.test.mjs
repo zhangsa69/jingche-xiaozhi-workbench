@@ -31,9 +31,10 @@ test("the sidebar footer is an action bar, not a fabricated identity", () => {
   }
 });
 
-test("footer exposes settings, plugins and notifications in one row", () => {
+test("footer exposes settings, tasks, plugins and notifications in one row", () => {
   assert.match(sidebarSource, /className="footer-actions"/);
   assert.match(sidebarSource, /data-nav="settings"/);
+  assert.match(sidebarSource, /data-nav="tasks"/);
   assert.match(sidebarSource, /data-nav="plugins"/);
   const pluginsAction = sidebarSource.match(
     /<TooltipButton[\s\S]*?data-nav="plugins"[\s\S]*?<\/TooltipButton>/,
@@ -50,7 +51,7 @@ test("footer exposes settings, plugins and notifications in one row", () => {
   const actions = sidebarSource
     .split("<TooltipButton")
     .filter((chunk) => /className=(?:"footer-action"|\{`footer-action )/.test(chunk));
-  assert.equal(actions.length, 2);
+  assert.equal(actions.length, 3);
   for (const action of actions) {
     const attrs = action.slice(0, action.indexOf(">"));
     assert.match(attrs, /tooltip=/);
@@ -69,6 +70,10 @@ test("footer exposes settings, plugins and notifications in one row", () => {
   assert.match(
     footerAttributes('data-nav="settings"'),
     /aria-pressed=\{page === "settings"\}/,
+  );
+  assert.match(
+    footerAttributes('data-nav="tasks"'),
+    /aria-pressed=\{page === "tasks"\}/,
   );
   assert.match(
     footerAttributes('data-nav="plugins"'),

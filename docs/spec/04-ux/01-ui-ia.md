@@ -251,7 +251,17 @@ auto-approve a contract.
 The user must explicitly switch it to Agent before enabling unattended
 execution.
 
-### 3.5 Extensions
+### 3.5 Task history
+Every task that produced a turn, newest first, grouped by day. Rows carry the
+title, last activity, message count and workspace; the detail pane repeats those
+facts, adds the model, and keeps three flat actions: **Run again** (new task
+replaying the first user message), **Reuse input only** (same prompt, no
+workspace) and **Reuse workspace** (open an empty task scoped to that folder).
+External Pi transcripts are listed read-only. Rerunning never rewrites history:
+the original row stays in the list, and the page is reachable from the sidebar
+footer and from search.
+
+### 3.6 Extensions
 
 The Extensions destination is a focused plugin surface with a compact header and
 only two tabs: **Installed** and **Marketplace**. Installed groups plugin rows
@@ -264,8 +274,7 @@ marketplace source settings show the source selector without a redundant
 provider explanation or active-source status line. MCP, Skills, and Subagents
 are not tabs or sections of Extensions.
 
-### 3.6 Settings (full-page takeover)
-### 3.6 Settings (full-page takeover)
+### 3.7 Settings (full-page takeover)
 Settings replaces the whole shell (D063): back-to-app + search + a grouped
 settings rail with concise, parallel destination labels. The Agent group
 contains independent Skills, MCP, and Subagents destinations alongside

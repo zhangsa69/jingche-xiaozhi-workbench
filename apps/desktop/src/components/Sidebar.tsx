@@ -68,6 +68,7 @@ import {
   IconBranch,
   IconCheck,
   IconChevronDown,
+  IconClock,
   IconCopy,
   IconCircleAlert,
   IconNewSession,
@@ -2214,6 +2215,19 @@ export function Sidebar({
               aria-pressed={page === "settings"}
             >
               <IconSettings size={14} aria-hidden />
+            </TooltipButton>
+            <TooltipButton
+              type="button"
+              className={`footer-action ${page === "tasks" ? "active" : ""}`}
+              data-nav="tasks"
+              tooltip={t("nav.tasks")}
+              ariaLabel={t("nav.tasks")}
+              onClick={() => page === "tasks"
+                ? (canNavBack() ? navBack() : setPage("chat"))
+                : setPage("tasks")}
+              aria-pressed={page === "tasks"}
+            >
+              <IconClock size={14} aria-hidden />
             </TooltipButton>
             <TooltipButton
               type="button"

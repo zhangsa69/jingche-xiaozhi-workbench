@@ -24,6 +24,7 @@ import {
 const PAGE_ENTRIES = [
   { page: "pulls", labelKey: "pulls.title", icon: IconPullRequest },
   { page: "scheduled", labelKey: "scheduled.title", icon: IconClock },
+  { page: "tasks", labelKey: "tasks.title", icon: IconClock },
   { page: "plugins", labelKey: "nav.plugins", icon: IconAt },
 ] as const;
 
