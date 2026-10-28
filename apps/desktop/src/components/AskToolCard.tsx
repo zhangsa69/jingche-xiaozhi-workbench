@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { AskToolQuestion } from "@pi-desktop/shared";
+import { parseRepeatGuardQuestion, type AskToolQuestion } from "@pi-desktop/shared";
 import type { PendingAsk } from "../lib/pending-asks";
 import { useAppStore } from "../stores/app-store";
 import { Button } from "./ui";
@@ -32,6 +32,11 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
   const [resolving, setResolving] = useState(false);
   const current = request.questions[index];
   const currentDraft = drafts[index];
+  // W-04: the repeat guard uses this channel for its round trip, so the card
+  // has to know that one of these questions is not a question — it is a
+  // decision with two answers, and its words come from the locale, not the
+  // model.
+  const guard = parseRepeatGuardQuestion(current.question);
 
   const currentValues = (draft: DraftAnswer): string[] => [
     ...draft.values,
@@ -102,6 +107,24 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
     }
   };
 
+  const guardLabel = (option: string) =>
+    option === "continue"
+      ? t("askTool.repeatGuardContinue")
+      : option === "stop"
+        ? t("askTool.repeatGuardStop")
+        : option;
+
+  // One click is one decision: the model is already blocked on this call, so a
+  // two-step select-then-submit would just be extra ceremony.
+  const decideGuard = (decision: string) => {
+    void submit(
+      drafts,
+      request.questions.map((_, questionIndex) =>
+        questionIndex === index ? [decision] : null,
+      ),
+    );
+  };
+
   const next = () => {
     const nextDrafts = drafts.map((draft, draftIndex) =>
       draftIndex === index && currentValues(draft).length === 0
@@ -123,47 +146,66 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
   };
 
   return (
-    <section className="asktool-card" role="region" aria-label={t("askTool.title")}>
+    <section
+      className="asktool-card"
+      role="region"
+      aria-label={guard ? t("askTool.repeatGuardTitle") : t("askTool.title")}
+    >
       <div className="asktool-card-header">
         <div>
           <div className="asktool-card-title" role="status" aria-live="polite">
-            {t("askTool.title")}
+            {guard ? t("askTool.repeatGuardTitle") : t("askTool.title")}
           </div>
-          <div className="asktool-card-progress">
-            {t("askTool.progress", { current: index + 1, total: request.questions.length })}
-            {queued > 0 ? <span> · {t("askTool.queued", { count: queued })}</span> : null}
-          </div>
+          {guard ? null : (
+            <div className="asktool-card-progress">
+              {t("askTool.progress", { current: index + 1, total: request.questions.length })}
+              {queued > 0 ? <span> · {t("askTool.queued", { count: queued })}</span> : null}
+            </div>
+          )}
         </div>
-        <button
-          type="button"
-          className="asktool-decline"
-          disabled={resolving}
-          onClick={() => void submit(drafts, request.questions.map(() => null))}
-        >
-          {t("askTool.decline")}
-        </button>
-      </div>
-
-      <div className="asktool-indicators" aria-label={t("askTool.indicatorLabel")}>
-        {statuses.map((status, statusIndex) => (
+        {guard ? null : (
           <button
-            key={`${request.requestId}-${statusIndex}`}
             type="button"
-            className={`asktool-indicator ${status} ${statusIndex === index ? "current" : ""}`}
-            aria-label={t(`askTool.status.${status}`, { number: statusIndex + 1 })}
-            aria-current={statusIndex === index ? "step" : undefined}
-            onClick={() => setIndex(statusIndex)}
-          />
-        ))}
+            className="asktool-decline"
+            disabled={resolving}
+            onClick={() => void submit(drafts, request.questions.map(() => null))}
+          >
+            {t("askTool.decline")}
+          </button>
+        )}
       </div>
 
-      <div className="asktool-question-number">
-        {t("askTool.questionNumber", { number: index + 1 })}
-      </div>
-      <h3 className="asktool-question">{current.question}</h3>
+      {guard ? null : (
+        <div className="asktool-indicators" aria-label={t("askTool.indicatorLabel")}>
+          {statuses.map((status, statusIndex) => (
+            <button
+              key={`${request.requestId}-${statusIndex}`}
+              type="button"
+              className={`asktool-indicator ${status} ${statusIndex === index ? "current" : ""}`}
+              aria-label={t(`askTool.status.${status}`, { number: statusIndex + 1 })}
+              aria-current={statusIndex === index ? "step" : undefined}
+              onClick={() => setIndex(statusIndex)}
+            />
+          ))}
+        </div>
+      )}
+
+      {guard ? null : (
+        <div className="asktool-question-number">
+          {t("askTool.questionNumber", { number: index + 1 })}
+        </div>
+      )}
+      <h3 className="asktool-question">
+        {guard
+          ? t("askTool.repeatGuardQuestion", {
+              tool: guard.toolName,
+              count: guard.attempts,
+            })
+          : current.question}
+      </h3>
       <div className="asktool-options" role={current.multiSelect ? "group" : "radiogroup"}>
         {current.options.map((option) => {
-          const selected = currentDraft.values.includes(option);
+          const selected = guard ? false : currentDraft.values.includes(option);
           return (
             <button
               key={option}
@@ -172,26 +214,28 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
               aria-pressed={current.multiSelect ? selected : undefined}
               aria-checked={!current.multiSelect ? selected : undefined}
               role={current.multiSelect ? "checkbox" : "radio"}
-              onClick={() => selectOption(option)}
+              onClick={() => (guard ? decideGuard(option) : selectOption(option))}
             >
               <span className="asktool-option-mark" aria-hidden>{selected ? "✓" : ""}</span>
-              <span>{option}</span>
+              <span>{guard ? guardLabel(option) : option}</span>
             </button>
           );
         })}
-        <button
-          type="button"
-          className={`asktool-option asktool-custom-option ${currentDraft.customSelected ? "selected" : ""}`}
-          aria-pressed={current.multiSelect ? currentDraft.customSelected : undefined}
-          aria-checked={!current.multiSelect ? currentDraft.customSelected : undefined}
-          role={current.multiSelect ? "checkbox" : "radio"}
-          onClick={() => selectOption(CUSTOM_OPTION)}
-        >
-          <span className="asktool-option-mark" aria-hidden>{currentDraft.customSelected ? "✓" : ""}</span>
-          <span>{t("askTool.customOption")}</span>
-        </button>
+        {guard ? null : (
+          <button
+            type="button"
+            className={`asktool-option asktool-custom-option ${currentDraft.customSelected ? "selected" : ""}`}
+            aria-pressed={current.multiSelect ? currentDraft.customSelected : undefined}
+            aria-checked={!current.multiSelect ? currentDraft.customSelected : undefined}
+            role={current.multiSelect ? "checkbox" : "radio"}
+            onClick={() => selectOption(CUSTOM_OPTION)}
+          >
+            <span className="asktool-option-mark" aria-hidden>{currentDraft.customSelected ? "✓" : ""}</span>
+            <span>{t("askTool.customOption")}</span>
+          </button>
+        )}
       </div>
-      {currentDraft.customSelected ? (
+      {!guard && currentDraft.customSelected ? (
         <input
           className="asktool-custom-input"
           value={currentDraft.customText}
@@ -204,14 +248,16 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
         />
       ) : null}
 
-      <div className="asktool-card-actions">
-        <Button variant="ghost" disabled={resolving} onClick={skip}>
-          {t("askTool.skip")}
-        </Button>
-        <Button variant="primary" disabled={resolving} onClick={next}>
-          {index === request.questions.length - 1 ? t("askTool.submit") : t("askTool.next")}
-        </Button>
-      </div>
+      {guard ? null : (
+        <div className="asktool-card-actions">
+          <Button variant="ghost" disabled={resolving} onClick={skip}>
+            {t("askTool.skip")}
+          </Button>
+          <Button variant="primary" disabled={resolving} onClick={next}>
+            {index === request.questions.length - 1 ? t("askTool.submit") : t("askTool.next")}
+          </Button>
+        </div>
+      )}
     </section>
   );
 }

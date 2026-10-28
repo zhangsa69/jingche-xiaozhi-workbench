@@ -1491,6 +1491,11 @@ sklm: {
     "submit": "Soumettez les réponses",
     "skip": "Ignorer",
     "decline": "Tout refuser",
+    "repeatGuardTitle": "Appel répété",
+    "repeatGuardQuestion":
+      "{{tool}} a renvoyé le même résultat {{count}} fois de suite. Relancer cet appel ou arrêter ?",
+    "repeatGuardContinue": "Relancer l'appel",
+    "repeatGuardStop": "Arrêter le tour",
     "queued": "{{count}} une autre invite est en attente",
     "status": {
       "answered": "Question {{number}} répondue",

@@ -1508,6 +1508,11 @@ sklm: {
     submit: "Yanıtları gönder",
     skip: "Atla",
     decline: "Tümünü reddet",
+    repeatGuardTitle: "Tekrarlanan çağrı",
+    repeatGuardQuestion:
+      "{{tool}} aynı sonucu {{count}} kez üst üste döndürdü. Bu çağrı yeniden çalıştırılsın mı, durdurulsun mu?",
+    repeatGuardContinue: "Yeniden çalıştır",
+    repeatGuardStop: "Turu durdur",
     queued: "{{count}} istem daha bekliyor",
     status: {
       answered: "Soru {{number}} yanıtlandı",

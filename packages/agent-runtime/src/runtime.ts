@@ -45,6 +45,9 @@ import {
 import {
   DEFAULT_COMMAND_TIMEOUT_MS,
   OAUTH_AUTH_KIND,
+  REPEAT_GUARD_DECISIONS,
+  repeatGuardQuestion,
+  resolveRepeatGuardDecision,
   type TrustedExtensionCommand,
   type TrustedExtensionDiagnostic,
   type TrustedExtensionSpec,
@@ -252,6 +255,49 @@ function runtimeAttachmentFromMessage(
 // one runtime-owned budget instead of multiplying nested retry loops.
 const PROVIDER_REQUEST_MAX_RETRIES = 0;
 const MAX_MUTATION_RECOVERY_FAILURES = 3;
+
+/**
+ * W-04: the attempt that pauses for a decision.
+ *
+ * Two identical calls are ordinary work — writing the same file twice after an
+ * edit, re-reading a range. The third one, with the same result twice already
+ * on record, is the point where continuing is the user's call, not ours.
+ */
+const REPEAT_GUARD_ATTEMPTS = 3;
+/** Keys are tool+arguments; a long session cannot grow this without bound. */
+const REPEAT_GUARD_MAX_KEYS = 64;
+
+/**
+ * W-04: arguments compare by value, not by insertion order.
+ *
+ * Long strings are truncated: a file body must not turn into a multi-megabyte
+ * map key, and two bodies that agree in their first 200 characters are the same
+ * call as far as a repeat is concerned.
+ */
+function repeatCallKey(toolName: string, params: unknown): string {
+  return `${toolName}:${stableArgumentString(params)}`;
+}
+
+function stableArgumentString(value: unknown, depth = 0): string {
+  if (depth > 3) return "…";
+  if (typeof value === "string") {
+    return JSON.stringify(
+      value.length > 200 ? `${value.slice(0, 200)}…` : value,
+    );
+  }
+  if (Array.isArray(value)) {
+    return `[${value
+      .map((item) => stableArgumentString(item, depth + 1))
+      .join(",")}]`;
+  }
+  if (isRecord(value)) {
+    const keys = Object.keys(value).sort();
+    return `{${keys
+      .map((key) => `${key}:${stableArgumentString(value[key], depth + 1)}`)
+      .join(",")}}`;
+  }
+  return String(value);
+}
 const BASH_PATCH_FAILURE_KEY = "__bash_patch_command__";
 /**
  * Edit failures the line-anchored contract expects and already answers: each
@@ -1529,6 +1575,16 @@ export class DesktopAgentRuntime {
     kind: "edit" | "patch-command";
     target: string;
     lastErrorCode?: string;
+  };
+  /** W-04: identical calls and the result they keep returning. */
+  private repeatCallTrail = new Map<
+    string,
+    { fingerprint: string; count: number; approved: boolean }
+  >();
+  /** Why the repeat guard ended the turn, pending its visible error row. */
+  private pendingRepeatTermination?: {
+    toolName: string;
+    attempts: number;
   };
   private terminatingToolCalls = new Set<string>();
   private fullEntries: MessageEntry[];
@@ -2917,6 +2973,9 @@ Delegation rules:
           text = JSON.stringify(rawContent, null, 2);
         }
         if (!result.ok) this.failedHostToolCalls.add(toolCallId);
+        // W-04: only a repeat that also returns the same result counts as a
+        // loop; any new output resets the streak.
+        this.noteRepeatCall(toolName, params, text, result.ok !== false);
         return {
           content: [{ type: "text", text }, ...imageBlocks],
           details,
@@ -2937,6 +2996,16 @@ Delegation rules:
         execute: async (toolCallId, rawParams, signal, onUpdate) => {
           const params = normalizeToolParams(toolName, rawParams);
           requireAliasedParams(toolName, params);
+          // W-04: a third identical call with nothing new to show pauses here,
+          // above the write lock, so the answer never holds a lock while the
+          // user decides.
+          const paused = await this.pauseRepeatedCall(
+            toolName,
+            params,
+            toolCallId,
+            signal,
+          );
+          if (paused) return paused;
           return PATH_MUTATING_TOOLS.has(toolName)
             ? this.writeLocks.run(
                 isRecord(params) ? String(params.path ?? "") : "",
@@ -3063,10 +3132,14 @@ Delegation rules:
           },
         ]
       : [];
+    // Read-only has no proposal to submit, so it gets no mode tool at all.
+    const submitKind = proposalKindForMode(this.mode);
     const modeTools =
       this.mode === "agent"
         ? [this.buildEnterModeTool("plan"), this.buildEnterModeTool("goal")]
-        : [this.buildSubmitTool(this.mode)];
+        : submitKind
+          ? [this.buildSubmitTool(submitKind)]
+          : [];
     // Delegation is an Agent-mode capability: Plan and Goal are read-only
     // contract negotiations, and a delegate with Bash or Edit would drive
     // straight through that (ADR 0062). The whole lifecycle rides together:
@@ -4952,6 +5025,8 @@ Delegation rules:
     this.mutationFailureCounts.clear();
     this.mutationRecoveryGraces.clear();
     this.pendingMutationTermination = undefined;
+    this.repeatCallTrail.clear();
+    this.pendingRepeatTermination = undefined;
     this.terminatingToolCalls.clear();
     this.turnHadError = false;
   }
@@ -6614,6 +6689,7 @@ Delegation rules:
         this.autonomousExecution = false;
         this.clearAgentActivity();
         this.reportMutationTermination();
+        this.reportRepeatTermination();
         this.emit({
           type: "agent_end",
           messageIds: [],
@@ -6622,6 +6698,117 @@ Delegation rules:
       default:
         break;
     }
+  }
+
+  /**
+   * W-04: the decision point for a repeated call.
+   *
+   * Returns null to let the call run, or the terminating result the model gets
+   * instead. The question rides the asktool channel: it already reaches the
+   * card, blocks the caller, and resolves through the same IPC the composer
+   * uses, so no second round trip had to be invented.
+   */
+  private async pauseRepeatedCall(
+    toolName: string,
+    params: unknown,
+    toolCallId: string,
+    signal?: AbortSignal,
+  ) {
+    const key = repeatCallKey(toolName, params);
+    const trail = this.repeatCallTrail.get(key);
+    if (!trail || trail.approved || trail.count < REPEAT_GUARD_ATTEMPTS - 1) {
+      return null;
+    }
+    const attempts = trail.count + 1;
+    const decision = await this.askRepeatGuard(
+      toolName,
+      attempts,
+      toolCallId,
+      signal,
+    );
+    if (decision === "continue") {
+      // The user took responsibility for this call. Do not ask again until the
+      // result actually changes, and give the failure budget a fresh start so
+      // the same call is not terminated one step later anyway.
+      trail.approved = true;
+      trail.count = 1;
+      this.resetMutationBudget(toolName, params);
+      return null;
+    }
+    this.repeatCallTrail.delete(key);
+    this.terminatingToolCalls.add(toolCallId);
+    // The card has to read as a failure, exactly like a host error would.
+    this.failedHostToolCalls.add(toolCallId);
+    this.pendingRepeatTermination = { toolName, attempts };
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: `Stopped at the user's request: ${toolName} returned the same result ${attempts} times in a row. Do not repeat this call; say what is blocking and ask how to proceed.`,
+        },
+      ],
+      details: { errorCode: "REPEAT_CALL_STOPPED", toolName, attempts },
+      terminate: true,
+      isError: true,
+    };
+  }
+
+  /**
+   * W-04: a `continue` overrides the failure budget for the path it concerns,
+   * so that budget starts over. Without this the user's answer would only delay
+   * the same termination by one call.
+   */
+  private resetMutationBudget(toolName: string, params: unknown): void {
+    if (!isRecord(params)) return;
+    const key =
+      toolName === "Bash" && isPatchCommand(params.command)
+        ? BASH_PATCH_FAILURE_KEY
+        : toolName === "Edit" || toolName === "Write"
+          ? mutationFailureKey(params.path)
+          : undefined;
+    if (key === undefined) return;
+    this.mutationFailureCounts.delete(key);
+    this.mutationRecoveryGraces.delete(key);
+  }
+
+  private async askRepeatGuard(
+    toolName: string,
+    attempts: number,
+    toolCallId: string,
+    signal?: AbortSignal,
+  ): Promise<"continue" | "stop"> {
+    const request = {
+      requestId: randomUUID(),
+      sessionId: this.sessionId,
+      toolCallId,
+      questions: [
+        {
+          question: repeatGuardQuestion({ toolName, attempts }),
+          options: [...REPEAT_GUARD_DECISIONS],
+        },
+      ],
+    };
+    const answers = await this.waitForAskTool(request, signal);
+    return resolveRepeatGuardDecision(answers);
+  }
+
+  private noteRepeatCall(
+    toolName: string,
+    params: unknown,
+    text: string,
+    ok: boolean,
+  ): void {
+    const key = repeatCallKey(toolName, params);
+    const fingerprint = `${ok ? "ok" : "error"}:${text.slice(0, 400)}`;
+    const trail = this.repeatCallTrail.get(key);
+    if (!trail || trail.fingerprint !== fingerprint) {
+      if (this.repeatCallTrail.size >= REPEAT_GUARD_MAX_KEYS) {
+        this.repeatCallTrail.clear();
+      }
+      this.repeatCallTrail.set(key, { fingerprint, count: 1, approved: false });
+      return;
+    }
+    trail.count += 1;
   }
 
   /**
@@ -6656,6 +6843,28 @@ Delegation rules:
           ? { lastErrorCode: termination.lastErrorCode }
           : {}),
         recovery,
+      },
+    };
+    this.terminateParentTurn();
+    this.finalizeCurrentAssistant("error", error);
+    this.emit({ type: "error", error });
+  }
+
+  /**
+   * W-04: the repeat guard ends the turn the same way, so the batch never ends
+   * on a stopped card with nothing said.
+   */
+  private reportRepeatTermination(): void {
+    const termination = this.pendingRepeatTermination;
+    if (!termination) return;
+    this.pendingRepeatTermination = undefined;
+    const error = {
+      code: "REPEAT_CALL_STOPPED",
+      message: `Stopped at your request: ${termination.toolName} returned the same result ${termination.attempts} times in a row. Try a different approach, or send a new instruction.`,
+      retriable: true,
+      details: {
+        toolName: termination.toolName,
+        attempts: termination.attempts,
       },
     };
     this.terminateParentTurn();
@@ -7143,6 +7352,8 @@ Delegation rules:
     this.mutationFailureCounts.clear();
     this.mutationRecoveryGraces.clear();
     this.pendingMutationTermination = undefined;
+    this.repeatCallTrail.clear();
+    this.pendingRepeatTermination = undefined;
     this.terminatingToolCalls.clear();
     this.gracefulStopRequested = false;
     this.hostCloseUnsubscribe?.();

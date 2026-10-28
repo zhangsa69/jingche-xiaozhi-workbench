@@ -1507,6 +1507,11 @@ sklm: {
     submit: "Submit answers",
     skip: "Skip",
     decline: "Decline all",
+    repeatGuardTitle: "Repeated call",
+    repeatGuardQuestion:
+      "{{tool}} has returned the same result {{count}} times in a row. Run this call again, or stop?",
+    repeatGuardContinue: "Run it again",
+    repeatGuardStop: "Stop this turn",
     queued: "{{count}} more prompt is waiting",
     status: {
       answered: "Question {{number}} answered",

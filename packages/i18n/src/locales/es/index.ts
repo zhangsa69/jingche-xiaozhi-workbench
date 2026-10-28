@@ -1491,6 +1491,11 @@ sklm: {
     "submit": "Enviar respuestas",
     "skip": "Omitir",
     "decline": "Rechazar todo",
+    "repeatGuardTitle": "Llamada repetida",
+    "repeatGuardQuestion":
+      "{{tool}} ha devuelto el mismo resultado {{count}} veces seguidas. ¿Ejecutar la llamada otra vez o detener?",
+    "repeatGuardContinue": "Ejecutar otra vez",
+    "repeatGuardStop": "Detener el turno",
     "queued": "{{count}} más mensaje está esperando",
     "status": {
       "answered": "Pregunta {{number}} respondida",

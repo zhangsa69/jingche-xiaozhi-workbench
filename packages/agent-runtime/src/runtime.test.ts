@@ -467,7 +467,8 @@ describe("DesktopAgentRuntime configuration matching", () => {
     await runtime.dispose();
   });
 
-  it("terminates a repeated Edit mismatch on the third failed attempt", async () => {
+  it("pauses a repeated Edit mismatch and stops when the user says so", async () => {
+    const onEvent = vi.fn();
     const host = {
       call: vi
         .fn()
@@ -479,7 +480,7 @@ describe("DesktopAgentRuntime configuration matching", () => {
           content: { error: "tag does not hash the live file" },
         }),
     };
-    const runtime = createRuntime({ host });
+    const runtime = createRuntime({ host, onEvent });
     const agent = (runtime as any).agent;
     const edit = agent.state.tools.find((tool: any) => tool.name === "Edit");
     const args = {
@@ -500,11 +501,114 @@ describe("DesktopAgentRuntime configuration matching", () => {
       agent.afterToolCall({ toolCall: { id: "edit-2" } }),
     ).resolves.toEqual({ isError: true });
 
-    const third = await edit.execute("edit-3", args);
+    // W-04: the third identical attempt waits for the user instead of ending
+    // the turn behind their back.
+    const pending = edit.execute("edit-3", args);
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    const request = onEvent.mock.calls
+      .map(([envelope]) => envelope as any)
+      .map((envelope) => envelope.event)
+      .find((event) => event.type === "asktool_request")?.request;
+    expect(request.questions[0].question).toBe("@@repeat-guard@@Edit|3");
+    expect(request.questions[0].options).toEqual(["continue", "stop"]);
+
+    runtime.resolveAskTool({
+      requestId: request.requestId,
+      sessionId: "session-1",
+      answers: [["stop"]],
+    });
+    const third = await pending;
     expect(third.terminate).toBe(true);
+    expect((third as any).details).toMatchObject({
+      errorCode: "REPEAT_CALL_STOPPED",
+      attempts: 3,
+    });
     await expect(
       agent.afterToolCall({ toolCall: { id: "edit-3" } }),
     ).resolves.toEqual({ isError: true, terminate: true });
+
+    await runtime.dispose();
+  });
+
+  it("runs the third identical call after the user chooses to continue", async () => {
+    const onEvent = vi.fn();
+    const host = {
+      call: vi
+        .fn()
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValue({
+          ok: false,
+          isError: true,
+          errorCode: "TOOL_FAILED",
+          content: { error: "tag does not hash the live file" },
+        }),
+    };
+    const runtime = createRuntime({ host, onEvent });
+    const agent = (runtime as any).agent;
+    const edit = agent.state.tools.find((tool: any) => tool.name === "Edit");
+    const args = {
+      path: "src/example.ts",
+      tag: "ABCD",
+      ops: "PUT 1.=1:\n+fresh\n",
+    };
+    const guardRequests = () =>
+      onEvent.mock.calls
+        .map(([envelope]) => envelope as any)
+        .map((envelope) => envelope.event)
+        .filter((event) => event.type === "asktool_request").length;
+
+    await edit.execute("continue-1", args);
+    await edit.execute("continue-2", args);
+
+    const pending = edit.execute("continue-3", args);
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    const request = onEvent.mock.calls
+      .map(([envelope]) => envelope as any)
+      .map((envelope) => envelope.event)
+      .find((event) => event.type === "asktool_request")?.request;
+    runtime.resolveAskTool({
+      requestId: request.requestId,
+      sessionId: "session-1",
+      answers: [["continue"]],
+    });
+
+    const third = await pending;
+    expect(third.terminate).toBeUndefined();
+    expect(guardRequests()).toBe(1);
+
+    // The answer covers this result: the fourth identical call does not ask
+    // again, and it still runs.
+    const fourth = await edit.execute("continue-4", args);
+    expect(fourth.terminate).toBeUndefined();
+    expect(guardRequests()).toBe(1);
+
+    await runtime.dispose();
+  });
+
+  it("does not ask when the repeated call keeps producing new output", async () => {
+    const onEvent = vi.fn();
+    let attempt = 0;
+    const host = {
+      call: vi.fn(async (method: string) => {
+        if (method !== "tools.execute") return undefined;
+        attempt += 1;
+        return { ok: true, content: `result ${attempt}` };
+      }),
+    };
+    const runtime = createRuntime({ host, onEvent });
+    const agent = (runtime as any).agent;
+    const read = agent.state.tools.find((tool: any) => tool.name === "Read");
+    const args = { path: "src/example.ts" };
+
+    for (let index = 0; index < 4; index += 1) {
+      const result = await read.execute(`read-${index}`, args);
+      expect(result.terminate).toBeUndefined();
+    }
+    expect(
+      onEvent.mock.calls
+        .map(([envelope]) => envelope as any)
+        .filter((envelope) => envelope.event.type === "asktool_request"),
+    ).toHaveLength(0);
 
     await runtime.dispose();
   });
@@ -538,6 +642,8 @@ describe("DesktopAgentRuntime configuration matching", () => {
       agent.afterToolCall({ toolCall: { id: "patch-2" } }),
     ).resolves.toEqual({ isError: true });
 
+    // Two identical patch attempts are not a loop yet: the failure budget is
+    // what stops this one, which is why the guard stays quiet here.
     const third = await bash.execute("patch-3", secondArgs);
     expect(third.terminate).toBe(true);
     await expect(
@@ -571,23 +677,29 @@ describe("DesktopAgentRuntime configuration matching", () => {
     const runtime = createRuntime({ host });
     const agent = (runtime as any).agent;
     const edit = agent.state.tools.find((tool: any) => tool.name === "Edit");
-    const args = { path: "src/example.ts", tag: "A1B2", ops: "PUT 1.=1:\n+fresh" };
+    // W-04: a different body per attempt keeps the repeat guard out of this
+    // test; it is about the failure budget, not about identical calls.
+    const argsFor = (attempt: number) => ({
+      path: "src/example.ts",
+      tag: "A1B2",
+      ops: `PUT 1.=1:\n+fresh-${attempt}`,
+    });
 
     // Each recoverable code answers itself: the error carries the live tag or
     // the unseen content, so one honest retry per code is the designed path.
-    const mismatch = await edit.execute("edit-1", args);
+    const mismatch = await edit.execute("edit-1", argsFor(1));
     expect(mismatch.terminate).toBeUndefined();
-    const unknown = await edit.execute("edit-2", args);
+    const unknown = await edit.execute("edit-2", argsFor(2));
     expect(unknown.terminate).toBeUndefined();
-    const unseen = await edit.execute("edit-3", args);
+    const unseen = await edit.execute("edit-3", argsFor(3));
     expect(unseen.terminate).toBeUndefined();
 
     // The same code twice is the model ignoring what the first error said.
-    const repeat = await edit.execute("edit-4", args);
+    const repeat = await edit.execute("edit-4", argsFor(4));
     expect(repeat.terminate).toBeUndefined();
-    const stillRecovering = await edit.execute("edit-5", args);
+    const stillRecovering = await edit.execute("edit-5", argsFor(5));
     expect(stillRecovering.terminate).toBeUndefined();
-    const exhausted = await edit.execute("edit-6", args);
+    const exhausted = await edit.execute("edit-6", argsFor(6));
     expect(exhausted.terminate).toBe(true);
 
     await runtime.dispose();
@@ -641,12 +753,18 @@ describe("DesktopAgentRuntime configuration matching", () => {
     const agent = (runtime as any).agent;
     const handleAgentEvent = (runtime as any).handleAgentEvent.bind(runtime);
     const edit = agent.state.tools.find((tool: any) => tool.name === "Edit");
-    const args = { path: "src/example.ts", tag: "A1B2", ops: "PUT 1.=1:" };
+    // W-04: distinct bodies keep the repeat guard from pre-empting the mutation
+    // budget this test is about.
+    const argsFor = (attempt: number) => ({
+      path: "src/example.ts",
+      tag: "A1B2",
+      ops: `PUT 1.=1:${"x".repeat(attempt)}`,
+    });
 
-    await edit.execute("edit-1", args);
-    const second = await edit.execute("edit-2", args);
+    await edit.execute("edit-1", argsFor(1));
+    const second = await edit.execute("edit-2", argsFor(2));
     expect(second.terminate).toBeUndefined();
-    const third = await edit.execute("edit-3", args);
+    const third = await edit.execute("edit-3", argsFor(3));
     expect(third.terminate).toBe(true);
     // pi-agent-core stops the loop on a terminating batch, so agent_end is the
     // last chance to say why instead of completing the turn in silence.

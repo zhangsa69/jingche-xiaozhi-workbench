@@ -1494,6 +1494,10 @@ sklm: {
     submit: "提交答案",
     skip: "跳過",
     decline: "全部拒絕",
+    repeatGuardTitle: "重複呼叫確認",
+    repeatGuardQuestion: "{{tool}} 已連續 {{count}} 次回傳相同結果。要繼續這次呼叫，還是停止？",
+    repeatGuardContinue: "繼續這次呼叫",
+    repeatGuardStop: "停止這輪執行",
     queued: "還有 {{count}} 個提問在等待",
     status: {
       answered: "第 {{number}} 題已回答",

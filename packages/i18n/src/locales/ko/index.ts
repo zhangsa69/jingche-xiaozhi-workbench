@@ -1509,6 +1509,11 @@ sklm: {
     submit: "답변 제출",
     skip: "건너뛰기",
     decline: "모두 거부",
+    repeatGuardTitle: "반복 호출 확인",
+    repeatGuardQuestion:
+      "{{tool}}이(가) 같은 결과를 {{count}}번 연속 반환했습니다. 이 호출을 다시 실행할까요, 중지할까요?",
+    repeatGuardContinue: "다시 실행",
+    repeatGuardStop: "이번 턴 중지",
     queued: "프롬프트 {{count}}개가 더 대기 중",
     status: {
       answered: "질문 {{number}}에 답변함",

@@ -1491,6 +1491,11 @@ sklm: {
     "submit": "Antworten senden",
     "skip": "Überspringen",
     "decline": "Alle ablehnen",
+    "repeatGuardTitle": "Wiederholter Aufruf",
+    "repeatGuardQuestion":
+      "{{tool}} hat {{count}} Mal hintereinander dasselbe Ergebnis geliefert. Diesen Aufruf erneut ausführen oder abbrechen?",
+    "repeatGuardContinue": "Erneut ausführen",
+    "repeatGuardStop": "Turn abbrechen",
     "queued": "{{count}} weitere Eingabeaufforderung wartet",
     "status": {
       "answered": "Frage {{number}} beantwortet",
