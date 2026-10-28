@@ -340,8 +340,18 @@ test("a symlink inside the workspace cannot carry a read out of it", async (t) =
   const outside = mkdtempSync(join(tmpdir(), "pi-fs-scope-outside-"));
   writeFileSync(join(outside, "id_rsa"), "PRIVATE KEY", "utf8");
   const ws = makeWorkspace();
-  symlinkSync(join(outside, "id_rsa"), join(ws, "innocent.txt"));
-  symlinkSync(outside, join(ws, "elsewhere"));
+  try {
+    symlinkSync(join(outside, "id_rsa"), join(ws, "innocent.txt"));
+    symlinkSync(outside, join(ws, "elsewhere"));
+  } catch (error) {
+    // Windows without developer mode grants cannot create symlinks at all, so
+    // the escape this test proves cannot even be set up on that machine.
+    if (error?.code === "EPERM" || error?.code === "EACCES") {
+      t.skip(`symlink creation unavailable: ${error.code}`);
+      return;
+    }
+    throw error;
+  }
 
   const { runtime } = await harness(t, {
     id: "fs.read.symlink",

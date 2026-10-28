@@ -204,6 +204,12 @@ export function useComposerSubmit({
     }
     invalidatePromptEnhancement();
     const submittedDraftKey = draftKey;
+    // The draft belongs to the conversation this composer was rendered for, and
+    // the slash-command lookup below awaits. Pin the target before the first
+    // await so a session switch cannot redirect the draft into the new one.
+    const submittedSessionId = useAppStore.getState().activeSessionId;
+    const sessionChanged = () =>
+      useAppStore.getState().activeSessionId !== submittedSessionId;
     // Slash dispatch stays local for builtin and extension commands, while
     // templates, skills, and unknown aliases continue as normal prompt text.
     if (!steering && serializedContent.startsWith("/")) {
@@ -213,6 +219,12 @@ export function useComposerSubmit({
         commandEnd === -1 ? undefined : commandEnd,
       );
       const command = name ? await resolveComposerCommand(name) : null;
+      if (sessionChanged()) {
+        // The recalled command belonged to the conversation the user left;
+        // running it now would act on the newly opened one instead.
+        showToast(t("chat.sessionChangedDraftKept"), { variant: "info" });
+        return;
+      }
       if (command && command.kind !== "template" && command.id) {
         const commandBody =
           commandEnd === -1 ? "" : serializedContent.slice(commandEnd).trim();
@@ -235,6 +247,9 @@ export function useComposerSubmit({
                 activeFileReferences,
               ),
               draft.draftSnapshot(visibleCommandBody),
+              // The mode was applied to the session that owned the draft; send
+              // the body there even if the user opened another one meanwhile.
+              submittedSessionId ?? undefined,
             );
             if (accepted) draft.clearDraftForKey(submittedDraftKey);
           } catch (error) {
@@ -274,10 +289,17 @@ export function useComposerSubmit({
       return;
     }
     const submittedDraft = draft.draftSnapshot(text);
+    // Steering addresses the turn running in the visible conversation, and
+    // steerPrompt has no target parameter. Keep the draft for the session the
+    // user left rather than injecting it into whatever is open now.
+    if (steering && sessionChanged()) {
+      showToast(t("chat.sessionChangedDraftKept"), { variant: "info" });
+      return;
+    }
     draft.clearDraftForKey(submittedDraftKey);
     const accepted = steering
       ? await steerPrompt(inlineContent, submittedDraft)
-      : await sendPrompt(inlineContent, submittedDraft);
+      : await sendPrompt(inlineContent, submittedDraft, submittedSessionId ?? undefined);
     if (!accepted) draft.restoreDraftForKey(submittedDraftKey, submittedDraft);
   };
 

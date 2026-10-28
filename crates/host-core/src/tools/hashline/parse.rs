@@ -357,10 +357,16 @@ fn parse_register(raw: &str) -> Result<String, ParseError> {
 }
 
 fn parse_dest(raw: &str) -> Result<String, ParseError> {
-    let dest = if (raw.starts_with('"') && raw.ends_with('"'))
-        || (raw.starts_with('\'') && raw.ends_with('\''))
-    {
+    // A single quote character satisfies both `starts_with` and `ends_with`, so
+    // the slice below would index 1..0 and panic on attacker-controlled input.
+    let quoted = raw.len() >= 2
+        && ((raw.starts_with('"') && raw.ends_with('"'))
+            || (raw.starts_with('\'') && raw.ends_with('\'')));
+    let dest = if quoted {
         raw[1..raw.len() - 1].to_string()
+    } else if raw == "\"" || raw == "'" {
+        // One lone quote is an unpaired wrapper: nothing is inside it.
+        String::new()
     } else {
         raw.to_string()
     };
@@ -404,6 +410,21 @@ mod tests {
             }
             other => panic!("{other:?}"),
         }
+    }
+
+    #[test]
+    fn rejects_a_lone_quote_instead_of_panicking() {
+        // One quote character is both a prefix and a suffix, so a naive
+        // `raw[1..raw.len() - 1]` slice indexed 1..0 and panicked on
+        // model-controlled tool arguments.
+        for raw in ["\"", "'"] {
+            let error = parse_dest(raw).unwrap_err();
+            assert_eq!(error.code, "EDIT_PARSE_FAILED");
+            assert_eq!(error.message, "MV dest is empty");
+        }
+        assert_eq!(parse_dest("\"a b\"").unwrap(), "a b");
+        assert_eq!(parse_dest("'a b'").unwrap(), "a b");
+        assert_eq!(parse_dest("plain").unwrap(), "plain");
     }
 
     #[test]

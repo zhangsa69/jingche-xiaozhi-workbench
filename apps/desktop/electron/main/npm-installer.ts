@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { extname, join } from "node:path";
 import { withRegistryOnlyProxy } from "./npm-registry-proxy";
 
 export type ExtensionDependencyInstallResult =
@@ -25,6 +25,15 @@ const DEPENDENCY_ERROR_TAIL_CHARS = 200;
 /** Rolling cap so a chatty npm cannot balloon the main process's memory. */
 const DEPENDENCY_STDERR_KEEP_CHARS = 8192;
 const PUBLIC_NPM_REGISTRY = "https://registry.npmjs.org/";
+
+/**
+ * cmd.exe re-parses the command line it is handed, so an argument that carries
+ * whitespace or a metacharacter has to be quoted before it reaches the shim.
+ */
+function quoteWindowsShellArg(arg: string): string {
+  if (!/[\s"&|<>^()%!]/.test(arg)) return arg;
+  return `"${arg.replace(/"/g, '""')}"`;
+}
 const NPM_LOCKFILE_NAMES = ["package-lock.json", "npm-shrinkwrap.json"] as const;
 const NON_NPM_LOCKFILE_NAMES = ["yarn.lock", "pnpm-lock.yaml"] as const;
 const LOCKFILE_DEPENDENCY_FIELDS = new Set([
@@ -156,9 +165,19 @@ export function defaultDependencyRunner(
     const isolatedGlobalConfig = join(tmpdir(), `.pi-desktop-npm-global-${randomUUID()}.npmrc`);
     const isolatedGit = join(tmpdir(), `.pi-desktop-npm-git-${randomUUID()}`);
     const isolatedCache = join(cwd, ".npm-cache");
-    const child = spawn(command, args, {
+    // Only the .cmd shim npm is published as needs a shell on Windows. Running
+    // a real executable through cmd.exe breaks on the spaces in
+    // "C:\Program Files\..." and lets a package name be re-parsed as a command.
+    const isBareName = !command.includes("/") && !command.includes("\\");
+    const resolvedCommand =
+      process.platform === "win32" && isBareName && !extname(command)
+        ? `${command}.cmd`
+        : command;
+    const usesShell =
+      process.platform === "win32" && /\.(cmd|bat)$/i.test(resolvedCommand);
+    const child = spawn(resolvedCommand, usesShell ? args.map(quoteWindowsShellArg) : args, {
       cwd,
-      shell: process.platform === "win32",
+      shell: usesShell,
       detached: process.platform !== "win32",
       windowsHide: true,
       stdio: ["ignore", "ignore", "pipe"],

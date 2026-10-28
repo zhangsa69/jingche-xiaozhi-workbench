@@ -1211,6 +1211,21 @@
   font-family: var(--font-mono);
 }
 
+/* A failed read keeps the editor disabled, so the retry row is the only way
+   back and has to stay visible above the editor. */
+.project-instructions-dialog-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--ds-warning) 45%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--ds-warning) 12%, transparent);
+  color: var(--ds-text-primary);
+  font-size: var(--text-sm);
+}
+
 .project-instructions-dialog-close {
   display: inline-flex;
   width: 28px;

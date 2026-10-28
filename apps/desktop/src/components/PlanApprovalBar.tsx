@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type {
@@ -61,6 +61,9 @@ export function PlanApprovalBar({ proposal }: { proposal: PlanProposal }) {
   );
   const [menuOpen, setMenuOpen] = useState(false);
   const [resolving, setResolving] = useState(false);
+  // Same-frame clicks both see `resolving === false`, so the real guard is the
+  // ref; the state only drives the disabled styling.
+  const resolvingRef = useRef(false);
   const [approvalMode, setApprovalMode] = useState<GlobalPermissionMode>(
     readPlanApprovalMode(),
   );
@@ -76,6 +79,7 @@ export function PlanApprovalBar({ proposal }: { proposal: PlanProposal }) {
   }, [proposal.id]);
 
   useEffect(() => {
+    resolvingRef.current = false;
     setResolving(false);
   }, [proposal.id]);
 
@@ -90,7 +94,8 @@ export function PlanApprovalBar({ proposal }: { proposal: PlanProposal }) {
     action: "approve" | "reject",
     targetPermissionMode?: GlobalPermissionMode,
   ) => {
-    if (busy || !isPending) return;
+    if (resolvingRef.current || !isPending) return;
+    resolvingRef.current = true;
     setMenuOpen(false);
     if (action === "approve") {
       const selectedMode = targetPermissionMode ?? PLAN_APPROVAL_DEFAULT_MODE;
@@ -121,6 +126,10 @@ export function PlanApprovalBar({ proposal }: { proposal: PlanProposal }) {
       showToast(error instanceof Error ? error.message : String(error), {
         variant: "error",
       });
+    } finally {
+      // A rejected or timed-out resolution leaves the proposal pending, so the
+      // bar has to become usable again instead of staying disabled forever.
+      resolvingRef.current = false;
       setResolving(false);
     }
   };

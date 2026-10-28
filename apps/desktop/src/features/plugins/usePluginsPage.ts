@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../stores/app-store";
 import { api } from "../../lib/api";
@@ -44,6 +44,11 @@ export function usePluginsPage() {
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [market, setMarket] = useState<MarketPluginSummary[]>([]);
   const [marketLoading, setMarketLoading] = useState(false);
+  // Rapid clicks and debounced searches overlap their network calls. A stale
+  // response must never overwrite the newest intent, and it must not clear the
+  // loading flag the newest request still owns.
+  const marketRequestRef = useRef(0);
+  const detailRequestRef = useRef(0);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [reloadingId, setReloadingId] = useState<string | null>(null);
   const [pendingInstall, setPendingInstall] = useState<{
@@ -67,10 +72,15 @@ export function usePluginsPage() {
   const [settingsPlugin, setSettingsPlugin] = useState<PluginSummary | null>(null);
 
   const refreshMarket = async (q = query, opts?: { refreshRemote?: boolean }) => {
+    const request = ++marketRequestRef.current;
+    // The debounced search and the post-install refresh can run at the same
+    // time; whichever started last owns the list and the loading flag.
+    const isCurrent = () => marketRequestRef.current === request;
     setMarketLoading(true);
     try {
       if (opts?.refreshRemote) {
         const meta = await api.marketRefresh(true);
+        if (!isCurrent()) return;
         setMarketSource(meta.sourceUrl || meta.homepage || "");
         showToast(
           t("plugins.marketRefreshed", {
@@ -81,6 +91,7 @@ export function usePluginsPage() {
         );
       }
       const res = await api.marketSearch(q);
+      if (!isCurrent()) return;
       setMarket((res.plugins ?? []).filter(isClientVisibleMarketPlugin));
       if (!marketSource) {
         // The host reports the catalog URL actually in effect, so a mirror or
@@ -88,17 +99,23 @@ export function usePluginsPage() {
         setMarketSource(res.sourceUrl || res.providerId || "");
       }
     } catch (e) {
+      if (!isCurrent()) return;
       showToast(e instanceof Error ? e.message : String(e), { variant: "error" });
     } finally {
-      setMarketLoading(false);
+      if (isCurrent()) setMarketLoading(false);
     }
   };
 
   const openDetail = async (id: string) => {
+    const request = ++detailRequestRef.current;
+    // Clicking a second row while the first fetch is in flight must leave the
+    // panel on the row the user picked last.
+    const isCurrent = () => detailRequestRef.current === request;
     setSelectedId(id);
     setDetailLoading(true);
     try {
       const res = await api.marketGetDetail(id);
+      if (!isCurrent()) return;
       const raw = res.plugin as MarketPluginDetail & {
         summary?: MarketPluginSummary;
       };
@@ -117,14 +134,18 @@ export function usePluginsPage() {
       setDetail(plugin);
       setSelectedVersion(plugin.versions?.[0]?.version || plugin.latestVersion || "");
     } catch (e) {
+      if (!isCurrent()) return;
       setDetail(null);
       showToast(e instanceof Error ? e.message : String(e), { variant: "error" });
     } finally {
-      setDetailLoading(false);
+      if (isCurrent()) setDetailLoading(false);
     }
   };
 
   const closeDetail = () => {
+    // Invalidate the in-flight fetch so a late response cannot reopen a panel
+    // the user already dismissed.
+    detailRequestRef.current += 1;
     setSelectedId(null);
     setDetail(null);
     setSelectedVersion("");
@@ -396,6 +417,10 @@ export function usePluginsPage() {
     newPermissions?: readonly string[];
     version?: string;
   }) => {
+    // One install at a time: `busyId` is a single value, so queuing a second
+    // one (possible after cancelling the dialog mid-install) would let the
+    // first run clear the flag while the second is still working.
+    if (busyId) return;
     const newPermissions = orderPermissions(input.newPermissions);
     setPendingInstall({
       id: input.id,

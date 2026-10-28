@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile, readdir, rm, mkdtemp } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, sep } from "node:path";
 import test from "node:test";
 import {
   Logger,
@@ -177,7 +177,8 @@ test("logger bounds and redacts messages, paths, credentials, and arbitrary data
     assert.equal(record.data.apiKey, "***REDACTED***");
     assert.equal(record.data.authorization, "***REDACTED***");
     assert.equal(record.data.password, "***REDACTED***");
-    assert.equal(record.data.path, "<data-dir>/workspace/private.txt");
+    // Redaction keeps the platform separator of the original path.
+    assert.equal(record.data.path.replaceAll(sep, "/"), "<data-dir>/workspace/private.txt");
     assert.equal(record.data.detail, "failed while reading <local-path>");
     assert.match(record.data.huge, /\[truncated/);
     assert.ok(Buffer.byteLength(JSON.stringify(record.data), "utf8") <= 8 * 1024);

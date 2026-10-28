@@ -77,7 +77,12 @@ test("composer renders atomic inline chips and serializes paths on send", () => 
     composer,
     /serializeComposerFileReferences\(text, activeFileReferences\)/,
   );
-  assert.match(composer, /sendPrompt\(inlineContent, submittedDraft\)/);
+  // The send names the session that owned the draft, so a session switch during
+  // the awaited command lookup cannot redirect it.
+  assert.match(
+    composer,
+    /sendPrompt\(inlineContent, submittedDraft, submittedSessionId \?\? undefined\)/,
+  );
   assert.match(composer, /serializeInlineComposerFileReferences\(/);
   assert.match(composer, /current\.filter\(/);
   assert.match(

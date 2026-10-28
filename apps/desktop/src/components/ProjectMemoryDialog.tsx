@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import type { ProjectMemory, ProjectMemoryEntry } from "@pi-desktop/shared";
 import { api } from "../lib/api";
+import { claimEscapeLayer } from "../lib/modal-escape-stack";
 import { Button, Input, Textarea, TooltipButton } from "./ui";
 import { IconClose, IconPlus, IconSparkles, IconTrash } from "./icons";
 
@@ -50,9 +51,15 @@ export function ProjectMemoryDialog({
   const [entries, setEntries] = useState<ProjectMemoryEntry[]>([]);
   const [savedEntries, setSavedEntries] = useState<ProjectMemoryEntry[]>([]);
   const [saving, setSaving] = useState(false);
+  // A failed read used to leave `memory` null, which disabled the whole dialog
+  // with no way back. Track the failure so it can be retried.
+  const [loadError, setLoadError] = useState<unknown>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    setLoadError(null);
     const load = project.groupId && !project.legacy
       ? api.getProjectGroupMemory(project.groupId)
       : api.getProjectMemory(project.path);
@@ -63,20 +70,46 @@ export function ProjectMemoryDialog({
       setEntries(loadedEntries);
       setSavedEntries(loadedEntries);
     }).catch((error) => {
-      if (!cancelled) onError(error);
+      if (cancelled) return;
+      setLoadError(error);
+      onError(error);
     });
     return () => {
       cancelled = true;
     };
-  }, [project.groupId, project.legacy, project.path]);
+  }, [project.groupId, project.legacy, project.path, loadAttempt]);
 
   useEffect(() => {
+    const layer = claimEscapeLayer();
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !saving) onClose();
+      // Only the dialog on top closes, and never mid-save.
+      if (event.key !== "Escape" || saving || !layer.isTop()) return;
+      event.preventDefault();
+      onClose();
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      layer.release();
+    };
   }, [onClose, saving]);
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const handle = requestAnimationFrame(() => {
+      const target =
+        dialogRef.current?.querySelector<HTMLElement>("input, textarea, select") ??
+        dialogRef.current?.querySelector<HTMLElement>(
+          ".project-memory-dialog-actions button:last-child",
+        ) ??
+        dialogRef.current;
+      target?.focus();
+    });
+    return () => {
+      cancelAnimationFrame(handle);
+      previouslyFocused?.focus?.();
+    };
+  }, []);
 
   const updateEntry = (id: string, patch: Partial<ProjectMemoryEntry>) => {
     setEntries((current) =>
@@ -113,6 +146,8 @@ export function ProjectMemoryDialog({
       }}
     >
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         className="dialog project-instructions-dialog project-memory-dialog"
         role="dialog"
         aria-modal="true"
@@ -139,6 +174,14 @@ export function ProjectMemoryDialog({
           </TooltipButton>
         </div>
         <p className="project-memory-dialog-description">{t("project.memoryDescription")}</p>
+        {loadError ? (
+          <div className="project-instructions-dialog-error" role="alert">
+            <span>{t("project.loadFailed")}</span>
+            <Button variant="ghost" onClick={() => setLoadAttempt((count) => count + 1)}>
+              {t("project.retryLoad")}
+            </Button>
+          </div>
+        ) : null}
         <div className="project-memory-dialog-toolbar">
           <span className="project-memory-dialog-count">
             {t("project.memoryCount", { count: entries.length })}

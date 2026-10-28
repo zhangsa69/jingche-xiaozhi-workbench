@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import type { TrustedExtensionUiPrompt } from "@pi-desktop/shared";
 import { api } from "../lib/api";
+import { claimEscapeLayer } from "../lib/modal-escape-stack";
 import { useAppStore } from "../stores/app-store";
 import { Button, TooltipButton } from "./ui";
 import { IconClose, IconPlug } from "./icons";
@@ -41,8 +42,12 @@ export function ExtensionPromptHost() {
   const current = queue[0];
   const statusTexts = activeSessionId ? Object.values(status[activeSessionId] ?? {}) : [];
 
+  // A prompt is answered exactly once: Enter and the primary button both land
+  // here, and answering twice would run the extension's action twice.
+  const answeredRef = useRef(new Set<string>());
   const settle = (value?: string | boolean) => {
-    if (!current) return;
+    if (!current || answeredRef.current.has(current.promptId)) return;
+    answeredRef.current.add(current.promptId);
     void api.respondExtensionPrompt({ promptId: current.promptId, value }).catch(() => undefined);
     setQueue((prev) => prev.filter((p) => p.promptId !== current.promptId));
   };
@@ -79,22 +84,37 @@ function ExtensionPromptDialog({
     request.kind === "select" ? request.options[0] : undefined,
   );
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
   const dialogId = `extension-prompt-${prompt.promptId}`;
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    requestAnimationFrame(() => inputRef.current?.focus());
+    const layer = claimEscapeLayer();
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    // Confirm and select used to leave focus on the page behind the overlay,
+    // so keyboard users had no way in. Fall back to the primary action.
+    const focusHandle = requestAnimationFrame(() => {
+      const target =
+        dialogRef.current?.querySelector<HTMLElement>("input, select, textarea") ??
+        dialogRef.current?.querySelector<HTMLElement>(
+          ".session-rename-dialog-actions button:last-child",
+        ) ??
+        dialogRef.current;
+      target?.focus();
+    });
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onSettle(undefined);
-      }
+      if (event.key !== "Escape" || !layer.isTop()) return;
+      event.preventDefault();
+      onSettle(undefined);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => {
+      cancelAnimationFrame(focusHandle);
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = previousOverflow;
+      layer.release();
+      previouslyFocused?.focus?.();
     };
   }, [onSettle]);
 
@@ -119,6 +139,8 @@ function ExtensionPromptDialog({
       }}
     >
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         className="dialog session-rename-dialog extension-prompt-dialog"
         role="dialog"
         aria-modal="true"

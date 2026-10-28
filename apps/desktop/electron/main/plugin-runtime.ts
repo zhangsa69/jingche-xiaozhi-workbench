@@ -3891,7 +3891,12 @@ export class PluginRuntime {
       // with a typo that they tried to escape the workspace is a lie that costs
       // them an afternoon.
       const lexical = !options.create && resolveWithinRoot(root, requestPath);
-      const missing = Boolean(lexical) && !existsSync(lexical as string);
+      // An absolute path that no grant covers is reported as missing, not as an
+      // escape: from inside the plugin's root that file simply does not exist,
+      // and a sibling folder the project never registered is not a group folder.
+      // Relative paths keep the escape wording, which is what their author
+      // actually did wrong.
+      const missing = lexical ? !existsSync(lexical) : isAbsolute(requestPath);
       const code = missing ? "NOT_FOUND" : "INVALID_ARGUMENT";
       this.auditFs(loaded, mode, requestPath, code);
       throw apiError(

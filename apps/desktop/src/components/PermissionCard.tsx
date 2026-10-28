@@ -27,6 +27,9 @@ export function PermissionCard({
     permissionSecondsLeft(permission.receivedAt),
   );
   const [resolving, setResolving] = useState(false);
+  // Two clicks in the same frame read the same `resolving` snapshot, so the
+  // guard has to be written synchronously before the request starts.
+  const resolvingRef = useRef(false);
   const timeoutHandled = useRef(false);
 
   const restoreComposerFocus = () => {
@@ -38,7 +41,8 @@ export function PermissionCard({
   const resolve = async (
     decision: "allow-once" | "allow-session" | "deny",
   ) => {
-    if (resolving) return;
+    if (resolvingRef.current) return;
+    resolvingRef.current = true;
     setResolving(true);
     try {
       await resolvePermission(permission.sessionId, permission.requestId, decision);
@@ -46,8 +50,12 @@ export function PermissionCard({
       showToast(error instanceof Error ? error.message : String(error), {
         variant: "error",
       });
-      setResolving(false);
     } finally {
+      // The card usually unmounts once the host confirms, but a resolution that
+      // settles without clearing the pending request must not leave the buttons
+      // dead for the rest of the turn.
+      resolvingRef.current = false;
+      setResolving(false);
       restoreComposerFocus();
     }
   };

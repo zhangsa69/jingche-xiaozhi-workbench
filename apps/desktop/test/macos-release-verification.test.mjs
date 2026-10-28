@@ -5,6 +5,11 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 
+// These scripts drive bash, xcrun and codesign, so they only mean something on
+// macOS. Skipping keeps the suite honest on Windows and Linux runners instead
+// of failing on a missing WSL distribution.
+const macosTest = process.platform === "darwin" ? test : test.skip;
+
 const verifyScript = new URL(
   "../../../scripts/verify-macos-release.sh",
   import.meta.url,
@@ -14,7 +19,7 @@ const stapleScript = new URL(
   import.meta.url,
 );
 
-test("macOS release finalization staples the generated DMG", async (t) => {
+macosTest("macOS release finalization staples the generated DMG", async (t) => {
   const root = await mkdtemp(join(tmpdir(), "pi-desktop-macos-staple-"));
   t.after(() => rm(root, { recursive: true, force: true }));
 
@@ -43,7 +48,7 @@ test("macOS release finalization staples the generated DMG", async (t) => {
   );
 });
 
-test("macOS release verification requires a notarized Developer ID app and DMG", async (t) => {
+macosTest("macOS release verification requires a notarized Developer ID app and DMG", async (t) => {
   const root = await mkdtemp(join(tmpdir(), "pi-desktop-macos-release-"));
   t.after(() => rm(root, { recursive: true, force: true }));
 
@@ -89,7 +94,7 @@ test("macOS release verification requires a notarized Developer ID app and DMG",
   );
 });
 
-test("macOS release verification rejects a Developer ID app without notarization", async (t) => {
+macosTest("macOS release verification rejects a Developer ID app without notarization", async (t) => {
   const root = await mkdtemp(join(tmpdir(), "pi-desktop-macos-unnotarized-"));
   t.after(() => rm(root, { recursive: true, force: true }));
 

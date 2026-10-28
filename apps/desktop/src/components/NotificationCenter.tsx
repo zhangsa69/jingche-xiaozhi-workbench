@@ -15,6 +15,7 @@ import {
   inboxNotifications,
   inboxUnreadCount,
 } from "../lib/notification-inbox";
+import { claimEscapeLayer } from "../lib/modal-escape-stack";
 import {
   IconBell,
   IconCheckCheck,
@@ -155,8 +156,11 @@ export function NotificationCenter({
       if (popoverRef.current?.contains(target)) return;
       closePopover(false);
     };
+    const layer = claimEscapeLayer();
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      // Never dismiss mid-refresh or mid-bulk-action, and never steal Escape
+      // from a dialog stacked above the popover.
+      if (event.key !== "Escape" || busy || !layer.isTop()) return;
       event.preventDefault();
       closePopover();
     };
@@ -165,8 +169,9 @@ export function NotificationCenter({
     return () => {
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("keydown", onKeyDown);
+      layer.release();
     };
-  }, [closePopover, open]);
+  }, [busy, closePopover, open]);
 
   const onPopoverKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;

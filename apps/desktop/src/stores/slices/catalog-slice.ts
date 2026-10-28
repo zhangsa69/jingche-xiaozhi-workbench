@@ -43,6 +43,10 @@ export function createCatalogSlice({
   | "openNotification"
   | "acknowledgeSessionOutcome"
 > {
+  // The badge is decremented locally after the round trip, so a second click
+  // that arrives before the first one resolves would subtract twice.
+  const pendingNotificationReads = new Set<string>();
+
   return {
     refreshProviders: async () => {
       const [providers, sessions, settings, onboarding] = await Promise.all([
@@ -98,6 +102,10 @@ export function createCatalogSlice({
           }
         }
 
+        // Only a successful round trip counts as "already refreshed": recording
+        // a failure here would make one transient error permanent, because the
+        // provider is never asked again in this generation.
+        let refreshedOk = false;
         try {
           const refreshed = await api.listProviderModels({
             providerId,
@@ -122,10 +130,11 @@ export function createCatalogSlice({
               },
             }));
           }
+          refreshedOk = true;
         } catch {
           // Keep the cached catalog; the menu already has a usable fallback.
         } finally {
-          if (generation === catalogRuntime.providerGeneration()) {
+          if (refreshedOk && generation === catalogRuntime.providerGeneration()) {
             refreshedProviderModels.add(providerId);
           }
         }
@@ -209,14 +218,20 @@ export function createCatalogSlice({
     markNotificationRead: async (id) => {
       const item = get().notifications.find((notification) => notification.id === id);
       if (!item || item.readAt) return;
-      await api.markNotificationRead(id);
-      const readAt = new Date().toISOString();
-      set((state) => ({
-        notifications: state.notifications.map((notification) =>
-          notification.id === id ? { ...notification, readAt } : notification,
-        ),
-        unreadNotificationCount: Math.max(0, state.unreadNotificationCount - 1),
-      }));
+      if (pendingNotificationReads.has(id)) return;
+      pendingNotificationReads.add(id);
+      try {
+        await api.markNotificationRead(id);
+        const readAt = new Date().toISOString();
+        set((state) => ({
+          notifications: state.notifications.map((notification) =>
+            notification.id === id ? { ...notification, readAt } : notification,
+          ),
+          unreadNotificationCount: Math.max(0, state.unreadNotificationCount - 1),
+        }));
+      } finally {
+        pendingNotificationReads.delete(id);
+      }
     },
 
     markAllNotificationsRead: async () => {

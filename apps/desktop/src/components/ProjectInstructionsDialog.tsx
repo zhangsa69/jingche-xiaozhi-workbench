@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import type { AgentInstructionFile } from "@pi-desktop/shared";
 import { api } from "../lib/api";
+import { claimEscapeLayer } from "../lib/modal-escape-stack";
 import { Button, Textarea, TooltipButton } from "./ui";
 import { IconClose } from "./icons";
 
@@ -21,9 +22,16 @@ export function ProjectInstructionsDialog({
   const [file, setFile] = useState<AgentInstructionFile | null>(null);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
+  // A failed read leaves `file` null, which disables the editor and the save
+  // button. Track the failure separately so the dialog can offer a retry
+  // instead of staying permanently read-only.
+  const [loadError, setLoadError] = useState<unknown>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    setLoadError(null);
     const load = project.groupId && !project.legacy
       ? api.getProjectGroupInstructions(project.groupId).then((result) => ({
           project: {
@@ -39,20 +47,41 @@ export function ProjectInstructionsDialog({
       setFile(result.project);
       setDraft(result.project.content);
     }).catch((error) => {
-      if (!cancelled) onError(error);
+      if (cancelled) return;
+      setLoadError(error);
+      onError(error);
     });
     return () => {
       cancelled = true;
     };
-  }, [project.groupId, project.legacy, project.path]);
+  }, [project.groupId, project.legacy, project.path, loadAttempt]);
 
   useEffect(() => {
+    const layer = claimEscapeLayer();
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !saving) onClose();
+      // Only the dialog on top closes, and never mid-save.
+      if (event.key !== "Escape" || saving || !layer.isTop()) return;
+      event.preventDefault();
+      onClose();
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      layer.release();
+    };
   }, [onClose, saving]);
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const handle = requestAnimationFrame(() => {
+      const target = dialogRef.current?.querySelector<HTMLElement>("textarea");
+      (target ?? dialogRef.current)?.focus();
+    });
+    return () => {
+      cancelAnimationFrame(handle);
+      previouslyFocused?.focus?.();
+    };
+  }, []);
 
   const save = async () => {
     setSaving(true);
@@ -82,6 +111,8 @@ export function ProjectInstructionsDialog({
       }}
     >
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         className="dialog project-instructions-dialog"
         role="dialog"
         aria-modal="true"
@@ -107,6 +138,17 @@ export function ProjectInstructionsDialog({
           </TooltipButton>
         </div>
         <div className="project-instructions-dialog-path">{file?.path ?? ""}</div>
+        {loadError ? (
+          <div className="project-instructions-dialog-error" role="alert">
+            <span>{t("project.loadFailed")}</span>
+            <Button
+              variant="ghost"
+              onClick={() => setLoadAttempt((count) => count + 1)}
+            >
+              {t("project.retryLoad")}
+            </Button>
+          </div>
+        ) : null}
         <Textarea
           className="settings-instruction-editor project-instructions-dialog-editor"
           value={draft}
