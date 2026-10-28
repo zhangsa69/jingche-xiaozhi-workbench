@@ -44,6 +44,11 @@ const TasksPage = lazy(() =>
     default: module.TasksPage,
   })),
 );
+const TemplatesPage = lazy(() =>
+  import("../../pages/TemplatesPage").then((module) => ({
+    default: module.TemplatesPage,
+  })),
+);
 
 export function AppShell() {
   const {
@@ -251,6 +256,10 @@ export function AppShell() {
               ) : page === "tasks" ? (
                 <div className="route-surface route-page">
                   <TasksPage />
+                </div>
+              ) : page === "templates" ? (
+                <div className="route-surface route-page">
+                  <TemplatesPage />
                 </div>
               ) : (
                 <ChatSurface />
