@@ -14,6 +14,7 @@ import {
   IconAt,
   IconClock,
   IconFileText,
+  IconFolder,
   IconNewSession,
   IconPullRequest,
   IconSearch,
@@ -27,6 +28,7 @@ const PAGE_ENTRIES = [
   { page: "scheduled", labelKey: "scheduled.title", icon: IconClock },
   { page: "tasks", labelKey: "tasks.title", icon: IconClock },
   { page: "templates", labelKey: "templates.title", icon: IconFileText },
+  { page: "library", labelKey: "library.title", icon: IconFolder },
   { page: "plugins", labelKey: "nav.plugins", icon: IconAt },
 ] as const;
 

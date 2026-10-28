@@ -188,6 +188,7 @@ export type AppState = {
     | "plugins"
     | "tasks"
     | "templates"
+    | "library"
     | "settings";
   /** Tab ids come from the shared settings index. */
   settingsTab: SettingsTabId;

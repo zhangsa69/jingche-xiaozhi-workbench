@@ -284,7 +284,24 @@ variables, and reports per-row skips with the values that row lacked; when a
 table shape cannot confirm its column order it says so instead of guessing
 silently. The page is reachable from the sidebar footer and from search.
 
-### 3.7 Extensions
+### 3.7 Library
+
+The library is a list of folders the user keeps on hand across tasks, not a
+store of copies. Left side lists the added folders, right side shows one folder's
+path and when it was added, plus two actions: copy its `@` reference, or remove
+it. Removing only forgets the pointer — the folder stays where it is, and the
+page says so in one line, because a "library" that might have deleted files
+would make nobody dare clean it up.
+
+Entries are de-duplicated by path, ignoring case and separator style, so the same
+folder added twice does not become two rows. Empty paths are rejected, and the
+list has a fixed ceiling instead of growing without bound.
+
+`@` in the composer lists these folders before workspace files, since they were
+chosen deliberately and remain reachable even when no workspace is open. A path
+already present in the workspace index appears once.
+
+### 3.8 Extensions
 
 The Extensions destination is a focused plugin surface with a compact header and
 only two tabs: **Installed** and **Marketplace**. Installed groups plugin rows
@@ -297,7 +314,7 @@ marketplace source settings show the source selector without a redundant
 provider explanation or active-source status line. MCP, Skills, and Subagents
 are not tabs or sections of Extensions.
 
-### 3.8 Settings (full-page takeover)
+### 3.9 Settings (full-page takeover)
 Settings replaces the whole shell (D063): back-to-app + search + a grouped
 settings rail with concise, parallel destination labels. The Agent group
 contains independent Skills, MCP, and Subagents destinations alongside

@@ -8,6 +8,7 @@ import {
   formatFileInsert,
   fuzzyMatchCommand,
   fuzzyMatchPath,
+  mergeLibraryCandidates,
   selectBestMatches,
   type ComposerCommand,
   type ComposerTrigger,
@@ -15,6 +16,7 @@ import {
   type FuzzyMatch,
 } from "@pi-desktop/shared";
 import { api } from "../lib/api";
+import { loadLibrarySources } from "../lib/library-store";
 import { useAppStore } from "../stores/app-store";
 
 /**
@@ -25,6 +27,8 @@ import { useAppStore } from "../stores/app-store";
  */
 
 const MAX_FILE_ITEMS = 50;
+/** Library folders lead the menu but never crowd out the workspace index. */
+const MAX_LIBRARY_ITEMS = 8;
 const SOURCE_TTL_MS = 10_000;
 
 export type AutocompleteItem =
@@ -234,7 +238,22 @@ export function useComposerAutocomplete({
     if (trigger.mode === "slash") {
       return commands ? filterCommands(commands, trigger.query) : [];
     }
-    return files ? filterFiles(files.entries, trigger.query) : [];
+    // Library folders are pointers the user chose to keep on hand, so they come
+    // first and stay listed even when no workspace is open — the point of the
+    // library is reaching a folder from whichever task you happen to be in.
+    const merged = mergeLibraryCandidates(
+      files?.entries ?? [],
+      loadLibrarySources(),
+      trigger.query,
+      MAX_LIBRARY_ITEMS,
+    );
+    const libraryRows: AutocompleteItem[] = merged.library.map((entry) => ({
+      kind: "path",
+      entry,
+      // Already ranked by the shared matcher; a flat score keeps their order.
+      match: { score: 1000, ranges: [] },
+    }));
+    return [...libraryRows, ...filterFiles(merged.workspace, trigger.query)];
   }, [trigger, dismissed, commands, files]);
 
   // New query or mode restarts keyboard navigation at the top hit.

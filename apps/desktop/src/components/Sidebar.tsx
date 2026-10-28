@@ -2249,6 +2249,23 @@ export function Sidebar({
             </TooltipButton>
             <TooltipButton
               type="button"
+              className={`footer-action ${page === "library" ? "active" : ""}`}
+              data-nav="library"
+              tooltip={t("nav.library")}
+              ariaLabel={t("nav.library")}
+              onClick={() =>
+                page === "library"
+                  ? canNavBack()
+                    ? navBack()
+                    : setPage("chat")
+                  : setPage("library")
+              }
+              aria-pressed={page === "library"}
+            >
+              <IconFolder size={14} aria-hidden />
+            </TooltipButton>
+            <TooltipButton
+              type="button"
               className={`footer-action ${page === "plugins" ? "active" : ""}`}
               data-nav="plugins"
               tooltip={t("nav.plugins")}

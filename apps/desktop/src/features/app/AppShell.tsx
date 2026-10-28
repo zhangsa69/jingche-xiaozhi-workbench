@@ -49,6 +49,11 @@ const TemplatesPage = lazy(() =>
     default: module.TemplatesPage,
   })),
 );
+const LibraryPage = lazy(() =>
+  import("../../pages/LibraryPage").then((module) => ({
+    default: module.LibraryPage,
+  })),
+);
 
 export function AppShell() {
   const {
@@ -260,6 +265,10 @@ export function AppShell() {
               ) : page === "templates" ? (
                 <div className="route-surface route-page">
                   <TemplatesPage />
+                </div>
+              ) : page === "library" ? (
+                <div className="route-surface route-page">
+                  <LibraryPage />
                 </div>
               ) : (
                 <ChatSurface />
