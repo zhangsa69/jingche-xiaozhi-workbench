@@ -11,7 +11,7 @@
 - `path` 是**工作区相对路径**，必须以上表对应的扩展名结尾；绝对路径、`..`、扩展名不符都会在插件里被拒，返回 `isError` 文本而不是抛异常。
 - 落盘只走 `pi.fs.writeBase64(path, base64)`，由宿主按 `manifest.fs.write` 的 scope 校验并记审计——插件不直接调用 Node 的 `fs`。
 - `main.js` 是 ESM 入口，`lib/*.js` 是 CommonJS 生成器（`buildDocx` / `buildXlsx` / `buildPptx`，返回 Buffer），所以入口用 `createRequire(import.meta.url)` 去 require。生成器按需加载：`lib/` 出问题时是工具报错，不会让整个插件加载失败。
-- 这个 ESM/CJS 分裂由两个 `type` 显式声明，**两边都别动**：根 `package.json` 是 `"type": "module"`（`main.js` 用 `import`），`lib/package.json` 是 `"type": "commonjs"`（生成器用 `module.exports`）。删掉前者，`main.js` 会按 CJS 解析 → `import` 语法报错；删掉后者，`require("./lib/docx.js")` 会按 ESM 解析 → `module is not defined`。两侧都只坏一半工具，所以有测试锁住这两个字段。
+- 这个 ESM/CJS 分裂由两个 `type` 显式声明，**两边都别动**：根 `package.json` 是 `"type": "module"`（`main.js` 用 `import`），`lib/package.json` 是 `"type": "commonjs"`（生成器用 `module.exports`）。删掉前者，`main.js` 会按 CJS 解析 → `import` 语法报错；删掉后者，`require("./lib/docx.js")` 会按 ESM 解析 → `module is not defined`。两侧都只坏一半工具，所以有测试锁住这两个字段。注意 `lib/package.json` 必须**随包发出**（`pack` 收所有文件，只排除 `dist/`、`node_modules/`、`.git/` 和凭据文件）：将来若给打包加「只收 `.js`/`.md`」之类的白名单，这个作用域声明会静默丢失，装到别人机器上才会炸。
 - 为什么自己拼 OOXML：docx/xlsx/pptx 都是 zip + XML，最小包只需要几个部件；自带 zip 写入器就够用，插件因此零依赖、可离线、体积可控。代价是没有公式、样式、图片与宏。
 - `OfficeSlides` 收到空 `slides` 数组**不是错误**：空 `sldIdLst` 会让 PowerPoint 判定文件损坏，所以生成器回落成「只有标题的一页」——这正是做纯封面页的用法，工具描述里已写明，别改成报错。
 - 参数形状在插件层校验：生成器对缺参是宽容的（`paragraphs: "a, b"` 会当成"没有段落"静默产出空文档并回报成功），所以 `main.js` 的 `paragraphList` / `rowGrid` / `slideList` 先把「不是数组 / 行不是数组 / 幻灯片不是对象」拒成 `isError`；空数组仍然合法（只含标题的文档、封面演示、空表）。
