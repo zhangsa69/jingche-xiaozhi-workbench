@@ -218,7 +218,7 @@
 
 | 编号 | 方案 | 功能点 | 落点 | 规模 |
 |---|---|---|---|---|
-| W-11 | **产物聚合标签页**：`WorkPanelTabKind` 增 `artifact`，按会话三分组「产物 / 本次改动 / 全部文件」 | 23/24 | `lib/work-panel-tabs.ts:1-11,163-169`、新建 `workpanel/ArtifactsTab.tsx` | M |
+| W-11 | **产物聚合标签页**：`WorkPanelTabKind` 增 `artifact`，按会话三分组「产物 / 本次改动 / 全部文件」 | 23/24 | `lib/work-panel-tabs.ts:1-11,163-169`、新建 `workpanel/ArtifactsTab.tsx`。**已实施**：kind 与启动器落在 `lib/work-panel-tabs.ts` / `WorkPanel.tsx`，派生逻辑抽到 `lib/task-artifacts.ts` 与 W-03 共用；改动行跳转审阅标签而非重写 diff | M |
 | W-12 | **office 插件**：docx / xlsx / pptx 三工具，依赖打进插件包，产物落 `scratch/<sessionId>` | 30/31/32 | `plugin-runtime.ts:993-996`、`runtime.ts:2997`（PluginPack）、`protocol.ts:171-177` | L |
 | W-13 | **PDF 生成**：隐藏 BrowserWindow 渲染 HTML → `printToPDF` → scratch | 33 | 复用 `browser-host.ts:60` | S |
 | W-14 | **导出 / 另存 RPC**：`fsWrite`、`dialog.showSaveDialog`、`artifactExport` | 34 | `protocol.ts:246-253`（现全只读）、`IPC_WHITELIST:290-293`、`workspace-ipc.ts:744-773` | M |

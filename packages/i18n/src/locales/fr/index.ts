@@ -1527,9 +1527,23 @@ sklm: {
     "closeTab": "Fermer {{name}}",
     "tabs": {
       "review": "Réviser",
+      "artifact": "Livrables",
       "browser": "Navigateur",
       "file": "Fichiers",
       "plugin": "Vue du plugin"
+    },
+    "artifacts": {
+      "produced": "Livrables",
+      "changed": "Modifications",
+      "files": "Tous les fichiers",
+      "noProduced": "Cette tâche n'a pas encore produit de fichier.",
+      "noChanged": "Aucune modification enregistrée dans cette conversation.",
+      "noFiles": "Aucun fichier à lister dans ce projet.",
+      "noWorkspace": "Ouvrez un projet pour lister ses fichiers.",
+      "loading": "Lecture des fichiers…",
+      "loadError": "Impossible de lire la liste des fichiers. Réessayez dans un instant.",
+      "more": "{{count}} fichiers de plus non listés",
+      "rolledBack": "Annulé"
     },
     "pluginView": {
       "failed": "Cette vue n'a pas pu être chargée. Rechargez le plugin et réessayez."

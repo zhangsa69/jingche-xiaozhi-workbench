@@ -1529,9 +1529,23 @@ sklm: {
     closeTab: "关闭{{name}}",
     tabs: {
       review: "审阅",
+      artifact: "产物",
       browser: "浏览器",
       file: "文件",
       plugin: "插件视图",
+    },
+    artifacts: {
+      produced: "产物",
+      changed: "本次改动",
+      files: "全部文件",
+      noProduced: "这次任务还没有产出文件。",
+      noChanged: "当前对话还没有记录改动。",
+      noFiles: "这个项目还没有可列出的文件。",
+      noWorkspace: "打开项目后即可列出文件。",
+      loading: "正在读取文件…",
+      loadError: "无法读取文件列表，请稍后再试。",
+      more: "还有 {{count}} 个文件未列出",
+      rolledBack: "已回滚",
     },
     pluginView: {
       failed: "无法加载该视图。请重新加载插件后重试。",

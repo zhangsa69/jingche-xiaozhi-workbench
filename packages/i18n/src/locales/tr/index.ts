@@ -1544,9 +1544,23 @@ sklm: {
     closeTab: "{{name}} öğesini kapat",
     tabs: {
       review: "İnceleme",
+      artifact: "Çıktılar",
       browser: "Tarayıcı",
       file: "Dosyalar",
       plugin: "Eklenti görünümü",
+    },
+    artifacts: {
+      produced: "Çıktılar",
+      changed: "Değişiklikler",
+      files: "Tüm dosyalar",
+      noProduced: "Bu görevde henüz dosya üretilmedi.",
+      noChanged: "Bu sohbette henüz kayıtlı değişiklik yok.",
+      noFiles: "Bu projede listelenecek dosya yok.",
+      noWorkspace: "Dosyaları listelemek için bir proje açın.",
+      loading: "Dosyalar okunuyor…",
+      loadError: "Dosya listesi okunamadı. Biraz sonra tekrar deneyin.",
+      more: "{{count}} dosya daha listelenmedi",
+      rolledBack: "Geri alındı",
     },
     pluginView: {
       failed: "Bu görünüm yüklenemedi. Eklentiyi yeniden yükleyip deneyin.",

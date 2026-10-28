@@ -26,14 +26,15 @@ test("the top bar exposes the task overview for an open session", async () => {
 });
 
 test("artifacts come from review records, deduped by path and rolled back ones dropped", async () => {
-  const popover = await read("src/components/TaskOverviewPopover.tsx");
+  // Shared with the artifacts tab (W-11), so the badge and the tab agree.
+  const artifacts = await read("src/lib/task-artifacts.ts");
 
-  assert.match(popover, /reviewChangesFromMessages\(messages\)/);
-  assert.match(popover, /if \(change\.state !== "active"\) continue;/);
+  assert.match(artifacts, /reviewChangesFromMessages\(messages\)/);
+  assert.match(artifacts, /if \(change\.state !== "active"\) continue;/);
   // Later writes to the same file supersede the earlier row instead of adding
   // a second one, so the badge counts files rather than edits.
-  assert.match(popover, /byPath\.set\(change\.path,/);
-  assert.match(popover, /return \[\.\.\.byPath\.values\(\)\]/);
+  assert.match(artifacts, /byPath\.set\(change\.path,/);
+  assert.match(artifacts, /return \[\.\.\.byPath\.values\(\)\]/);
 });
 
 test("progress rows keep their task-wide position and drop empty states", async () => {

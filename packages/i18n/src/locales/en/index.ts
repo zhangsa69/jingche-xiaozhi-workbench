@@ -1543,9 +1543,23 @@ sklm: {
     closeTab: "Close {{name}}",
     tabs: {
       review: "Review",
+      artifact: "Artifacts",
       browser: "Browser",
       file: "Files",
       plugin: "Plugin view",
+    },
+    artifacts: {
+      produced: "Artifacts",
+      changed: "Changes",
+      files: "All files",
+      noProduced: "No files produced by this task yet.",
+      noChanged: "No changes recorded in this conversation yet.",
+      noFiles: "No files to list in this project yet.",
+      noWorkspace: "Open a project to list its files.",
+      loading: "Reading files…",
+      loadError: "Could not read the file list. Try again in a moment.",
+      more: "{{count}} more files not listed",
+      rolledBack: "Rolled back",
     },
     pluginView: {
       failed: "This view could not be loaded. Reload the plugin and try again.",

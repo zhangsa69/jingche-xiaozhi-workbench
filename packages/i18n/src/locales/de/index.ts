@@ -1527,9 +1527,23 @@ sklm: {
     "closeTab": "Schließen {{name}}",
     "tabs": {
       "review": "Überprüfen",
+      "artifact": "Artefakte",
       "browser": "Browser",
       "file": "Dateien",
       "plugin": "Plugin-Ansicht"
+    },
+    "artifacts": {
+      "produced": "Artefakte",
+      "changed": "Änderungen",
+      "files": "Alle Dateien",
+      "noProduced": "Dieser Vorgang hat noch keine Dateien erzeugt.",
+      "noChanged": "In diesem Gespräch sind noch keine Änderungen aufgezeichnet.",
+      "noFiles": "In diesem Projekt gibt es noch keine Dateien zum Auflisten.",
+      "noWorkspace": "Öffnen Sie ein Projekt, um seine Dateien aufzulisten.",
+      "loading": "Dateien werden gelesen…",
+      "loadError": "Die Dateiliste konnte nicht gelesen werden. Versuchen Sie es gleich noch einmal.",
+      "more": "{{count}} weitere Dateien nicht aufgelistet",
+      "rolledBack": "Zurückgerollt"
     },
     "pluginView": {
       "failed": "Diese Ansicht konnte nicht geladen werden. Laden Sie das Plugin neu und versuchen Sie es erneut."

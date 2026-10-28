@@ -1529,9 +1529,23 @@ sklm: {
     closeTab: "關閉{{name}}",
     tabs: {
       review: "審閱",
+      artifact: "產物",
       browser: "瀏覽器",
       file: "檔案",
       plugin: "外掛檢視",
+    },
+    artifacts: {
+      produced: "產物",
+      changed: "本次改動",
+      files: "全部檔案",
+      noProduced: "這次任務還沒有產出檔案。",
+      noChanged: "目前對話還沒有記錄改動。",
+      noFiles: "這個專案還沒有可列出的檔案。",
+      noWorkspace: "開啟專案後即可列出檔案。",
+      loading: "正在讀取檔案…",
+      loadError: "無法讀取檔案清單，請稍後再試。",
+      more: "還有 {{count}} 個檔案未列出",
+      rolledBack: "已回滾",
     },
     pluginView: {
       failed: "無法載入該檢視。請重新載入外掛後重試。",

@@ -1,6 +1,12 @@
 export type WorkPanelTabKind =
   | "new"
   | "review"
+  /**
+   * The session's output in one place: files produced, files changed, and the
+   * workspace index. Singleton per session, like review — the resource is the
+   * session, not a path (W-11).
+   */
+  | "artifact"
   | "file"
   | "plugin"
   /**
@@ -164,7 +170,8 @@ export function isKnownWorkPanelTab(tab: WorkPanelTab): boolean {
   return (
     Boolean(tab) &&
     (tab.kind === "new" || tab.kind === "review" ||
-      tab.kind === "file" || tab.kind === "plugin" || tab.kind === "sidechat")
+      tab.kind === "artifact" || tab.kind === "file" ||
+      tab.kind === "plugin" || tab.kind === "sidechat")
   );
 }
 

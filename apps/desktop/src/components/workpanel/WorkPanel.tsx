@@ -23,6 +23,7 @@ import { cx } from "../ui";
 import { TooltipButton } from "../ui";
 import type { IconProps } from "../icons";
 import {
+  IconArchive,
   IconBot,
   IconChevronLeft,
   IconClose,
@@ -35,6 +36,7 @@ import {
   IconPlus,
 } from "../icons";
 import { ReviewTab } from "./ReviewTab";
+import { ArtifactsTab } from "./ArtifactsTab";
 import { FilesTab } from "./FilesTab";
 import { PluginViewTab } from "./PluginViewTab";
 import { SubagentPanel } from "./SubagentPanel";
@@ -52,6 +54,7 @@ import { sideChatTabSessionId } from "../../lib/side-chat";
 const TAB_ICONS = {
   new: IconPlus,
   review: IconDiff,
+  artifact: IconArchive,
   file: IconFileText,
   plugin: IconPlug,
   sidechat: IconChat,
@@ -100,14 +103,21 @@ function workPanelTools(
   t: (key: string) => string,
   pluginViews: PluginViewMeta[],
 ): WorkPanelTool[] {
-  // Review is the only host-owned launcher. Files, Browser, and every future
-  // tool are plugin-contributed views, so their list stays data-driven.
+  // Review and artifacts are the host-owned launchers. Files, Browser, and
+  // every future tool are plugin-contributed views, so their list stays
+  // data-driven.
   return [
     {
       id: "review",
       tab: toolWorkPanelTab("review"),
       label: t("panel.tabs.review"),
       icon: IconDiff,
+    },
+    {
+      id: "artifact",
+      tab: toolWorkPanelTab("artifact"),
+      label: t("panel.tabs.artifact"),
+      icon: IconArchive,
     },
     ...pluginViews.map((view) => {
       const Icon = pluginViewIcon(view.icon);
@@ -587,6 +597,16 @@ export function WorkPanel({
               aria-labelledby={`work-panel-tab-${activeTab.id}`}
             >
               <ReviewTab />
+            </div>
+          )}
+          {!subagentPanel && activeTab?.kind === "artifact" && (
+            <div
+              id={`work-panel-surface-${activeTab.id}`}
+              className="work-panel-tabpane"
+              role="tabpanel"
+              aria-labelledby={`work-panel-tab-${activeTab.id}`}
+            >
+              <ArtifactsTab />
             </div>
           )}
           {!subagentPanel && activeTab?.kind === "file" && (

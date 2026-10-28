@@ -17,16 +17,9 @@ import {
 } from "../lib/context-inspector-position";
 import { formatToolDuration } from "../lib/tool-display";
 import { fileWorkPanelTab } from "../lib/work-panel-tabs";
-import { reviewChangesFromMessages } from "../lib/workspace-review";
+import { collectTaskArtifacts, shortArtifactPath } from "../lib/task-artifacts";
 import { IconListChecks } from "./icons";
 import { TooltipButton } from "./ui";
-
-/** One file the agent wrote to during this task, newest change wins. */
-export type TaskArtifact = {
-  path: string;
-  additions: number;
-  deletions: number;
-};
 
 /** One tool call, shaped for the "task progress" list. */
 export type TaskProgressRow = {
@@ -39,29 +32,6 @@ export type TaskProgressRow = {
 };
 
 const PROGRESS_ROWS = 6;
-
-/**
- * Collect the files this task produced.
- *
- * "Artifact" here means a workspace write the transcript can prove: the review
- * record embedded in a successful `Write`/`Edit` message. Rolled-back changes
- * are excluded — the file's current state no longer matches them.
- */
-export function collectTaskArtifacts(messages: UiMessage[]): TaskArtifact[] {
-  const byPath = new Map<string, TaskArtifact>();
-  for (const entry of reviewChangesFromMessages(messages)) {
-    const { change } = entry;
-    if (change.state !== "active") continue;
-    byPath.set(change.path, {
-      path: change.path,
-      additions: change.additions,
-      deletions: change.deletions,
-    });
-  }
-  return [...byPath.values()].sort((left, right) =>
-    left.path.localeCompare(right.path),
-  );
-}
 
 /** The tail of the tool calls, with their task-wide positions preserved. */
 export function collectTaskProgress(messages: UiMessage[]): {
@@ -108,8 +78,7 @@ export function taskWorkSeconds(
 
 /** Keep the tail of a long workspace path; the popover is narrow. */
 function shortPath(path: string): string {
-  const parts = path.split(/[/\\]/).filter(Boolean);
-  return parts.length > 2 ? `…/${parts.slice(-2).join("/")}` : path;
+  return shortArtifactPath(path);
 }
 
 /**

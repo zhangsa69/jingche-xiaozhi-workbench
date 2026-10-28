@@ -1527,9 +1527,23 @@ sklm: {
     "closeTab": "Cerrar {{name}}",
     "tabs": {
       "review": "Revisar",
+      "artifact": "Artefactos",
       "browser": "Navegador",
       "file": "Archivos",
       "plugin": "Vista de complemento"
+    },
+    "artifacts": {
+      "produced": "Artefactos",
+      "changed": "Cambios",
+      "files": "Todos los archivos",
+      "noProduced": "Esta tarea aún no ha generado archivos.",
+      "noChanged": "Aún no hay cambios registrados en esta conversación.",
+      "noFiles": "Aún no hay archivos que listar en este proyecto.",
+      "noWorkspace": "Abra un proyecto para listar sus archivos.",
+      "loading": "Leyendo archivos…",
+      "loadError": "No se pudo leer la lista de archivos. Inténtelo de nuevo en un momento.",
+      "more": "{{count}} archivos más sin listar",
+      "rolledBack": "Revertido"
     },
     "pluginView": {
       "failed": "Esta vista no se pudo cargar. Vuelva a cargar el complemento e inténtelo de nuevo."

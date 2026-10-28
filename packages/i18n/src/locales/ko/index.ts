@@ -1545,9 +1545,23 @@ sklm: {
     closeTab: "{{name}} 닫기",
     tabs: {
       review: "검토",
+      artifact: "산출물",
       browser: "브라우저",
       file: "파일",
       plugin: "플러그인 화면",
+    },
+    artifacts: {
+      produced: "산출물",
+      changed: "이번 변경",
+      files: "모든 파일",
+      noProduced: "아직 이 작업에서 생성된 파일이 없습니다.",
+      noChanged: "아직 이 대화에 기록된 변경이 없습니다.",
+      noFiles: "이 프로젝트에 나열할 파일이 없습니다.",
+      noWorkspace: "프로젝트를 열면 파일을 나열할 수 있습니다.",
+      loading: "파일을 읽는 중…",
+      loadError: "파일 목록을 읽을 수 없습니다. 잠시 후 다시 시도하세요.",
+      more: "표시되지 않은 파일 {{count}}개",
+      rolledBack: "되돌림",
     },
     pluginView: {
       failed: "이 화면을 불러올 수 없습니다. 플러그인을 새로 고친 후 다시 시도하세요.",
