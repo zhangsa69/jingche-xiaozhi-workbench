@@ -206,7 +206,7 @@
 | W-01 | **三模式对齐**：`Mode` 扩为 `read-only / plan / goal / agent`（wire 值用 `read-only`，避开 `PermissionMode` 已占用的 `ask`；`ask` 仅作历史别名归一），UI 三选一「问一问 / 想一想 / 做一做」，只读模式不写文件 | 10 | `types/common.ts:2`、`normalizeMode:6-11`、`crates/host-core/src/permissions.rs:148-239`（`read_only_mode_allows` 白名单）、`ComposerModeIcon.tsx`、8 语言 | M |
 | W-02 | **每条回复运行时间**：assistant 消息尾部 `用时 12s`，流式中实时走、完成定格 | 20 | `transcript/AssistantTurns.tsx`、`events-slice.ts:240-247` | S |
 | W-03 | **任务概览浮层**：对话区右上角图标 → 产物 N + 任务进程；点击产物开新标签；空态「暂无产物文件」 | 22/24 | 新建 `transcript/TaskOverviewPopover.tsx`；数据复用 `work-panel-slice` + steps | M |
-| W-04 | **循环执行确认**：工具调用前做重复度检测（同工具同参数第 N 次），命中则暂停并弹「继续 / 停止」 | 13 | 复用 `errors.ts:75-77` 守卫、`runtime.ts:270-288`；新增待确认事件 + `ToolRow` 确认条 | M |
+| W-04 | **循环执行确认**：工具调用前做重复度检测（同工具同参数第 N 次），命中则暂停并弹「继续 / 停止」 | 13/13 | 复用 `errors.ts:75-77` 守卫、`runtime.ts:270-288`；新增待确认事件 + `ToolRow` 确认条。**已实施**时改为复用既有 asktool 通道（见 §11），未新增事件与 `ToolRow` 确认条 | M |
 | W-05 | **任务进程 steps**（结构性，见 §5.1）——已实施：步骤从已批准的 Markdown 快照解析（不落库、不加迁移），进度由 `UpdateStep` 工具行重放得出，`第 3/8 步` 常驻转写流之上，当前步高亮、点击定位到工具行 | 18/18 | 新建 `packages/shared/src/plan-steps.ts`（`parsePlanSteps` / `planStepProgress`）、`runtime.ts`（`buildPlanStepTool` + 指令注入）、`apps/desktop/src/components/PlanStepBar.tsx`、`ChatTranscript.tsx` 挂载点、`styles/chrome.css` | L |
 | W-06 | 思考行计时 / 常驻偏好 / 末行摘要 | 17 | `transcript/shared.tsx:539-604`、`ActivityGroup.tsx:343-349` | S |
 | W-07 | 工具行序号 + 单步耗时 | 18/21 | `transcript/ToolRow.tsx:274-292,363` | S |
@@ -445,7 +445,7 @@ M1 与 M2 可并行（改动文件不重叠：`transcript/*` vs `electron/main/r
 
 ---
 
-## 11. 实施记录（M1 完成，M2 差 W-04）
+## 11. 实施记录（M1、M2 均已收口）
 
 > 本节每一行都对应真实代码改动与测试；§4 的编号与范围保持不变。
 > 截至 2026-10-28 的完整盘点（做了什么 / 剩下什么 / 下一步排序）见 `docs/进度报告-2026-10-28.md`。
@@ -460,11 +460,11 @@ M1 与 M2 可并行（改动文件不重叠：`transcript/*` vs `electron/main/r
 | W-03 任务概览浮层 | 已实施 | 新增 `components/TaskOverviewPopover.tsx`（触发器 + 浮层，复用 `placeContextInspector` 定位、点击外部/Esc 关闭）；接入 `components/ConversationTopbar.tsx` 右上角；`styles/chrome.css`。产物 = 转写中 `Write`/`Edit` 的 review 记录（按路径去重、排除已回滚），任务进程 = 工具调用末 6 条且保留全局序号；产物行点击开文件标签。**落点与 §4.1 的 `transcript/` 不同**：它是顶栏控件，与 `ConversationTopbar` 同目录更内聚 | `test/task-overview-popover.test.mjs` |
 | W-05 任务进程步骤 | 已实施 | **不落库、不加迁移**：步骤从 `planCheckpoints[sessionId].markdown`（用户批准的那份快照）解析，进度从转写里的 `UpdateStep` 工具行重放，因此重启、第二个窗口、侧栏读到的是同一组数字。`packages/shared/src/plan-steps.ts`：`parsePlanSteps`（勾选框 → 编号列表 → `Step N:` → 编号标题，首个产出 ≥2 项的形态胜出，跳过围栏代码，上限 40）+ `planStepProgress`（只计成功行、单调不回退、`anchors` 记录每步起始行）；`runtime.ts`：仅 `autonomousExecution && mode === "agent" && planSteps.length >= 2` 时注册 `UpdateStep`（核心工具集），批准执行时注入 `<approved-steps>` 清单并要求「进入第 n 步前调用 `step=<n>`」，普通 prompt 清空并在重建目录时摘掉；`components/PlanStepBar.tsx`：`第 3/8 步` + 步骤药丸（done/active），点击按 `[data-message-id]` 滚到对应工具行；挂在 `.thread-scroll` **之外**（不随转写滚动、不影响 minimap 测高），阅读窗口隐藏。**落点与 §4.1 的 Rust `plans/{model,repository}.rs` 不同**：Rust 侧无需改动即可满足「重启一致」，因为快照与工具行本就持久化 | `packages/shared/src/plan-steps.test.ts`（15 例，含重启重放与失败行不计）、`packages/agent-runtime/src/runtime.test.ts`（`offers a step marker only while an approved contract executes`）、`test/plan-steps-contract.test.mjs`（6 例） |
 | W-10 侧栏步骤进度 | 已实施 | 新增 `components/SessionPlanProgress.tsx`：运行中的会话行显示 `3/8`，与 W-05 共用 `parsePlanSteps` / `planStepProgress`，**没有第二个计数器**。数据源为 `activeSessionId` 的 `messages`，其他会话用 `retainedTranscripts`（保留 pane 最后画面）；没有转写的会话不显示（宁可空白也不写假的 `0/8`）。只有 `runningSessions[id] === true` 才挂内层组件，空闲行不参与转写重放。接入 `components/Sidebar.tsx`；`styles/sidebar-threads.css` 新增 `.thread-item-steps`。**已知局限**：后台会话切走后进度停住，切回即校正 | `test/session-plan-progress.test.mjs`（4 例） |
-| W-04 | 未开始 | 见 §4.1 | — |
+| W-04 循环执行确认 | 已实施 | 判定 = **同工具 + 同参数 + 同结果**：`runtime.ts` 的 `repeatCallKey`（键排序、长字符串截 200 字符、`Map` 上限 64）与结果指纹（`ok\|text.slice(0,400)`）一致才累加，指纹一变即清零，所以「同一处反复改、每次都有新报错」不会被误杀。第 3 次命中时在写锁**之外** `await pauseRepeatedCall(...)` 挂起该次调用，经 `waitForAskTool` 发问、`resolveAskTool` 收回，`continue` 放行并 `resetMutationBudget`（否则同一步会被 mutation failure budget 立刻再杀一次），`stop` 以 `details.errorCode = "REPEAT_CALL_STOPPED"` 终止并走 `reportRepeatTermination` 收轮。**与 §4.1 的差异（两条）**：①没有新增待确认事件——asktool 通道本就能从 runtime 阻塞到 renderer 再 resolve，复用它等于零新增跨进程协议；②确认条不在 `ToolRow`，而在 `AskToolCard` 的 guard 形态（标题/问题/两个按钮全部走 locale，隐藏进度、指示点、全部拒绝、跳过与自定义输入，点一下即决策）。问题文本用哨兵 `@@repeat-guard@@<tool>\|<count>`，两端都从 `packages/shared/src/repeat-guard.ts` 读写，renderer 侧翻成 8 语言文案；`resolveRepeatGuardDecision` 把「关闭窗口 / 中途放弃 / 无答案」一律当 `stop` | `packages/shared/src/repeat-guard.test.ts`（4 例）、`packages/agent-runtime/src/runtime.test.ts`（`pauses a repeated Edit mismatch and stops when the user says so` / `runs the third identical call after the user chooses to continue` / `does not ask when the repeated call keeps producing new output`）、`test/repeat-guard-card.test.mjs`（5 例，含 8 语言 key 齐平） |
 
-新增 i18n key（8 语言已齐）：`nav.sessionRunningFor`、`chat.slowResponseHint`、`chat.verySlowResponseHint`、`chat.stalledResponseHint`、`chat.overview{Title,Elapsed,Artifacts,NoArtifacts,Steps,NoSteps,ToolCalls}`、`settings.modeReadOnly`、`chat.modeReadOnly`、`chat.modeReadOnlyHint`、`chat.stepsProgress`、`chat.stepsPending`、`chat.stepsGoTo`。
+新增 i18n key（8 语言已齐）：`nav.sessionRunningFor`、`chat.slowResponseHint`、`chat.verySlowResponseHint`、`chat.stalledResponseHint`、`chat.overview{Title,Elapsed,Artifacts,NoArtifacts,Steps,NoSteps,ToolCalls}`、`settings.modeReadOnly`、`chat.modeReadOnly`、`chat.modeReadOnlyHint`、`chat.stepsProgress`、`chat.stepsPending`、`chat.stepsGoTo`、`askTool.repeatGuard{Title,Question,Continue,Stop}`。
 
-基线：`apps/desktop` 2086 tests / 2080 pass / 6 skip / 0 fail；`packages/shared` 692 pass；`packages/agent-runtime` 473 pass；`packages/i18n` 24 pass；`cargo test -p host-core` 429 pass / 0 fail；`pnpm typecheck` 通过；`check-style-tokens.mjs` 通过。
+基线：`apps/desktop` 2091 tests / 2085 pass / 6 skip / 0 fail；`packages/shared` 700 pass；`packages/agent-runtime` 475 pass；`packages/i18n` 24 pass；`cargo test -p host-core` 429 pass / 0 fail；受影响包 build（含 tsc）通过；`check-style-tokens.mjs` 通过。
 
 
 
