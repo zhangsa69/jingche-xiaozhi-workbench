@@ -7,9 +7,10 @@ import {
   useSyncExternalStore,
 } from "react";
 import { useTranslation } from "react-i18next";
-import type { FsEntry, FsReadResult } from "@pi-desktop/shared";
+import type { DocumentPreviewResult, FsEntry, FsReadResult } from "@pi-desktop/shared";
 import { useAppStore } from "../../stores/app-store";
 import { api } from "../../lib/api";
+import { previewKindForPath } from "../../lib/document-preview";
 import { Markdown } from "../Markdown";
 import { fileDirOf } from "../../lib/chat-links";
 import { cx } from "../ui";
@@ -32,6 +33,7 @@ import {
   IconFolder,
 } from "../icons";
 import { exportFile } from "../../lib/export-file";
+import { DocumentPreview, DocumentPreviewSkeleton } from "./DocumentPreview";
 import { WorkTabEmpty } from "./WorkTabEmpty";
 
 const VIEWER_LINE_CAP = 5000;
@@ -158,6 +160,13 @@ export function FilesTab() {
   const [selected, setSelected] = useState<string | null>(null);
   const [file, setFile] = useState<FsReadResult | null>(null);
   const [fileError, setFileError] = useState(false);
+  // Rich-format preview (W-19) is a second, independent read path: a document
+  // has no `FsReadResult`, so it never populates `file`.
+  const [doc, setDoc] = useState<DocumentPreviewResult | null>(null);
+  const [docError, setDocError] = useState(false);
+  // Opening another document while the first is still parsing must not let the
+  // slower answer overwrite the newer one.
+  const docSeq = useRef(0);
 
   // Workspace switches reset all browsing state. Guarded so it only fires on
   // an actual root change: an unconditional [root] effect also runs on the
@@ -172,6 +181,9 @@ export function FilesTab() {
     setSelected(null);
     setFile(null);
     setFileError(false);
+    setDoc(null);
+    setDocError(false);
+    docSeq.current += 1;
   }, [root]);
 
   const loadDir = useCallback(
@@ -211,6 +223,23 @@ export function FilesTab() {
     setSelected(rel);
     setFile(null);
     setFileError(false);
+    setDoc(null);
+    setDocError(false);
+    // Office documents are parsed by the host. Handing `.docx` bytes to the
+    // text reader would only produce mojibake, so this branch returns before
+    // the `fsRead` call below and never falls through to it.
+    if (previewKindForPath(rel)) {
+      docSeq.current += 1;
+      const seq = docSeq.current;
+      try {
+        const result = await api.previewDocument({ path: rel });
+        if (docSeq.current === seq) setDoc(result);
+      } catch {
+        if (docSeq.current === seq) setDocError(true);
+      }
+      return;
+    }
+    docSeq.current += 1;
     try {
       setFile(await api.fsRead(rel, mimeType));
     } catch {
@@ -318,6 +347,7 @@ export function FilesTab() {
   }
 
   if (selected !== null) {
+    const previewKind = previewKindForPath(selected);
     return (
       <div className="file-viewer">
         <div className="file-viewer-header">
@@ -329,6 +359,8 @@ export function FilesTab() {
             onClick={() => {
               setSelected(null);
               setFile(null);
+              setDoc(null);
+              setDocError(false);
             }}
           >
             <IconChevronLeft size={14} />
@@ -357,7 +389,30 @@ export function FilesTab() {
           </TooltipButton>
         </div>
         <div className="file-viewer-body">
-          {fileError ? (
+          {previewKind ? (
+            docError ? (
+              <WorkTabEmpty
+                icon={IconFileText}
+                title={t("panel.files.preview.failed")}
+              >
+                <button
+                  type="button"
+                  className="doc-preview-action"
+                  onClick={() => void api.fsOpen(selected)}
+                >
+                  {t("panel.files.preview.openExternal")}
+                </button>
+              </WorkTabEmpty>
+            ) : !doc ? (
+              <DocumentPreviewSkeleton path={selected} />
+            ) : (
+              <DocumentPreview
+                path={selected}
+                result={doc}
+                onOpenExternal={() => void api.fsOpen(selected)}
+              />
+            )
+          ) : fileError ? (
             <WorkTabEmpty icon={IconFileText} title={t("panel.files.error")} />
           ) : !file ? (
             <div className="file-tree-note">{t("panel.files.loading")}</div>

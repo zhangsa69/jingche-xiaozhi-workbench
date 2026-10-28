@@ -1628,7 +1628,20 @@ sklm: {
       "pdfFallbackTitle": "Aufgabe",
       "pdfError": "PDF konnte nicht erstellt werden. Bitte erneut versuchen.",
       "binary": "Binärdatei – Vorschau nicht verfügbar",
-      "tooLarge": "Datei ist zu groß für die Vorschau"
+      "tooLarge": "Datei ist zu groß für die Vorschau",
+      "preview": {
+        "loading": "Dokument wird gelesen…",
+        "truncated": "Der Inhalt überschreitet das Vorschau-Limit und wurde gekürzt.",
+        "unsupported": "Dieses Dokument kann hier nicht angezeigt werden",
+        "extension": "Dieses Format kann im Panel nicht angezeigt werden.",
+        "corrupt": "Die Datei ist beschädigt oder kein lesbares Office-Dokument.",
+        "tooLarge": "Das Dokument ist zu groß für die Vorschau im Panel.",
+        "sheet": "Arbeitsblätter",
+        "slides": "Folien",
+        "empty": "Dieses Dokument enthält nichts zur Vorschau.",
+        "failed": "Dokument konnte nicht gelesen werden",
+        "openExternal": "In System-App öffnen"
+      }
     }
   },
   "palette": {

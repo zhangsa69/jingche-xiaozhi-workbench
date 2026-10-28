@@ -1628,7 +1628,20 @@ sklm: {
       "pdfFallbackTitle": "Tarea",
       "pdfError": "No se pudo generar el PDF. Inténtalo de nuevo.",
       "binary": "Archivo binario: vista previa no disponible",
-      "tooLarge": "El archivo es demasiado grande para obtener una vista previa"
+      "tooLarge": "El archivo es demasiado grande para obtener una vista previa",
+      "preview": {
+        "loading": "Analizando el documento…",
+        "truncated": "El contenido superó el límite de vista previa y se truncó.",
+        "unsupported": "No se puede previsualizar este documento aquí",
+        "extension": "Este formato no se puede previsualizar en el panel.",
+        "corrupt": "El archivo está dañado o no es un documento de Office legible.",
+        "tooLarge": "El documento es demasiado grande para previsualizarlo en el panel.",
+        "sheet": "Hojas",
+        "slides": "Diapositivas",
+        "empty": "Este documento no tiene nada que previsualizar.",
+        "failed": "No se pudo analizar el documento",
+        "openExternal": "Abrir en la aplicación del sistema"
+      }
     }
   },
   "palette": {

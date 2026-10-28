@@ -1628,7 +1628,20 @@ sklm: {
       "pdfFallbackTitle": "Tâche",
       "pdfError": "Impossible de générer le PDF. Réessayez.",
       "binary": "Fichier binaire — aperçu indisponible",
-      "tooLarge": "Le fichier est trop volumineux pour être prévisualisé"
+      "tooLarge": "Le fichier est trop volumineux pour être prévisualisé",
+      "preview": {
+        "loading": "Analyse du document…",
+        "truncated": "Le contenu dépasse la limite d'aperçu et a été tronqué.",
+        "unsupported": "Impossible d'afficher ce document ici",
+        "extension": "Ce format ne peut pas être prévisualisé dans le panneau.",
+        "corrupt": "Le fichier est endommagé ou n'est pas un document Office lisible.",
+        "tooLarge": "Le document est trop volumineux pour l'aperçu du panneau.",
+        "sheet": "Feuilles",
+        "slides": "Diapositives",
+        "empty": "Ce document n'a rien à prévisualiser.",
+        "failed": "Impossible d'analyser ce document",
+        "openExternal": "Ouvrir dans l'application système"
+      }
     }
   },
   "palette": {

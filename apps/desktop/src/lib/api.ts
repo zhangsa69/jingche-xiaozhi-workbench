@@ -35,6 +35,8 @@ import type {
   FsImageDataUrlResult,
   FsIndexResult,
   FsReadResult,
+  DocumentPreviewRequest,
+  DocumentPreviewResult,
   HostHealth,
   HostStatusEvent,
   MarketSource,
@@ -960,6 +962,12 @@ export const api = {
   /** Render finished HTML into a PDF inside the session's scratch dir (W-13). */
   pdfRender: (request: PdfRenderRequest) =>
     invoke<PdfRenderResult>(IPC.invoke.pdfRender, request),
+  /**
+   * Flatten a `.docx` / `.xlsx` / `.pptx` into panel blocks (W-19). The host
+   * parses; the renderer never reads these bytes as text.
+   */
+  previewDocument: (request: DocumentPreviewRequest) =>
+    invoke<DocumentPreviewResult>(IPC.invoke.documentPreview, request),
   /** Newest NDJSON log rows of one channel (W-17). */
   logTail: (request: LogTailRequest) =>
     invoke<LogTailResult>(IPC.invoke.logTail, request),

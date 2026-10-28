@@ -1609,3 +1609,245 @@
   color: var(--ds-text-muted);
   font-size: var(--text-xs);
 }
+
+/* Work panel — rich-format document preview (W-19) */
+
+/* One scroll container for the whole view: the paper scrolls here, the sheet
+   grid scrolls inside itself, and the panel body never gets a second bar. */
+.doc-preview {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+  padding: 12px;
+}
+
+.doc-preview-notice {
+  margin: 0;
+  padding: 6px 8px;
+  border-radius: var(--radius-2xs);
+  background: var(--ds-bg-inset);
+  color: var(--ds-text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+}
+
+/* The paper stands in for the printed page, so it keeps its ink and fill in
+   both themes instead of inverting with the panel surface. */
+.doc-preview-paper {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 32px;
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xs);
+  background: var(--gray-0);
+  color: var(--gray-900);
+  font-size: var(--text-base);
+  line-height: var(--leading-prose);
+}
+
+.doc-preview-heading {
+  margin: 18px 0 8px;
+  color: var(--gray-1000);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-heading);
+}
+
+.doc-preview-heading:first-child {
+  margin-top: 0;
+}
+
+.doc-preview-paragraph {
+  margin: 0 0 10px;
+  white-space: pre-wrap;
+}
+
+.doc-preview-table {
+  width: 100%;
+  margin: 8px 0 14px;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+/* Cells keep the host's own line breaks: a docx cell joins its paragraphs with
+   `\n` and keeps `\t` from tabs, so collapsing whitespace would glue them.
+   The width cap bounds a runaway column: the host sends no column widths and a
+   single cell can hold thousands of characters. */
+.doc-preview-table th,
+.doc-preview-table td {
+  max-width: 240px;
+  padding: 6px 8px;
+  border: 1px solid var(--gray-300);
+  text-align: left;
+  vertical-align: top;
+  white-space: pre-wrap;
+}
+
+.doc-preview-table th {
+  background: var(--gray-75);
+  color: var(--gray-1000);
+  font-weight: var(--font-weight-semibold);
+}
+
+.doc-preview-table td {
+  color: var(--gray-900);
+}
+
+/* Spreadsheets scroll sideways rather than squeezing columns: a row that wraps
+   to three lines is harder to scan than a row you scroll to. */
+.doc-preview-sheet {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doc-preview-sheet-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.doc-preview-sheet-tab {
+  padding: 4px 10px;
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: var(--radius-2xs);
+  background: transparent;
+  color: var(--ds-text-secondary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.doc-preview-sheet-tab:hover {
+  background: var(--ds-bg-hover);
+}
+
+.doc-preview-sheet-tab.active {
+  border-color: var(--ds-accent);
+  background: var(--ds-bg-active);
+  color: var(--ds-text-primary);
+}
+
+.doc-preview-sheet-tab:focus-visible {
+  outline: 2px solid var(--ds-accent);
+  outline-offset: -2px;
+}
+
+.doc-preview-sheet-scroll {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xs);
+  background: var(--gray-0);
+}
+
+.doc-preview-sheet-scroll .doc-preview-table {
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+}
+
+/* A spreadsheet cell does not wrap, so it is clipped at the cap above and the
+   full value stays available through the `title` the view sets on the cell. */
+.doc-preview-table--nowrap th,
+.doc-preview-table--nowrap td {
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doc-preview-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 12px;
+}
+
+.doc-preview-slide {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  aspect-ratio: 16 / 9;
+  padding: 24px 26px;
+  overflow: auto;
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-md);
+  background: var(--gray-0);
+  color: var(--gray-900);
+  font-size: var(--text-base);
+}
+
+.doc-preview-slide-title {
+  margin: 0;
+  color: var(--gray-1000);
+  font-size: var(--text-lg-plus);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-tight);
+}
+
+.doc-preview-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.doc-preview-bullets li {
+  line-height: var(--leading-relaxed);
+}
+
+.doc-preview-paper--skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.doc-preview-skeleton-line {
+  height: 12px;
+  border-radius: var(--radius-3xs);
+  background: var(--gray-100);
+  animation: doc-preview-pulse 1.4s ease-in-out infinite;
+}
+
+.doc-preview-skeleton-line--short {
+  width: 60%;
+}
+
+.doc-preview-action {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border: 1px solid var(--ds-border-strong);
+  border-radius: var(--radius-2xs);
+  background: var(--ds-bg-elevated);
+  color: var(--ds-text-primary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.doc-preview-action:hover {
+  background: var(--ds-bg-hover);
+}
+
+.doc-preview-action:focus-visible {
+  outline: 2px solid var(--ds-accent);
+  outline-offset: -2px;
+}
+
+@keyframes doc-preview-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}

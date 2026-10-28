@@ -136,6 +136,17 @@ destination, chat as the home surface, tools and permissions inline.
   minimum supported size of 1040×700. Replaces
   the former context-panel overlay; workspace/model/status info lives in the
   composer chips and Settings instead.
+  The file tab previews text, Markdown, and images in place; `.docx`, `.xlsx`,
+  and `.pptx` open a read-only document view instead of the binary empty state:
+  headings, paragraphs, and tables on a paper surface for Word, a header row
+  over a horizontally scrollable grid with per-sheet switching for Excel, and a
+  vertical stack of 16:9 slide cards for PowerPoint. Spreadsheet cells keep a
+  width cap and ellipsise long values with the full text on hover, because the
+  host sends no column widths and one wide cell must not size the whole grid. The host parses these
+  documents and the renderer never reads them as text. A parse failure or an
+  unsupported format falls back to the ordinary file state with the reason and
+  an open-in-system-app action instead of rendering bytes; content beyond the
+  preview limit still renders, under a truncation notice.
 - **Composer**: workspace-agnostic floating pill anchored to the conversation
   destination — centered empty-home content above a bottom-reserved composer
   (D111/D204/D206), bottom-docked in a transcript, with no project / Local / branch
