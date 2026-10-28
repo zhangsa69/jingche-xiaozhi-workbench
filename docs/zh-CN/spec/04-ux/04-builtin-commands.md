@@ -4,7 +4,7 @@
 
 ## 1. 目标
 
-定义无需插件即可使用的五条第一方命令。它们也会出现在输入框的 `/` 菜单中。
+定义无需插件即可使用的六条第一方命令。它们也会出现在输入框的 `/` 菜单中。
 
 快捷键：**Cmd/Ctrl + Shift + P**（D014）
 
@@ -16,7 +16,7 @@ builtin.<domain>.<action>
 
 ## 3. 核心内置目录
 
-内置 registry 有意只包含以下五条命令。插件命令会动态扩展可搜索的命令列表；
+内置 registry 有意只包含以下六条命令。插件命令会动态扩展可搜索的命令列表；
 应用导航、项目管理、设置、插件管理和诊断不属于内置命令契约。
 
 | id | 标题 | 关键词 | 类别 | 风险 | 行为 |
@@ -26,10 +26,11 @@ builtin.<domain>.<action>
 | `builtin.mode.agent` | 切换到 Agent | mode、agent | Session | 低 | 将空闲会话模式设为 Agent |
 | `builtin.mode.plan` | 切换到 Plan | mode、plan、planning | Session | 低 | 将空闲会话模式设为 Plan |
 | `builtin.mode.goal` | 切换到 Goal | mode、goal、objective、autonomous | Session | 低 | 将空闲会话模式设为 Goal |
+| `builtin.session.exportPdf` | 导出任务为 PDF | pdf、export、save、print | Session | 低 | 把当前会话渲染成 PDF 落到会话 scratch 目录，再交给保存对话框 |
 
 ## 4. 可见性与执行规则
 
-- 五个 ID 构成完整的第一方 registry。移除的 ID 不会出现在命令面板结果中，
+- 六个 ID 构成完整的第一方 registry。移除的 ID 不会出现在命令面板结果中，
   也不再有渲染器 dispatch case；插件命令仍可独立发现。
 - `New Task` 使用当前项目或临时分组。若该组最新会话为空则选中复用；否则
   在第一帧露出空首页并创建持久空会话。同一分组内该操作是幂等的。
@@ -55,7 +56,7 @@ type CommandExecutionResult =
 
 ## 6. 验收
 
-1. 内置 registry 恰好包含五个唯一且带前缀的 ID。
+1. 内置 registry 恰好包含六个唯一且带前缀的 ID。
 2. 命令面板搜索可匹配每条命令的标题和关键词。
 3. 模式切换命令立即更新空闲会话模式；Plan、Goal 和 Agent 使用同一个 pi Agent。
 4. Compact 在空闲时可用，在活动回合/检查点期间返回 `AGENT_BUSY`。
@@ -74,6 +75,7 @@ type CommandExecutionResult =
 | `/agent-mode` | `builtin.mode.agent` |
 | `/plan-mode` | `builtin.mode.plan` |
 | `/goal-mode` | `builtin.mode.goal` |
+| `/pdf` | `builtin.session.exportPdf` |
 
 别名与模板和插件命令名称共享一个命名空间；冲突时优先使用内置别名，其次是项目模板、
 用户模板和插件命令。选择别名会插入 `/alias `；单独发送 `/new` 或 `/compact` 时，

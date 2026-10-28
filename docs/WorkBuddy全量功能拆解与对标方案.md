@@ -220,7 +220,7 @@
 |---|---|---|---|---|
 | W-11 | **产物聚合标签页**：`WorkPanelTabKind` 增 `artifact`，按会话三分组「产物 / 本次改动 / 全部文件」 | 23/24 | `lib/work-panel-tabs.ts:1-11,163-169`、新建 `workpanel/ArtifactsTab.tsx`。**已实施**：kind 与启动器落在 `lib/work-panel-tabs.ts` / `WorkPanel.tsx`，派生逻辑抽到 `lib/task-artifacts.ts` 与 W-03 共用；改动行跳转审阅标签而非重写 diff | M |
 | W-12 | **office 插件**：docx / xlsx / pptx 三工具，依赖打进插件包，产物落 `scratch/<sessionId>` | 30/31/32 | `plugin-runtime.ts:993-996`、`runtime.ts:2997`（PluginPack）、`protocol.ts:171-177` | L |
-| W-13 | **PDF 生成**：隐藏 BrowserWindow 渲染 HTML → `printToPDF` → scratch | 33 | 复用 `browser-host.ts:60` | S |
+| W-13 | **PDF 生成**：隐藏 BrowserWindow 渲染 HTML → `printToPDF` → scratch | 33 | 复用 `browser-host.ts:60`。**已实施**：`pdf/render` 通道 + `lib/session-pdf.ts` 组文档 + `builtin.session.exportPdf` / `/pdf`；PDF 落 scratch 后走 W-14 的 `fs/export` 出盘 | S |
 | W-14 | **导出 / 另存 RPC**：`fsWrite`、`dialog.showSaveDialog`、`artifactExport` | 34 | `protocol.ts:246-253`（现全只读）、`IPC_WHITELIST:290-293`、`workspace-ipc.ts:744-773`。**已实施（改口径）**：只做 `fs/export` —— 源走 `fs/reveal` 同一条 `resolveRealOpenablePath` 校验，目标是保存对话框返回的路径，renderer 从头到尾说不了目标；`fsWrite` 主动不做（会绕过审阅记录与回滚，把只读证据链撕开一个口子），导出是「出去」，不是「进来」 | M |
 | W-15 | **终端标签页**：先做「命令输出面板」（无交互 PTY），复用 host shell 流式输出；二期再评估 node-pty | 29 | `crates/host-core/src/tools/shell.rs`、`lib/work-panel-tabs.ts:1-11` | L |
 | W-16 | **变更追踪增强**：按文件分组、批量回滚、与消息双向定位 | 26 | `workpanel/ReviewTab.tsx:9-47`、`protocol.ts:239` | M |

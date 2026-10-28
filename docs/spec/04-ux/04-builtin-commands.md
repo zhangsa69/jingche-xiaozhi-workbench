@@ -2,7 +2,7 @@
 
 ## 1. Goal
 
-Define the five first-party command palette entries available without plugins.
+Define the six first-party command palette entries available without plugins.
 The same entries are available in the composer `/` menu.
 
 Shortcut: **Cmd/Ctrl + Shift + P** (D014)
@@ -15,7 +15,7 @@ builtin.<domain>.<action>
 
 ## 3. Core builtin catalog
 
-The builtin registry intentionally contains exactly these five commands. Plugin
+The builtin registry intentionally contains exactly these six commands. Plugin
 commands extend the searchable command list dynamically; app navigation,
 project management, settings, plugin management, and diagnostics are not
 builtin command contracts.
@@ -27,10 +27,11 @@ builtin command contracts.
 | `builtin.mode.agent` | Switch to Agent | mode, agent | Session | low | set the idle session mode to Agent |
 | `builtin.mode.plan` | Switch to Plan | mode, plan, planning | Session | low | set the idle session mode to Plan |
 | `builtin.mode.goal` | Switch to Goal | mode, goal, objective, autonomous | Session | low | set the idle session mode to Goal |
+| `builtin.session.exportPdf` | Export Task as PDF | pdf, export, save, print | Session | low | render the active transcript to a PDF in the session scratch dir, then hand it to the save dialog |
 
 ## 4. Visibility and execution rules
 
-- The five IDs are the complete first-party registry. Removed IDs are not
+- The six IDs are the complete first-party registry. Removed IDs are not
   palette results and are not renderer dispatch cases; plugin commands remain
   independently discoverable.
 - `New Task` uses the current project or temporary group. It selects the
@@ -62,7 +63,7 @@ type CommandExecutionResult =
 
 ## 6. Acceptance
 
-1. The builtin registry contains exactly five unique, prefixed IDs.
+1. The builtin registry contains exactly six unique, prefixed IDs.
 2. Palette search matches each title and keyword set.
 3. Mode switch commands update the idle session mode immediately; Plan, Goal,
    and Agent refer to the same pi Agent.
@@ -84,6 +85,7 @@ in the same registry that feeds palette search
 | `/agent-mode` | `builtin.mode.agent` |
 | `/plan-mode` | `builtin.mode.plan` |
 | `/goal-mode` | `builtin.mode.goal` |
+| `/pdf` | `builtin.session.exportPdf` |
 
 Aliases share one namespace with template and plugin command names; builtin
 aliases win collisions, then project templates, then user templates, then

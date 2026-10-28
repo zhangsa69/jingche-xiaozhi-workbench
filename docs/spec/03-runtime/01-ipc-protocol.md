@@ -1614,6 +1614,13 @@ Renderer IPC kept for the Plan-safe preview facade and URL fallback:
   already open. `suggestedName` is reduced to a bare file name before it reaches
   the dialog. Saving onto the source is a no-op, and a canceled dialog is not an
   error. Renderer-only; not a plugin host API.
+- `pdf/render({html, sessionId?, name?})` → `PdfRenderResult` (`{ path: string }`).
+  Renders finished HTML to A4 PDF in the session's scratch directory (or the
+  shared scratch root when no session is given) and returns the absolute path.
+  The window is hidden, sandboxed, and destroyed before the call resolves; the
+  intermediate HTML file is removed too. Bodies over 4 MiB are rejected as a bug,
+  not a document. The result is readable through `fs/read`, so exporting it is
+  the ordinary `fs/export` call — this method adds no destination of its own.
 - `fs/open({path})` → open with the OS default application. Same lexical
   containment as `fs/read` (without the extra realpath step used by reads).
 - `fs/resolveRef({ref, sessionId?})` → `FsChatRefResolveResult`
