@@ -1571,6 +1571,11 @@ sklm: {
       "rollingBack": "Rollback…",
       "rolledBack": "Rollback",
       "rollbackUnavailable": "Rollback nicht verfügbar",
+      "rollbackFile": "Änderungen dieser Datei rückgängig machen",
+      "rollbackFileDone": "Alle Änderungen an dieser Datei rückgängig gemacht",
+      "rollbackFilePartial": "{{done}} rückgängig gemacht, {{failed}} nicht möglich",
+      "fileSnapshots": "{{count}} Snapshots",
+      "locateInChat": "Im Gespräch zeigen",
       "rollbackConflict": "Die Datei wurde nach dieser Meldung geändert; Rollback wurde übersprungen.",
       "rollbackError": "Diese Änderung konnte nicht rückgängig gemacht werden.",
       "status": {

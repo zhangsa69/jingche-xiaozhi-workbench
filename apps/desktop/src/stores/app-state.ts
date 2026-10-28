@@ -242,6 +242,10 @@ export type AppState = {
     messageId: string,
     snapshotId: string,
   ) => Promise<ReviewRollbackResult | null>;
+  /** Roll back every snapshot of one file, newest first (W-16). */
+  rollbackWorkspaceChanges: (
+    targets: { messageId: string; snapshotId: string }[],
+  ) => Promise<{ rolledBack: number; failed: number } | null>;
   abort: () => Promise<void>;
   openProject: () => Promise<void>;
   closeProjectDialog: () => void;

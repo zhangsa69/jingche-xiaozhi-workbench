@@ -1571,6 +1571,11 @@ sklm: {
       "rollingBack": "Restauration…",
       "rolledBack": "Restauration",
       "rollbackUnavailable": "Restauration indisponible",
+      "rollbackFile": "Annuler les modifications de ce fichier",
+      "rollbackFileDone": "Toutes les modifications de ce fichier ont été annulées",
+      "rollbackFilePartial": "{{done}} annulées, {{failed}} impossibles à annuler",
+      "fileSnapshots": "{{count}} instantanés",
+      "locateInChat": "Afficher dans la conversation",
       "rollbackConflict": "Le fichier a changé après ce message ; la restauration a été ignorée.",
       "rollbackError": "Impossible d'annuler cette modification.",
       "status": {

@@ -3213,6 +3213,24 @@
   content-visibility: visible;
 }
 
+/* A row the work panel asked to see (W-16). `content-visibility` has to be
+   lifted for the same reason a search hit lifts it: an offscreen row would
+   otherwise skip layout and never scroll into a stable position. */
+.message-row.transcript-locate-target {
+  content-visibility: visible;
+  animation: transcript-locate-flash 1.6s ease-out;
+}
+
+@keyframes transcript-locate-flash {
+  0%,
+  60% {
+    background-color: color-mix(in srgb, var(--ds-accent) 14%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
 ::highlight(transcript-search) {
   color: var(--ds-text-primary);
   background-color: color-mix(in srgb, var(--ds-accent) 35%, transparent);

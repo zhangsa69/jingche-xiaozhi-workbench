@@ -1587,6 +1587,11 @@ sklm: {
       rollingBack: "Rolling back…",
       rolledBack: "Rolled back",
       rollbackUnavailable: "Rollback unavailable",
+      rollbackFile: "Undo this file's changes",
+      rollbackFileDone: "Undid every change to this file",
+      rollbackFilePartial: "Undid {{done}}, {{failed}} could not be undone",
+      fileSnapshots: "{{count}} snapshots",
+      locateInChat: "Show in conversation",
       rollbackConflict: "The file changed after this message; rollback was skipped.",
       rollbackError: "Couldn't roll back this change.",
       status: {

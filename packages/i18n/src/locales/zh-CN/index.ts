@@ -1573,6 +1573,11 @@ sklm: {
       rollingBack: "正在回退…",
       rolledBack: "已回退",
       rollbackUnavailable: "无法回退",
+      rollbackFile: "回退此文件的改动",
+      rollbackFileDone: "已回退该文件的全部改动",
+      rollbackFilePartial: "已回退 {{done}} 项，{{failed}} 项未能回退",
+      fileSnapshots: "{{count}} 个快照",
+      locateInChat: "在对话中定位",
       rollbackConflict: "该文件在此消息之后又发生了变化，已跳过回退。",
       rollbackError: "这项改动回退失败。",
       status: {

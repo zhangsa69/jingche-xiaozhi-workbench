@@ -8,7 +8,7 @@ import type {
 import { reviewChangeFromMessage } from "../lib/workspace-review";
 import { useAppStore } from "../stores/app-store";
 import { cx } from "./ui";
-import { IconCheck, IconChevronRight, IconSnapshot } from "./icons";
+import { IconChat, IconCheck, IconChevronRight, IconSnapshot } from "./icons";
 
 /* Git-status letters carry the status without relying on color alone; the
    localized word stays in the row's accessible name. */
@@ -18,7 +18,15 @@ const STATUS_MARKS: Record<ReviewChangeStatus, string> = {
   deleted: "D",
 };
 
-function DiffBody({ message, compact }: { message: UiMessage; compact: boolean }) {
+function DiffBody({
+  message,
+  compact,
+  onLocate,
+}: {
+  message: UiMessage;
+  compact: boolean;
+  onLocate?: () => void;
+}) {
   const { t } = useTranslation();
   const change = reviewChangeFromMessage(message);
   const rollback = useAppStore((state) => state.rollbackWorkspaceChange);
@@ -67,6 +75,16 @@ function DiffBody({ message, compact }: { message: UiMessage; compact: boolean }
       )}
 
       <div className={cx("review-change-card-actions", compact && "is-compact")}>
+        {onLocate ? (
+          <button
+            type="button"
+            className="review-change-locate"
+            onClick={onLocate}
+          >
+            <IconChat size={13} />
+            {t("panel.review.locateInChat")}
+          </button>
+        ) : null}
         {rollbackStatus === "conflict" ? (
           <div className="review-change-rollback-note is-warning">
             {t("panel.review.rollbackConflict")}
@@ -106,9 +124,12 @@ function DiffBody({ message, compact }: { message: UiMessage; compact: boolean }
 export const ReviewChangeCard = memo(function ReviewChangeCard({
   message,
   compact = false,
+  onLocate,
 }: {
   message: UiMessage;
   compact?: boolean;
+  /** Set by the review panel: jump to this snapshot's row in the transcript. */
+  onLocate?: () => void;
 }) {
   const { t } = useTranslation();
   const change = reviewChangeFromMessage(message);
@@ -172,7 +193,7 @@ export const ReviewChangeCard = memo(function ReviewChangeCard({
       </button>
       {open ? (
         <div className="review-change-card-body" id={detailsId}>
-          <DiffBody message={message} compact={compact} />
+          <DiffBody message={message} compact={compact} onLocate={onLocate} />
         </div>
       ) : null}
     </section>

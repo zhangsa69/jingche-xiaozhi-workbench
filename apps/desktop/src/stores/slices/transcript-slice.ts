@@ -49,6 +49,7 @@ export function createTranscriptSlice({
   | "activateMessageRevision"
   | "deleteMessage"
   | "rollbackWorkspaceChange"
+  | "rollbackWorkspaceChanges"
   | "abort"
 > {
   return {
@@ -385,6 +386,51 @@ export function createTranscriptSlice({
           errorCode: (error as { code?: string })?.code ?? null,
         }));
       }
+    },
+
+    rollbackWorkspaceChanges: async (targets) => {
+      const state = get();
+      const sessionId = state.activeSessionId;
+      if (!sessionId || state.isRunning || targets.length === 0) return null;
+
+      const rolledBackIds: string[] = [];
+      let failed = 0;
+      // Serial and in the caller's order: each snapshot restores over the state
+      // the previous one produced, so undoing newest-first is what actually
+      // returns the file to where it started.
+      for (const target of targets) {
+        try {
+          const result = await api.workspaceReviewRollback({
+            sessionId,
+            snapshotId: target.snapshotId,
+          });
+          if (
+            result.status === "rolledBack" ||
+            result.status === "alreadyRolledBack"
+          ) {
+            rolledBackIds.push(target.messageId);
+          } else {
+            failed += 1;
+          }
+        } catch {
+          failed += 1;
+        }
+      }
+
+      if (rolledBackIds.length > 0) {
+        set((current) =>
+          current.activeSessionId === sessionId
+            ? {
+                messages: current.messages.map((message) =>
+                  rolledBackIds.includes(message.id)
+                    ? withReviewChangeState(message, "rolledBack")
+                    : message,
+                ),
+              }
+            : {},
+        );
+      }
+      return { rolledBack: rolledBackIds.length, failed };
     },
 
     rollbackWorkspaceChange: async (messageId, snapshotId) => {

@@ -1589,6 +1589,11 @@ sklm: {
       rollingBack: "되돌리는 중…",
       rolledBack: "되돌림",
       rollbackUnavailable: "되돌릴 수 없음",
+      rollbackFile: "이 파일의 변경 사항 되돌리기",
+      rollbackFileDone: "이 파일의 모든 변경을 되돌렸습니다",
+      rollbackFilePartial: "{{done}}개를 되돌렸고 {{failed}}개는 되돌리지 못했습니다",
+      fileSnapshots: "스냅샷 {{count}}개",
+      locateInChat: "대화에서 보기",
       rollbackConflict: "이 메시지 후 파일이 변경되어 되돌리기를 건너뛰었습니다.",
       rollbackError: "이 변경을 되돌릴 수 없습니다.",
       status: {

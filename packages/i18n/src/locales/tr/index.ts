@@ -1588,6 +1588,11 @@ sklm: {
       rollingBack: "Geri alınıyor…",
       rolledBack: "Geri alındı",
       rollbackUnavailable: "Geri alma yok",
+      rollbackFile: "Bu dosyanın değişikliklerini geri al",
+      rollbackFileDone: "Bu dosyadaki tüm değişiklikler geri alındı",
+      rollbackFilePartial: "{{done}} geri alındı, {{failed}} alınamadı",
+      fileSnapshots: "{{count}} anlık görüntü",
+      locateInChat: "Konuşmada göster",
       rollbackConflict: "Bu iletiden sonra dosya değişti; geri alma atlandı.",
       rollbackError: "Bu değişiklik geri alınamadı.",
       status: {

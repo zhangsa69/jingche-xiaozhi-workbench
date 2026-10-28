@@ -1571,6 +1571,11 @@ sklm: {
       "rollingBack": "Revertir…",
       "rolledBack": "Revertir",
       "rollbackUnavailable": "Revertir no disponible",
+      "rollbackFile": "Deshacer los cambios de este archivo",
+      "rollbackFileDone": "Se deshicieron todos los cambios de este archivo",
+      "rollbackFilePartial": "{{done}} deshechos, {{failed}} sin deshacer",
+      "fileSnapshots": "{{count}} instantáneas",
+      "locateInChat": "Mostrar en la conversación",
       "rollbackConflict": "El archivo cambió después de este mensaje; se omitió la reversión.",
       "rollbackError": "No se pudo revertir este cambio.",
       "status": {

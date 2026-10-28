@@ -938,6 +938,106 @@
   color: var(--ds-error);
 }
 
+/* One block per file. The head stays put while its snapshots scroll past it,
+   so "which file am I looking at" survives a long list. */
+.review-file-group {
+  border-radius: var(--radius-md);
+}
+
+.review-file-group + .review-file-group {
+  margin-top: var(--space-2);
+}
+
+.review-file-head {
+  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--ds-surface);
+  border-bottom: 1px solid var(--ds-border-subtle);
+}
+
+.review-file-path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ds-text);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  direction: rtl;
+  text-align: left;
+}
+
+.review-file-snapshots,
+.review-file-state {
+  flex: 0 0 auto;
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+}
+
+.review-file-rollback {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 3px var(--space-2);
+  color: var(--ds-text-muted);
+  background: transparent;
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
+  cursor: pointer;
+  transition: color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+}
+
+.review-file-rollback:hover:not(:disabled) {
+  color: var(--ds-text);
+  border-color: var(--ds-border);
+}
+
+.review-file-rollback:focus-visible {
+  outline: 2px solid var(--ds-focus);
+  outline-offset: 1px;
+}
+
+.review-file-rollback:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.review-file-changes {
+  padding-top: var(--space-1);
+}
+
+.review-change-locate {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: auto;
+  padding: 3px 6px;
+  color: var(--ds-text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
+  cursor: pointer;
+  transition: color var(--motion-fast) ease;
+}
+
+.review-change-locate:hover {
+  color: var(--ds-text);
+}
+
+.review-change-locate:focus-visible {
+  outline: 2px solid var(--ds-focus);
+  outline-offset: 1px;
+}
+
 /* Hunks are set apart by a gap; each opens with its own tinted header line. */
 .diff-hunk + .diff-hunk {
   margin-top: 8px;
