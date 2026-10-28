@@ -1546,6 +1546,7 @@ sklm: {
     tabs: {
       review: "검토",
       artifact: "산출물",
+      log: "로그",
       browser: "브라우저",
       file: "파일",
       plugin: "플러그인 화면",
@@ -1569,6 +1570,20 @@ sklm: {
     empty: {
       title: "열린 리소스 없음",
       body: "도구를 선택하거나 리소스를 여세요.",
+    },
+    log: {
+      channel: "채널",
+      level: "수준",
+      all: "전체",
+      search: "이벤트나 메시지 검색",
+      follow: "끝부분 따라가기",
+      empty: "아직 로그가 없습니다.",
+      emptyHint: "앱이 실행되는 동안 로그를 기록합니다. 작업을 한 번 마친 뒤 다시 확인하세요.",
+      error: "로그를 읽지 못했습니다.",
+      truncated: "최근 기록만 불러왔습니다.",
+      count: "{{count}}개",
+      counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
+      details: "자세히",
     },
     review: {
       noWorkspace: "변경 사항을 보려면 프로젝트를 여세요",

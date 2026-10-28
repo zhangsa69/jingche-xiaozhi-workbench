@@ -34,9 +34,11 @@ import {
   IconPanelRestore,
   IconPlug,
   IconPlus,
+  IconTerminal,
 } from "../icons";
 import { ReviewTab } from "./ReviewTab";
 import { ArtifactsTab } from "./ArtifactsTab";
+import { LogTab } from "./LogTab";
 import { FilesTab } from "./FilesTab";
 import { PluginViewTab } from "./PluginViewTab";
 import { SubagentPanel } from "./SubagentPanel";
@@ -55,6 +57,7 @@ const TAB_ICONS = {
   new: IconPlus,
   review: IconDiff,
   artifact: IconArchive,
+  log: IconTerminal,
   file: IconFileText,
   plugin: IconPlug,
   sidechat: IconChat,
@@ -103,9 +106,9 @@ function workPanelTools(
   t: (key: string) => string,
   pluginViews: PluginViewMeta[],
 ): WorkPanelTool[] {
-  // Review and artifacts are the host-owned launchers. Files, Browser, and
-  // every future tool are plugin-contributed views, so their list stays
-  // data-driven.
+  // Review, artifacts, and the log tail are the host-owned launchers. Files,
+  // Browser, and every future tool are plugin-contributed views, so their list
+  // stays data-driven.
   return [
     {
       id: "review",
@@ -118,6 +121,12 @@ function workPanelTools(
       tab: toolWorkPanelTab("artifact"),
       label: t("panel.tabs.artifact"),
       icon: IconArchive,
+    },
+    {
+      id: "log",
+      tab: toolWorkPanelTab("log"),
+      label: t("panel.tabs.log"),
+      icon: IconTerminal,
     },
     ...pluginViews.map((view) => {
       const Icon = pluginViewIcon(view.icon);
@@ -607,6 +616,16 @@ export function WorkPanel({
               aria-labelledby={`work-panel-tab-${activeTab.id}`}
             >
               <ArtifactsTab />
+            </div>
+          )}
+          {!subagentPanel && activeTab?.kind === "log" && (
+            <div
+              id={`work-panel-surface-${activeTab.id}`}
+              className="work-panel-tabpane"
+              role="tabpanel"
+              aria-labelledby={`work-panel-tab-${activeTab.id}`}
+            >
+              <LogTab />
             </div>
           )}
           {!subagentPanel && activeTab?.kind === "file" && (

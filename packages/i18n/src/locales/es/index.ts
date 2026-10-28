@@ -1528,6 +1528,7 @@ sklm: {
     "tabs": {
       "review": "Revisar",
       "artifact": "Artefactos",
+      "log": "Registro",
       "browser": "Navegador",
       "file": "Archivos",
       "plugin": "Vista de complemento"
@@ -1551,6 +1552,20 @@ sklm: {
     "empty": {
       "title": "No hay ningún recurso abierto",
       "body": "Elija una herramienta o abra un recurso."
+    },
+    "log": {
+      "channel": "Canal",
+      "level": "Nivel",
+      "all": "Todo",
+      "search": "Buscar eventos o mensajes",
+      "follow": "Seguir el final",
+      "empty": "Aún no hay registros.",
+      "emptyHint": "La aplicación escribe registros mientras se ejecuta: vuelve tras una tarea.",
+      "error": "No se pudo leer el registro.",
+      "truncated": "Solo se cargaron los registros más recientes.",
+      "count": "{{count}} filas",
+      "counts": "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
+      "details": "Detalles",
     },
     "review": {
       "noWorkspace": "Abrir un proyecto para ver los cambios",

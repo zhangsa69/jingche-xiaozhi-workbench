@@ -1545,6 +1545,7 @@ sklm: {
     tabs: {
       review: "İnceleme",
       artifact: "Çıktılar",
+      log: "Günlük",
       browser: "Tarayıcı",
       file: "Dosyalar",
       plugin: "Eklenti görünümü",
@@ -1568,6 +1569,20 @@ sklm: {
     empty: {
       title: "Açık kaynak yok",
       body: "Bir araç seçin veya bir kaynak açın.",
+    },
+    log: {
+      channel: "Kanal",
+      level: "Düzey",
+      all: "Tümü",
+      search: "Olay veya ileti ara",
+      follow: "Sondan takip et",
+      empty: "Henüz günlük yok.",
+      emptyHint: "Uygulama çalışırken günlük yazar — bir görevden sonra tekrar bakın.",
+      error: "Günlük okunamadı.",
+      truncated: "Yalnızca en yeni kayıtlar yüklendi.",
+      count: "{{count}} satır",
+      counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
+      details: "Ayrıntılar",
     },
     review: {
       noWorkspace: "Değişiklikleri görmek için bir proje açın",

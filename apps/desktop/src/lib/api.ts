@@ -60,6 +60,8 @@ import type {
   PluginInstallResult,
   ProjectRecord,
   ProjectGroupRecord,
+  LogTailRequest,
+  LogTailResult,
   PdfRenderRequest,
   PdfRenderResult,
   ProjectMemory,
@@ -958,6 +960,9 @@ export const api = {
   /** Render finished HTML into a PDF inside the session's scratch dir (W-13). */
   pdfRender: (request: PdfRenderRequest) =>
     invoke<PdfRenderResult>(IPC.invoke.pdfRender, request),
+  /** Newest NDJSON log rows of one channel (W-17). */
+  logTail: (request: LogTailRequest) =>
+    invoke<LogTailResult>(IPC.invoke.logTail, request),
   /**
    * Complete a file reference from chat text to a real file (D320 follow-up).
    * The main process owns the root order — project, session scratch,

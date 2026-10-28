@@ -255,6 +255,8 @@ export const IPC = {
     fsExport: "pi-desktop/fs/export",
     /** Render HTML to a PDF inside the session's scratch dir (W-13). */
     pdfRender: "pi-desktop/pdf/render",
+    /** Read the tail of the NDJSON log files (W-17). */
+    logTail: "pi-desktop/log/tail",
     windowSetWorkPanelReservation:
       "pi-desktop/window/setWorkPanelReservation",
     windowSetWorkPanelChatWidth: "pi-desktop/window/setWorkPanelChatWidth",

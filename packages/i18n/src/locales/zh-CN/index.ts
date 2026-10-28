@@ -1530,6 +1530,7 @@ sklm: {
     tabs: {
       review: "审阅",
       artifact: "产物",
+      log: "日志",
       browser: "浏览器",
       file: "文件",
       plugin: "插件视图",
@@ -1553,6 +1554,20 @@ sklm: {
     empty: {
       title: "还没有打开的资源",
       body: "选择工具或打开资源。",
+    },
+    log: {
+      channel: "通道",
+      level: "级别",
+      all: "全部",
+      search: "搜索事件或消息",
+      follow: "跟随尾部",
+      empty: "还没有日志。",
+      emptyHint: "应用运行时会写入日志，跑一次任务后再回来看看。",
+      error: "无法读取日志。",
+      truncated: "只加载了最近的记录，更早的内容未读取。",
+      count: "{{count}} 条",
+      counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
+      details: "详情",
     },
     review: {
       noWorkspace: "打开项目后即可查看改动",

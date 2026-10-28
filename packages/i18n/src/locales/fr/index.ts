@@ -1528,6 +1528,7 @@ sklm: {
     "tabs": {
       "review": "Réviser",
       "artifact": "Livrables",
+      "log": "Journal",
       "browser": "Navigateur",
       "file": "Fichiers",
       "plugin": "Vue du plugin"
@@ -1551,6 +1552,20 @@ sklm: {
     "empty": {
       "title": "Aucune ressource ouverte",
       "body": "Choisissez un outil ou ouvrez une ressource."
+    },
+    "log": {
+      "channel": "Canal",
+      "level": "Niveau",
+      "all": "Tout",
+      "search": "Rechercher des événements ou messages",
+      "follow": "Suivre la fin",
+      "empty": "Pas encore de journal.",
+      "emptyHint": "L'application écrit un journal pendant qu'elle tourne — revenez après une tâche.",
+      "error": "Impossible de lire le journal.",
+      "truncated": "Seuls les enregistrements les plus récents ont été chargés.",
+      "count": "{{count}} lignes",
+      "counts": "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
+      "details": "Détails",
     },
     "review": {
       "noWorkspace": "Ouvrir un projet pour voir les modifications",

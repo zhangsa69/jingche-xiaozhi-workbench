@@ -7,6 +7,11 @@ export type WorkPanelTabKind =
    * session, not a path (W-11).
    */
   | "artifact"
+  /**
+   * The app's own log tail. A tool like the plugin views rather than a
+   * transcript resource: it describes the process, not this conversation (W-17).
+   */
+  | "log"
   | "file"
   | "plugin"
   /**
@@ -170,8 +175,9 @@ export function isKnownWorkPanelTab(tab: WorkPanelTab): boolean {
   return (
     Boolean(tab) &&
     (tab.kind === "new" || tab.kind === "review" ||
-      tab.kind === "artifact" || tab.kind === "file" ||
-      tab.kind === "plugin" || tab.kind === "sidechat")
+      tab.kind === "artifact" || tab.kind === "log" ||
+      tab.kind === "file" || tab.kind === "plugin" ||
+      tab.kind === "sidechat")
   );
 }
 
@@ -198,12 +204,12 @@ export function sanitizeWorkPanelTabsState(
 }
 
 /**
- * Only plugin-contributed views are launchable tools. Review and file tabs
- * are transcript resources even though their tab ids are singleton-shaped, so
- * they remain visible in the opened-resource section.
+ * Plugin-contributed views and the log tail are launchable tools. Review,
+ * artifact, and file tabs are transcript resources even though their tab ids
+ * are singleton-shaped, so they remain visible in the opened-resource section.
  */
 export function isToolWorkPanelTab(tab: WorkPanelTab): boolean {
-  return tab.kind === "plugin";
+  return tab.kind === "plugin" || tab.kind === "log";
 }
 
 export function normalizeWorkPanelFilePath(path: string): string {

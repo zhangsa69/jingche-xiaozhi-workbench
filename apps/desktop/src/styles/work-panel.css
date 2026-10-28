@@ -1038,6 +1038,180 @@
   outline-offset: 1px;
 }
 
+/* W-17: the log tail. Rows are columns, not sentences, so the level and the
+   event line up down the page and the message is the only thing that wraps. */
+.log-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.log-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--ds-border-subtle);
+}
+
+.log-select,
+.log-search,
+.log-follow {
+  height: 26px;
+  color: var(--ds-text);
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
+}
+
+.log-select {
+  padding: 0 var(--space-1);
+}
+
+.log-search {
+  flex: 1;
+  min-width: 90px;
+  padding: 0 var(--space-2);
+}
+
+.log-search::placeholder {
+  color: var(--ds-text-muted);
+}
+
+.log-follow {
+  padding: 0 var(--space-2);
+  color: var(--ds-text-muted);
+  cursor: pointer;
+}
+
+.log-follow[aria-pressed="true"] {
+  color: var(--ds-accent);
+  border-color: var(--ds-accent);
+}
+
+.log-select:focus-visible,
+.log-search:focus-visible,
+.log-follow:focus-visible {
+  outline: 2px solid var(--ds-focus);
+  outline-offset: 1px;
+}
+
+.log-count {
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.log-notice {
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+}
+
+.log-notice.is-error {
+  color: var(--ds-error);
+}
+
+.log-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-1) 0;
+}
+
+.log-row {
+  display: grid;
+  grid-template-columns: auto auto minmax(48px, auto) 1fr;
+  gap: var(--space-2);
+  align-items: baseline;
+  padding: 3px var(--space-3);
+  font-size: var(--text-2xs);
+}
+
+.log-row:hover {
+  background: var(--ds-surface-hover);
+}
+
+.log-time {
+  color: var(--ds-text-muted);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.log-level {
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-3xs);
+  font-size: var(--text-3xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.log-level.is-debug {
+  color: var(--ds-text-muted);
+}
+
+.log-level.is-info {
+  color: var(--ds-accent);
+}
+
+.log-level.is-warn {
+  color: var(--ds-warning);
+}
+
+.log-level.is-error {
+  color: var(--ds-error);
+}
+
+.log-event {
+  overflow: hidden;
+  max-width: 40vw;
+  color: var(--ds-text);
+  font-family: var(--font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.log-message {
+  color: var(--ds-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.log-data {
+  grid-column: 1 / -1;
+}
+
+.log-data summary {
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+  cursor: pointer;
+}
+
+.log-data pre {
+  margin: var(--space-1) 0 0;
+  padding: var(--space-2);
+  overflow-x: auto;
+  background: var(--ds-surface-sunken);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  white-space: pre-wrap;
+}
+
+.log-legend {
+  margin: 0;
+  padding: 0 var(--space-3) var(--space-2);
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Hunks are set apart by a gap; each opens with its own tinted header line. */
 .diff-hunk + .diff-hunk {
   margin-top: 8px;

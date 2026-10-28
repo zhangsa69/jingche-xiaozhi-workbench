@@ -1530,6 +1530,7 @@ sklm: {
     tabs: {
       review: "審閱",
       artifact: "產物",
+      log: "日誌",
       browser: "瀏覽器",
       file: "檔案",
       plugin: "外掛檢視",
@@ -1553,6 +1554,20 @@ sklm: {
     empty: {
       title: "還沒有開啟的資源",
       body: "選擇工具或開啟資源。",
+    },
+    log: {
+      channel: "通道",
+      level: "層級",
+      all: "全部",
+      search: "搜尋事件或訊息",
+      follow: "跟隨尾端",
+      empty: "還沒有日誌。",
+      emptyHint: "應用程式執行時會寫入日誌，跑一次任務後再回來看看。",
+      error: "無法讀取日誌。",
+      truncated: "只載入了最近的記錄，更早的內容未讀取。",
+      count: "{{count}} 筆",
+      counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
+      details: "詳情",
     },
     review: {
       noWorkspace: "開啟專案後即可檢視改動",

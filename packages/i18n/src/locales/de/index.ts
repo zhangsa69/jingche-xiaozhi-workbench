@@ -1528,6 +1528,7 @@ sklm: {
     "tabs": {
       "review": "Überprüfen",
       "artifact": "Artefakte",
+      "log": "Protokoll",
       "browser": "Browser",
       "file": "Dateien",
       "plugin": "Plugin-Ansicht"
@@ -1551,6 +1552,20 @@ sklm: {
     "empty": {
       "title": "Keine Ressource geöffnet",
       "body": "Wählen Sie ein Werkzeug oder öffnen Sie eine Ressource."
+    },
+    "log": {
+      "channel": "Kanal",
+      "level": "Stufe",
+      "all": "Alle",
+      "search": "Ereignisse oder Meldungen suchen",
+      "follow": "Ende folgen",
+      "empty": "Noch keine Protokolle.",
+      "emptyHint": "Die App schreibt Protokolle während sie läuft – nach einer Aufgabe erneut nachsehen.",
+      "error": "Protokoll konnte nicht gelesen werden.",
+      "truncated": "Nur die neuesten Einträge wurden geladen.",
+      "count": "{{count}} Zeilen",
+      "counts": "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
+      "details": "Details",
     },
     "review": {
       "noWorkspace": "Öffnen Sie ein Projekt, um Änderungen anzuzeigen",

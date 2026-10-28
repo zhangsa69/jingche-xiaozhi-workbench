@@ -1544,6 +1544,7 @@ sklm: {
     tabs: {
       review: "Review",
       artifact: "Artifacts",
+      log: "Log",
       browser: "Browser",
       file: "Files",
       plugin: "Plugin view",
@@ -1567,6 +1568,21 @@ sklm: {
     empty: {
       title: "No resource open",
       body: "Choose a tool or open a resource.",
+    },
+    log: {
+      channel: "Channel",
+      level: "Level",
+      all: "All",
+      search: "Search events or messages",
+      follow: "Follow tail",
+      empty: "No logs yet.",
+      emptyHint:
+        "The app writes logs while it runs — come back after a task.",
+      error: "Could not read the log.",
+      truncated: "Only the most recent records were loaded.",
+      count: "{{count}} rows",
+      counts: "debug {{debug}} · info {{info}} · warn {{warn}} · error {{error}}",
+      details: "Details",
     },
     review: {
       noWorkspace: "Open a project to see changes",
