@@ -2,7 +2,7 @@ import { BrowserWindow, dialog, shell } from "electron";
 import { dirname } from "node:path";
 import { homedir } from "node:os";
 import { existsSync, statSync } from "node:fs";
-import { copyFile } from "node:fs/promises";
+import { copyFile, mkdir, rm, writeFile } from "node:fs/promises";
 import { basename, isAbsolute, join, resolve } from "node:path";
 import {
   ErrorCodes,
@@ -12,6 +12,7 @@ import {
   type FsChatRefProjectRoot,
   type FsChatRefResolveResult,
   type FsExportRequest,
+  type PdfRenderRequest,
   type ProjectGroupRecord,
 } from "@pi-desktop/shared";
 import {
@@ -102,6 +103,9 @@ function sanitizeExportName(value: unknown): string {
     .slice(0, 120);
   return name === "." || name === ".." ? "" : name;
 }
+
+/** A page that needs more than this is a bug, not a document (W-13). */
+const PDF_HTML_LIMIT = 4 * 1024 * 1024;
 
 export function registerWorkspaceIpc({
   registrar,
@@ -853,6 +857,63 @@ export function registerWorkspaceIpc({
       }
       await copyFile(source, picked.filePath);
       return { canceled: false, path: picked.filePath };
+    },
+  );
+
+  /**
+   * W-13: render the document the renderer built into a PDF.
+   *
+   * The window exists only to host Chromium's layout engine — no node, no
+   * network beyond what the page already inlined, and it is destroyed in
+   * `finally` whatever happens. The output lands in the session's scratch
+   * directory, which the file panel can already read, so "export as PDF" is
+   * `pdf/render` followed by `fs/export` rather than a second write path.
+   */
+  handle(
+    IPC.invoke.pdfRender,
+    async (input?: PdfRenderRequest): Promise<{ path: string }> => {
+      const html = typeof input?.html === "string" ? input.html : "";
+      if (!html.trim()) {
+        throw Object.assign(new Error("html required"), {
+          errorCode: ErrorCodes.INVALID_ARGUMENT,
+        });
+      }
+      if (Buffer.byteLength(html, "utf8") > PDF_HTML_LIMIT) {
+        throw Object.assign(new Error("html too large"), {
+          errorCode: ErrorCodes.INVALID_ARGUMENT,
+        });
+      }
+
+      const scratch =
+        (await sessionScratchRoot(input?.sessionId)) ?? join(dataDir, "scratch");
+      await mkdir(scratch, { recursive: true });
+      const stem = sanitizeExportName(input?.name) || "export";
+      const target = join(scratch, `${stem}.pdf`);
+      // Chromium can only print a file it loaded itself, so the HTML is written
+      // beside the target with a dot name and removed once the PDF exists.
+      const source = join(scratch, `.${stem}-${Date.now().toString(36)}.html`);
+      await writeFile(source, html, "utf8");
+
+      const renderer = new BrowserWindow({
+        show: false,
+        webPreferences: {
+          sandbox: true,
+          contextIsolation: true,
+          nodeIntegration: false,
+        },
+      });
+      try {
+        await renderer.loadFile(source);
+        const pdf = await renderer.webContents.printToPDF({
+          printBackground: true,
+          pageSize: "A4",
+        });
+        await writeFile(target, pdf);
+        return { path: target };
+      } finally {
+        if (!renderer.isDestroyed()) renderer.destroy();
+        await rm(source, { force: true }).catch(() => undefined);
+      }
     },
   );
 

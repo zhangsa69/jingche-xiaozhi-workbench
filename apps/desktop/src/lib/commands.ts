@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { api } from "./api";
+import { exportSessionPdf } from "./export-session-pdf";
 import { useAppStore } from "../stores/app-store";
 import { trustedExtensionCommandName, type Mode } from "@pi-desktop/shared";
 
@@ -16,6 +17,9 @@ export async function runPaletteCommand(commandId: string): Promise<void> {
       break;
     case "builtin.agent.compact":
       await store.compactContext();
+      break;
+    case "builtin.session.exportPdf":
+      await exportSessionPdf();
       break;
     case "builtin.mode.agent":
     case "builtin.mode.plan":

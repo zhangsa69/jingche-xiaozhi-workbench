@@ -1602,6 +1602,11 @@ sklm: {
       "export": "Speichern unter",
       "exported": "Gespeichert unter {{path}}",
       "exportError": "Datei konnte nicht gespeichert werden. Bitte erneut versuchen.",
+      "pdfUser": "Nutzer",
+      "pdfAssistant": "Assistent",
+      "pdfEmpty": "Diese Aufgabe hat noch nichts zum Exportieren.",
+      "pdfFallbackTitle": "Aufgabe",
+      "pdfError": "PDF konnte nicht erstellt werden. Bitte erneut versuchen.",
       "binary": "Binärdatei – Vorschau nicht verfügbar",
       "tooLarge": "Datei ist zu groß für die Vorschau"
     }

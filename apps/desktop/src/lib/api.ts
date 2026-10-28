@@ -60,6 +60,8 @@ import type {
   PluginInstallResult,
   ProjectRecord,
   ProjectGroupRecord,
+  PdfRenderRequest,
+  PdfRenderResult,
   ProjectMemory,
   ProjectMemoryEntry,
   ProjectWorkspace,
@@ -953,6 +955,9 @@ export const api = {
       path,
       ...(suggestedName ? { suggestedName } : {}),
     }),
+  /** Render finished HTML into a PDF inside the session's scratch dir (W-13). */
+  pdfRender: (request: PdfRenderRequest) =>
+    invoke<PdfRenderResult>(IPC.invoke.pdfRender, request),
   /**
    * Complete a file reference from chat text to a real file (D320 follow-up).
    * The main process owns the root order — project, session scratch,

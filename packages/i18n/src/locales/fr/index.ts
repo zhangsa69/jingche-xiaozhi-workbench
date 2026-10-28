@@ -1602,6 +1602,11 @@ sklm: {
       "export": "Enregistrer sous",
       "exported": "Enregistré dans {{path}}",
       "exportError": "Impossible d'enregistrer le fichier. Réessayez.",
+      "pdfUser": "Utilisateur",
+      "pdfAssistant": "Assistant",
+      "pdfEmpty": "Cette tâche n'a encore rien à exporter.",
+      "pdfFallbackTitle": "Tâche",
+      "pdfError": "Impossible de générer le PDF. Réessayez.",
       "binary": "Fichier binaire — aperçu indisponible",
       "tooLarge": "Le fichier est trop volumineux pour être prévisualisé"
     }

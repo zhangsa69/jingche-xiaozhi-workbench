@@ -71,6 +71,25 @@ export type FsExportResult = {
   path?: string;
 };
 
+/**
+ * PDF rendering takes finished HTML, not a URL: the renderer owns the document
+ * (it is the only side that knows how a transcript should look) and the main
+ * process owns the window and the file, so nothing in the page can reach the
+ * network or the filesystem on its own.
+ */
+export type PdfRenderRequest = {
+  html: string;
+  /** Session whose scratch directory receives the file. */
+  sessionId?: string;
+  /** Base name without the extension; sanitized before use. */
+  name?: string;
+};
+
+export type PdfRenderResult = {
+  /** Absolute path of the PDF inside scratch, ready to hand to `fs/export`. */
+  path: string;
+};
+
 export type TokenUsageBucket = "day" | "week" | "month";
 
 export type TokenUsageHistoryItem = {

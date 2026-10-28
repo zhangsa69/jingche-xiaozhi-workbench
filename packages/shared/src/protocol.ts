@@ -253,6 +253,8 @@ export const IPC = {
     fsResolveRef: "pi-desktop/fs/resolveRef",
     /** Copy one file the app can already read out to a location the user picks (W-14). */
     fsExport: "pi-desktop/fs/export",
+    /** Render HTML to a PDF inside the session's scratch dir (W-13). */
+    pdfRender: "pi-desktop/pdf/render",
     windowSetWorkPanelReservation:
       "pi-desktop/window/setWorkPanelReservation",
     windowSetWorkPanelChatWidth: "pi-desktop/window/setWorkPanelChatWidth",

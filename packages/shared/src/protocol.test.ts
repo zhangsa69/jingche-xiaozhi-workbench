@@ -52,6 +52,8 @@ describe("Plan protocol contracts", () => {
     // the destination comes back from the save dialog.
     expect(IPC.invoke.fsExport).toBe("pi-desktop/fs/export");
     expect(IPC_WHITELIST.has(IPC.invoke.fsExport)).toBe(true);
+    expect(IPC.invoke.pdfRender).toBe("pi-desktop/pdf/render");
+    expect(IPC_WHITELIST.has(IPC.invoke.pdfRender)).toBe(true);
     expect(IPC.invoke.statsGetTokenUsageHistory).toBe(
       "pi-desktop/stats/getTokenUsageHistory",
     );

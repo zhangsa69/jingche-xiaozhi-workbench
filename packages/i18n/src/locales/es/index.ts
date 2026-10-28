@@ -1602,6 +1602,11 @@ sklm: {
       "export": "Guardar como",
       "exported": "Guardado en {{path}}",
       "exportError": "No se pudo guardar el archivo. Inténtalo de nuevo.",
+      "pdfUser": "Usuario",
+      "pdfAssistant": "Asistente",
+      "pdfEmpty": "Esta tarea aún no tiene nada que exportar.",
+      "pdfFallbackTitle": "Tarea",
+      "pdfError": "No se pudo generar el PDF. Inténtalo de nuevo.",
       "binary": "Archivo binario: vista previa no disponible",
       "tooLarge": "El archivo es demasiado grande para obtener una vista previa"
     }
