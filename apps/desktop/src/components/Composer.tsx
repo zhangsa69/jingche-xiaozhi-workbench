@@ -13,6 +13,7 @@ import type {
 import {
   buildContextPinBlock,
   buildContextReferenceBlock,
+  insertDictation,
   contextPinCandidates,
   contextPinUsage,
   findContextReferences,
@@ -42,6 +43,7 @@ import {
   useComposerAutocomplete,
 } from "../hooks/use-composer-autocomplete";
 import { usePromptLibrary } from "../hooks/use-prompt-library";
+import { useVoiceDictation } from "../hooks/use-voice-dictation";
 import { ComposerAutocomplete } from "./ComposerAutocomplete";
 import type { ContextPickerController } from "./ContextPickerSheet";
 import { AskToolCard } from "./AskToolCard";
@@ -88,7 +90,7 @@ export function Composer({
   variant?: "home" | "docked";
   prefill?: ComposerPrefill | null;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const sendPromptRaw = useAppStore((s) => s.sendPrompt);
   const steerPrompt = useAppStore((s) => s.steerPrompt);
   const removeQueuedPrompt = useAppStore((s) => s.removeQueuedPrompt);
@@ -410,6 +412,18 @@ export function Composer({
   // attachments share one content check.
   const hasDraftContent = Boolean(value.trim()) || hasAnnotations;
   const promptLibrary = usePromptLibrary();
+  /**
+   * Dictation lands at the caret and only when the recogniser has a final
+   * transcript, so a word the engine is still revising never enters the draft.
+   */
+  const voice = useVoiceDictation({
+    lang: i18n.language || "en",
+    onCommitted: (text: string) => {
+      const inserted = insertDictation(value, cursor, text);
+      setValue(inserted.value);
+      setCursor(inserted.cursor);
+    },
+  });
   /**
    * `#` references resolve here, at send time, so the draft stays editable text
    * and the model only receives what this workspace can actually show.
@@ -746,6 +760,7 @@ export function Composer({
             hasDraftContent={hasDraftContent}
             promptLibrary={promptLibrary}
             contextPicker={contextPicker}
+            voice={voice}
             abort={abort}
             submit={submit}
           />

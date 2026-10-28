@@ -241,6 +241,14 @@ export const ko = {
     referenceUnavailable: "세션을 사용할 수 없음",
     sessionMissing: "해당 세션이 더 이상 존재하지 않습니다",
   },
+  voice: {
+    start: "받아쓰기 시작",
+    listening: "받아쓰기 중지",
+    requesting: "마이크 권한을 기다리는 중…",
+    denied: "마이크 권한이 거부되었습니다",
+    error: "받아쓰기에 실패했습니다",
+    unsupported: "이 버전에는 음성 엔진이 없습니다",
+  },
   contextPins: {
     title: "고정된 컨텍스트",
     open: "이전 대화 고정",

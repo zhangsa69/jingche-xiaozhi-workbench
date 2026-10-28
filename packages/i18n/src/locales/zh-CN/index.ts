@@ -234,6 +234,14 @@ export const zhCN = {
     referenceUnavailable: "会话不可用",
     sessionMissing: "该会话已不存在",
   },
+  voice: {
+    start: "开始语音输入",
+    listening: "停止语音输入",
+    requesting: "正在请求麦克风权限…",
+    denied: "麦克风权限被拒绝",
+    error: "语音输入失败",
+    unsupported: "当前版本没有可用的语音引擎",
+  },
   contextPins: {
     title: "已固定的上下文",
     open: "固定前面的对话",

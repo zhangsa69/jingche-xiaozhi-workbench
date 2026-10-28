@@ -232,6 +232,14 @@ export const fr = {
     referenceUnavailable: "Session indisponible",
     sessionMissing: "Cette session n'existe plus",
   },
+  "voice": {
+    "start": "Démarrer la dictée",
+    "listening": "Arrêter la dictée",
+    "requesting": "En attente de l'accès au micro…",
+    "denied": "L'accès au micro a été refusé",
+    "error": "La dictée a échoué",
+    "unsupported": "Cette version n'inclut pas de moteur vocal",
+  },
   "contextPins": {
     "title": "Contexte épinglé",
     "open": "Épingler des tours précédents",

@@ -387,7 +387,23 @@ actually controls. Eight turns and 1,600 characters per prompt; a turn that does
 not fit is dropped rather than cut in half, and the ticks clear once the message
 is accepted so the same history is not quietly resent.
 
-### 3.13 Extensions
+### 3.13 Voice input
+
+The microphone in the composer toolbar dictates into the draft at the caret. The
+speech engine belongs to the platform: a build either exposes a recogniser or it
+does not, and when it does not the button is disabled with a tooltip saying so
+instead of failing on press.
+
+The states the user sees are idle, requesting permission, listening, denied and
+failed; listening shows a pulsing dot and pressing again stops. Only a **final**
+transcript is inserted. Interim text is shown in the tooltip and thrown away,
+because a recogniser that revises "ship it" into "shipped" would otherwise leave
+both words in the box and the user could not tell which one the model will read.
+
+Dictation writes plain draft text. It never sends on the user's behalf, and a
+message sent right after dictating goes through the same submit path as typing.
+
+### 3.14 Extensions
 
 The Extensions destination is a focused plugin surface with a compact header and
 only two tabs: **Installed** and **Marketplace**. Installed groups plugin rows
@@ -400,7 +416,7 @@ marketplace source settings show the source selector without a redundant
 provider explanation or active-source status line. MCP, Skills, and Subagents
 are not tabs or sections of Extensions.
 
-### 3.14 Settings (full-page takeover)
+### 3.15 Settings (full-page takeover)
 Settings replaces the whole shell (D063): back-to-app + search + a grouped
 settings rail with concise, parallel destination labels. The Agent group
 contains independent Skills, MCP, and Subagents destinations alongside

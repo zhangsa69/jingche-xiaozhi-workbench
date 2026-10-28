@@ -234,6 +234,14 @@ export const zhTW = {
     referenceUnavailable: "對話無法使用",
     sessionMissing: "該對話已不存在",
   },
+  voice: {
+    start: "開始語音輸入",
+    listening: "停止語音輸入",
+    requesting: "正在請求麥克風權限…",
+    denied: "麥克風權限被拒絕",
+    error: "語音輸入失敗",
+    unsupported: "目前版本沒有可用的語音引擎",
+  },
   contextPins: {
     title: "已固定的上下文",
     open: "固定前面的對話",

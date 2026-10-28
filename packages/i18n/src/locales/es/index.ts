@@ -232,6 +232,14 @@ export const es = {
     referenceUnavailable: "Sesión no disponible",
     sessionMissing: "Esa sesión ya no existe",
   },
+  "voice": {
+    "start": "Iniciar dictado",
+    "listening": "Detener dictado",
+    "requesting": "Esperando acceso al micrófono…",
+    "denied": "Se denegó el acceso al micrófono",
+    "error": "El dictado falló",
+    "unsupported": "Esta versión no incluye motor de voz",
+  },
   "contextPins": {
     "title": "Contexto fijado",
     "open": "Fijar turnos anteriores",

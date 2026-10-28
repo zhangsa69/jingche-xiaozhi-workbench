@@ -232,6 +232,14 @@ export const de = {
     referenceUnavailable: "Sitzung nicht verfügbar",
     sessionMissing: "Diese Sitzung existiert nicht mehr",
   },
+  "voice": {
+    "start": "Diktat starten",
+    "listening": "Diktat beenden",
+    "requesting": "Warte auf Mikrofonzugriff…",
+    "denied": "Mikrofonzugriff wurde abgelehnt",
+    "error": "Diktat fehlgeschlagen",
+    "unsupported": "Diese Version hat keine Spracherkennung",
+  },
   "contextPins": {
     "title": "Angehefteter Kontext",
     "open": "Frühere Beiträge anheften",
