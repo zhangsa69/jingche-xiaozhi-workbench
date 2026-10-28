@@ -11,15 +11,19 @@ import type {
   PermissionMode,
 } from "@pi-desktop/shared";
 import {
+  buildContextReferenceBlock,
+  findContextReferences,
   initialThinkingLevelForBinding,
   modelIdsMatch,
   normalizeLargePasteThreshold,
+  stripContextReferenceTokens,
   stripInlineComposerFileReferenceTokens,
 } from "@pi-desktop/shared";
 import { useAppStore } from "../stores/app-store";
 import { latestTurnContextInspector } from "../lib/latest-turn-context";
 import { isActivePlanExecution } from "../lib/plan-mode-state";
 import { headAsk, queuedAskCount } from "../lib/pending-asks";
+import type { ComposerDraftSnapshot } from "../lib/composer-smart-stop";
 import type { QueuedPrompt } from "../lib/queued-prompts";
 import {
   composerModelDisplayName,
@@ -79,7 +83,7 @@ export function Composer({
   prefill?: ComposerPrefill | null;
 }) {
   const { t } = useTranslation();
-  const sendPrompt = useAppStore((s) => s.sendPrompt);
+  const sendPromptRaw = useAppStore((s) => s.sendPrompt);
   const steerPrompt = useAppStore((s) => s.steerPrompt);
   const removeQueuedPrompt = useAppStore((s) => s.removeQueuedPrompt);
   const moveQueuedPrompt = useAppStore((s) => s.moveQueuedPrompt);
@@ -400,6 +404,52 @@ export function Composer({
   // attachments share one content check.
   const hasDraftContent = Boolean(value.trim()) || hasAnnotations;
   const promptLibrary = usePromptLibrary();
+  /**
+   * `#` references resolve here, at send time, so the draft stays editable text
+   * and the model only receives what this workspace can actually show.
+   */
+  const contextReferenceSessions = useAppStore((state) => state.sessions);
+  const retainedTranscripts = useAppStore((state) => state.retainedTranscripts);
+  const contextReferences = useMemo(
+    () => ({
+      decorate: (text: string) => {
+        const refs = findContextReferences(text, contextReferenceSessions, {
+          excludeId: activeSessionId,
+        });
+        if (!refs.length) return text;
+        const withExcerpts = refs.map((ref) => {
+          const transcript = retainedTranscripts[ref.id] ?? [];
+          const last = [...transcript]
+            .reverse()
+            .find((message) => message.role === "assistant" && message.content.trim());
+          return last ? { ...ref, excerpt: last.content } : ref;
+        });
+        const block = buildContextReferenceBlock(withExcerpts);
+        return block ? `${text}\n\n${block}` : text;
+      },
+      strip: (text: string) =>
+        stripContextReferenceTokens(
+          text,
+          findContextReferences(text, contextReferenceSessions, {
+            excludeId: activeSessionId,
+          }).map((ref) => ref.title),
+        ),
+    }),
+    [contextReferenceSessions, retainedTranscripts, activeSessionId],
+  );
+
+  const stripContextReferences = contextReferences.strip;
+
+  /**
+   * The quoted block is attached at the store boundary rather than inside the
+   * submit path, so the draft that gets restored, cleared and measured is still
+   * exactly what the user typed.
+   */
+  const sendPrompt = (
+    content: string,
+    draft?: ComposerDraftSnapshot,
+    sessionId?: string,
+  ) => sendPromptRaw(contextReferences.decorate(content), draft, sessionId);
 
   useEffect(() => {
     if (!controlsBlocked) return;
@@ -429,7 +479,9 @@ export function Composer({
       setValue,
       setCursor,
     },
-    onAcceptedPrompt: promptLibrary.remember,
+    // The library stores the user's words; a `#"Title"` token is composer
+    // syntax, not something worth replaying.
+    onAcceptedPrompt: (text: string) => promptLibrary.remember(stripContextReferences(text)),
   });
   enhancementInvalidateRef.current = submitController.invalidatePromptEnhancement;
   const {

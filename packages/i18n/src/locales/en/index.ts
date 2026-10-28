@@ -240,6 +240,9 @@ export const en = {
     sessionMissing: "That session no longer exists",
   },
   chat: {
+    contextRefMenu: "Reference a conversation",
+    contextRefEmpty: "No conversation matches",
+    contextRefMessages: "{{count}} messages",
     sessionTabs: "Open tasks",
     sessionTabClose: "Close the {{title}} tab",
     sessionTabOverflow: "{{count}} more in the sidebar",

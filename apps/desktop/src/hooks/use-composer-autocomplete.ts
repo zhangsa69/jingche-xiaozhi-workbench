@@ -8,10 +8,13 @@ import {
   formatFileInsert,
   fuzzyMatchCommand,
   fuzzyMatchPath,
+  contextReferenceCandidates,
+  contextReferenceToken,
   mergeLibraryCandidates,
   selectBestMatches,
   type ComposerCommand,
   type ComposerTrigger,
+  type ContextReferenceCandidate,
   type FsIndexEntry,
   type FuzzyMatch,
 } from "@pi-desktop/shared";
@@ -33,7 +36,8 @@ const SOURCE_TTL_MS = 10_000;
 
 export type AutocompleteItem =
   | { kind: "command"; command: ComposerCommand; match: FuzzyMatch }
-  | { kind: "path"; entry: FsIndexEntry; match: FuzzyMatch };
+  | { kind: "path"; entry: FsIndexEntry; match: FuzzyMatch }
+  | { kind: "context"; session: ContextReferenceCandidate; match: FuzzyMatch };
 
 /** Module-level TTL caches so re-triggering stays IPC-free. */
 let commandsCache: { key: string; at: number; commands: ComposerCommand[] } | null =
@@ -146,6 +150,8 @@ export function useComposerAutocomplete({
 }) {
   const workspaceKey = useAppStore((s) => s.workspace?.path ?? "");
   const hasWorkspace = workspaceKey !== "";
+  const sessions = useAppStore((s) => s.sessions);
+  const activeSessionId = useAppStore((s) => s.activeSessionId);
   const [commands, setCommands] = useState<ComposerCommand[] | null>(null);
   const [files, setFiles] = useState<{
     entries: FsIndexEntry[];
@@ -238,6 +244,17 @@ export function useComposerAutocomplete({
     if (trigger.mode === "slash") {
       return commands ? filterCommands(commands, trigger.query) : [];
     }
+    if (trigger.mode === "context") {
+      // References come from the session list, so the menu needs no IPC and
+      // never offers a conversation the store has not seen.
+      return contextReferenceCandidates(sessions, trigger.query, {
+        excludeId: activeSessionId,
+      }).map((session, index) => ({
+        kind: "context" as const,
+        session,
+        match: { score: 1000 - index, ranges: [] },
+      }));
+    }
     // Library folders are pointers the user chose to keep on hand, so they come
     // first and stay listed even when no workspace is open — the point of the
     // library is reaching a folder from whichever task you happen to be in.
@@ -254,7 +271,7 @@ export function useComposerAutocomplete({
       match: { score: 1000, ranges: [] },
     }));
     return [...libraryRows, ...filterFiles(merged.workspace, trigger.query)];
-  }, [trigger, dismissed, commands, files]);
+  }, [trigger, dismissed, commands, files, sessions, activeSessionId]);
 
   // New query or mode restarts keyboard navigation at the top hit.
   const itemsKey = trigger ? `${trigger.mode}:${trigger.query}` : "";
@@ -264,7 +281,11 @@ export function useComposerAutocomplete({
 
   const sourceReady =
     !!trigger &&
-    (trigger.mode === "slash" ? commands !== null : files !== null);
+    (trigger.mode === "slash"
+      ? commands !== null
+      : trigger.mode === "context"
+        ? true
+        : files !== null);
   const open = !!trigger && !dismissed && sourceReady;
 
   const close = useCallback(() => {
@@ -296,7 +317,9 @@ export function useComposerAutocomplete({
       const insert =
         item.kind === "command"
           ? formatCommandInsert(item.command.name)
-          : formatFileInsert(item.entry.path, item.entry.kind);
+          : item.kind === "context"
+            ? `${contextReferenceToken(item.session.title)} `
+            : formatFileInsert(item.entry.path, item.entry.kind);
       return applyCompletion(value, trigger, insert);
     },
     [trigger, items, value],

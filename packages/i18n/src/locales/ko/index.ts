@@ -242,6 +242,9 @@ export const ko = {
     sessionMissing: "해당 세션이 더 이상 존재하지 않습니다",
   },
   chat: {
+    contextRefMenu: "대화 참조",
+    contextRefEmpty: "일치하는 대화 없음",
+    contextRefMessages: "메시지 {{count}}개",
     sessionTabs: "열린 작업",
     sessionTabClose: "{{title}} 탭 닫기",
     sessionTabOverflow: "사이드바에 {{count}}개 더 있음",

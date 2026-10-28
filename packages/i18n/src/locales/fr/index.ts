@@ -233,6 +233,9 @@ export const fr = {
     sessionMissing: "Cette session n'existe plus",
   },
   "chat": {
+    "contextRefMenu": "Référencer une conversation",
+    "contextRefEmpty": "Aucune conversation ne correspond",
+    "contextRefMessages": "{{count}} messages",
     "sessionTabs": "Tâches ouvertes",
     "sessionTabClose": "Fermer l'onglet {{title}}",
     "sessionTabOverflow": "{{count}} de plus dans la barre latérale",

@@ -47,6 +47,7 @@ export * from "./template-apply.js";
 export * from "./library.js";
 export * from "./prompt-library.js";
 export * from "./session-tabs.js";
+export * from "./context-reference.js";
 export * from "./expert-presets.js";
 export * from "./expert-panel.js";
 export * from "./model-catalog.js";

@@ -235,6 +235,9 @@ export const zhCN = {
     sessionMissing: "该会话已不存在",
   },
   chat: {
+    contextRefMenu: "引用一条对话",
+    contextRefEmpty: "没有匹配的对话",
+    contextRefMessages: "{{count}} 条消息",
     sessionTabs: "打开的任务",
     sessionTabClose: "关闭「{{title}}」标签",
     sessionTabOverflow: "还有 {{count}} 个在侧栏",

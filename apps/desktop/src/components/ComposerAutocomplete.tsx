@@ -84,7 +84,9 @@ export function ComposerAutocomplete({
       key:
         item.kind === "command"
           ? `c:${item.command.kind}:${item.command.name}`
-          : `p:${item.entry.path}`,
+          : item.kind === "context"
+            ? `s:${item.session.id}`
+            : `p:${item.entry.path}`,
       type: "button" as const,
       role: "option" as const,
       "aria-selected": active,
@@ -115,6 +117,19 @@ export function ComposerAutocomplete({
           {item.command.description ? (
             <span className="composer-ac-desc">{item.command.description}</span>
           ) : null}
+        </button>
+      );
+    }
+    if (item.kind === "context") {
+      return (
+        <button {...commonProps} title={item.session.title}>
+          <span className="composer-ac-icon">
+            <IconSparkles size={14} />
+          </span>
+          <span className="composer-ac-name">#{item.session.title}</span>
+          <span className="composer-ac-hint">
+            {t("chat.contextRefMessages", { count: item.session.messageCount })}
+          </span>
         </button>
       );
     }
@@ -157,7 +172,15 @@ export function ComposerAutocomplete({
       ? ac.noWorkspace
         ? "chat.fileNoWorkspace"
         : "chat.fileEmpty"
-      : "chat.slashEmpty";
+      : ac.mode === "context"
+        ? "chat.contextRefEmpty"
+        : "chat.slashEmpty";
+  const labelKey =
+    ac.mode === "file"
+      ? "chat.fileMenu"
+      : ac.mode === "context"
+        ? "chat.contextRefMenu"
+        : "chat.slashMenu";
 
   return (
     <AnchoredMenu
@@ -166,7 +189,7 @@ export function ComposerAutocomplete({
       onClose={ac.close}
       anchorRef={anchorRef}
       menuClassName="composer-autocomplete"
-      label={t(ac.mode === "file" ? "chat.fileMenu" : "chat.slashMenu")}
+      label={t(labelKey)}
       role="listbox"
       side="top"
       matchAnchorWidth

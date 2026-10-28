@@ -12,7 +12,7 @@
  *   may contain spaces until its closing quote.
  */
 
-export type ComposerTriggerMode = "slash" | "file";
+export type ComposerTriggerMode = "slash" | "file" | "context";
 
 export type ComposerTrigger = {
   mode: ComposerTriggerMode;
@@ -95,11 +95,12 @@ export function detectTrigger(
     const ch = value[i];
     if (ch === '"') {
       // A bare closing quote before the cursor ends any quoted token.
-      if (i > 0 && value[i - 1] === "@" && isBoundary(value, i - 1)) {
+      const opener = i > 0 ? value[i - 1] : "";
+      if ((opener === "@" || opener === "#") && isBoundary(value, i - 1)) {
         const query = value.slice(i + 1, cursor);
         if (!query.includes('"') && !query.includes("\n")) {
           return {
-            mode: "file",
+            mode: opener === "#" ? "context" : "file",
             query,
             tokenStart: i - 1,
             tokenEnd: cursor,
@@ -118,6 +119,16 @@ export function detectTrigger(
   if (token.startsWith("@") && isBoundary(value, start)) {
     return {
       mode: "file",
+      query: token.slice(1),
+      tokenStart: start,
+      tokenEnd: cursor,
+    };
+  }
+  // `#` references an earlier conversation (W-30). Same boundaries as `@` so a
+  // `#` inside a word (`issue#42`) stays text.
+  if (token.startsWith("#") && isBoundary(value, start)) {
+    return {
+      mode: "context",
       query: token.slice(1),
       tokenStart: start,
       tokenEnd: cursor,

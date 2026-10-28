@@ -235,6 +235,9 @@ export const zhTW = {
     sessionMissing: "該對話已不存在",
   },
   chat: {
+    contextRefMenu: "引用一條對話",
+    contextRefEmpty: "沒有符合的對話",
+    contextRefMessages: "{{count}} 則訊息",
     sessionTabs: "開啟的任務",
     sessionTabClose: "關閉「{{title}}」標籤",
     sessionTabOverflow: "還有 {{count}} 個在側欄",

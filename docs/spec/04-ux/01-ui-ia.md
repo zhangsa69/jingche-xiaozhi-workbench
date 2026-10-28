@@ -353,7 +353,25 @@ Closing a tab drops the shortcut, not the session — the conversation stays in 
 sidebar. When the visible tab closes, its right neighbour takes over, then its
 left; an empty pane is never left behind without a replacement.
 
-### 3.11 Extensions
+### 3.11 `#` conversation references
+
+Typing `#` in the composer opens the conversations of this workspace; picking one
+writes `#"Title"` into the draft as ordinary text, so a reference can be reworded,
+moved, or deleted like anything else typed there.
+
+Nothing is sent at pick time. At send time each resolved token becomes a short
+quoted block naming the conversation, its message count, and — when that
+transcript is still loaded in a pane — the tail of its last answer. The block says
+it is an excerpt; a summary invented at reference time would be a claim the user
+never saw.
+
+A token whose title no longer matches any conversation is left in the text
+untouched: `#"typo"` is an unfinished thought, not consent to quote whatever
+looked closest. References never target the conversation being written in, and one
+draft cites at most six. The prompt library records the cleaned sentence, not the
+`#"Title"` syntax.
+
+### 3.12 Extensions
 
 The Extensions destination is a focused plugin surface with a compact header and
 only two tabs: **Installed** and **Marketplace**. Installed groups plugin rows
@@ -366,7 +384,7 @@ marketplace source settings show the source selector without a redundant
 provider explanation or active-source status line. MCP, Skills, and Subagents
 are not tabs or sections of Extensions.
 
-### 3.12 Settings (full-page takeover)
+### 3.13 Settings (full-page takeover)
 Settings replaces the whole shell (D063): back-to-app + search + a grouped
 settings rail with concise, parallel destination labels. The Agent group
 contains independent Skills, MCP, and Subagents destinations alongside

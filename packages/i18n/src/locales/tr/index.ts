@@ -242,6 +242,9 @@ export const tr = {
     sessionMissing: "Bu oturum artık mevcut değil",
   },
   chat: {
+    contextRefMenu: "Bir konuşmaya başvur",
+    contextRefEmpty: "Eşleşen konuşma yok",
+    contextRefMessages: "{{count}} mesaj",
     sessionTabs: "Açık görevler",
     sessionTabClose: "{{title}} sekmesini kapat",
     sessionTabOverflow: "Kenar çubuğunda {{count}} tane daha",

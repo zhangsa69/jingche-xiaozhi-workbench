@@ -77,7 +77,9 @@ test("only accepted sends are recorded, using the visible text", () => {
     /stripInlineComposerFileReferenceTokens\(text, activeFileReferences\)/,
   );
   assert.match(submit, /if \(accepted && typeof onAcceptedPrompt === "function"\)/);
-  assert.match(composer, /onAcceptedPrompt: promptLibrary\.remember/);
+  // Wrappers may clean the text first (W-30 strips `#"Title"` tokens), but the
+  // library still receives it through `remember`.
+  assert.match(composer, /onAcceptedPrompt: \(text: string\) => promptLibrary\.remember\(/);
   // The chip sentinels must never be what the library remembers.
   assert.doesNotMatch(submit, /onAcceptedPrompt\?\.\(inlineContent\)/);
 });

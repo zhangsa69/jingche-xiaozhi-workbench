@@ -233,6 +233,9 @@ export const de = {
     sessionMissing: "Diese Sitzung existiert nicht mehr",
   },
   "chat": {
+    "contextRefMenu": "Unterhaltung referenzieren",
+    "contextRefEmpty": "Keine passende Unterhaltung",
+    "contextRefMessages": "{{count}} Nachrichten",
     "sessionTabs": "Offene Aufgaben",
     "sessionTabClose": "Tab „{{title}}“ schließen",
     "sessionTabOverflow": "{{count}} weitere in der Seitenleiste",
