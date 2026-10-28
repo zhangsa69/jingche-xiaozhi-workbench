@@ -23,6 +23,8 @@ export type ComposerInputProps = {
   composerAc: AutocompleteController;
   onPaste: (event: ClipboardEvent<HTMLDivElement>) => void;
   onAcceptCompletion: (index: number) => void;
+  /** ArrowUp on an empty box: step back through the prompt library history. */
+  onRecallPrompt?: () => void;
   onSubmit: (steering?: boolean) => void;
   onInsertNewline: () => void;
   onInput: (source: string, caret: number) => void;
@@ -45,6 +47,7 @@ export function ComposerInput({
   composerAc,
   onPaste,
   onAcceptCompletion,
+  onRecallPrompt,
   onSubmit,
   onInsertNewline,
   onInput,
@@ -124,6 +127,20 @@ export function ComposerInput({
                 onAcceptCompletion(composerAc.highlight);
                 return;
               }
+            }
+            // ArrowUp only recalls when the box is empty: while typing it has to
+            // stay free for moving the caret to the start of a multi-line draft.
+            if (
+              event.key === "ArrowUp" &&
+              !event.shiftKey &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.altKey &&
+              !value.trim()
+            ) {
+              event.preventDefault();
+              onRecallPrompt?.();
+              return;
             }
             if (
               event.key === "Enter" &&

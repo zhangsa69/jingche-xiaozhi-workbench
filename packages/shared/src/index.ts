@@ -45,6 +45,7 @@ export * from "./provider-presets.js";
 export * from "./template-presets.js";
 export * from "./template-apply.js";
 export * from "./library.js";
+export * from "./prompt-library.js";
 export * from "./expert-presets.js";
 export * from "./expert-panel.js";
 export * from "./model-catalog.js";

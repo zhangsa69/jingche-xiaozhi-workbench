@@ -32,6 +32,7 @@ import {
 import {
   useComposerAutocomplete,
 } from "../hooks/use-composer-autocomplete";
+import { usePromptLibrary } from "../hooks/use-prompt-library";
 import { ComposerAutocomplete } from "./ComposerAutocomplete";
 import { AskToolCard } from "./AskToolCard";
 import { PlanApprovalBar } from "./PlanApprovalBar";
@@ -398,6 +399,7 @@ export function Composer({
   // Chips occupy sentinel characters, which `trim()` preserves — text and
   // attachments share one content check.
   const hasDraftContent = Boolean(value.trim()) || hasAnnotations;
+  const promptLibrary = usePromptLibrary();
 
   useEffect(() => {
     if (!controlsBlocked) return;
@@ -427,6 +429,7 @@ export function Composer({
       setValue,
       setCursor,
     },
+    onAcceptedPrompt: promptLibrary.remember,
   });
   enhancementInvalidateRef.current = submitController.invalidatePromptEnhancement;
   const {
@@ -566,9 +569,20 @@ export function Composer({
             composerAc={composerAc}
             onPaste={pasteClipboardFiles}
             onAcceptCompletion={acceptCompletion}
+            onRecallPrompt={() => {
+              if (activeFileReferences.length) return;
+              const recalled = promptLibrary.recall(value);
+              if (recalled === null || !recalled) return;
+              applyEditorDraft(recalled, [], recalled.length);
+            }}
             onSubmit={(steering) => void submit(steering)}
             onInsertNewline={insertNewlineInEditor}
-            onInput={handleInput}
+            onInput={(source, caret) => {
+              // Any keystroke ends the recall walk: continuing from an anchor
+              // after an edit would overwrite what the user just typed.
+              promptLibrary.resetRecall();
+              handleInput(source, caret);
+            }}
             onCompositionStart={() => setComposing(true)}
             onCompositionEnd={(event) => {
               setComposing(false);
@@ -610,6 +624,7 @@ export function Composer({
             clearEnhancementError={clearEnhancementError}
             runActive={runActive}
             hasDraftContent={hasDraftContent}
+            promptLibrary={promptLibrary}
             abort={abort}
             submit={submit}
           />

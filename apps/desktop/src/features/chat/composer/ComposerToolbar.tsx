@@ -8,6 +8,8 @@ import {
   type ThinkingLevel,
 } from "@pi-desktop/shared";
 import type { AppState } from "../../../stores/app-store";
+import type { PromptLibraryController } from "../../../hooks/use-prompt-library";
+import { PromptLibrarySheet } from "../../../components/PromptLibrarySheet";
 import { AnchoredMenu } from "../../../components/settings/AnchoredMenu";
 import { ContextUsageInspector } from "../../../components/ContextUsageInspector";
 import { TooltipButton } from "../../../components/ui";
@@ -62,6 +64,7 @@ export type ComposerToolbarProps = {
   clearEnhancementError: () => void;
   runActive: boolean;
   hasDraftContent: boolean;
+  promptLibrary: PromptLibraryController;
   abort: AppState["abort"];
   submit: () => Promise<void>;
 };
@@ -97,6 +100,7 @@ export function ComposerToolbar({
   clearEnhancementError,
   runActive,
   hasDraftContent,
+  promptLibrary,
   abort,
   submit,
 }: ComposerToolbarProps) {
@@ -238,6 +242,7 @@ export function ComposerToolbar({
             </button>
           ))}
         </AnchoredMenu>
+        <PromptLibrarySheet t={t} controller={promptLibrary} />
       </div>
 
       <div className="composer-right">

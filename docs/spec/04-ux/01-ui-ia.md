@@ -320,7 +320,26 @@ domain — and then for **one** deliverable: disagreements survive only when the
 change the recommendation, duplicates collapse, and the tail lists what still
 needs a human decision. The prompt is visible in the composer before it is sent.
 
-### 3.9 Extensions
+### 3.9 Prompt library
+
+A panel docked above the composer, opened from the toolbar. It lists the prompts
+this user actually sent, newest first, with the pin floating a row up while the
+list keeps recency underneath.
+
+Sending a prompt records it; slash commands do not, because replaying `/model`
+as free text would produce something that does nothing. The same text typed with
+different spacing stays one entry, so the list does not fill with near-duplicates.
+
+Each row carries a use count and its tags; the tag rail filters, and the search
+box narrows by every word it is given rather than widening on the second. Clicking
+a row appends it to the live draft — nothing is sent directly — and the row actions
+sit outside that click target so a pin can never be mistaken for an insert.
+
+↑ in an empty box walks backwards through the same history. The walk stops at the
+oldest entry, and it also stops the moment the recalled text is edited: stepping
+further from a rewritten prompt would throw the edit away without asking.
+
+### 3.10 Extensions
 
 The Extensions destination is a focused plugin surface with a compact header and
 only two tabs: **Installed** and **Marketplace**. Installed groups plugin rows
@@ -333,7 +352,7 @@ marketplace source settings show the source selector without a redundant
 provider explanation or active-source status line. MCP, Skills, and Subagents
 are not tabs or sections of Extensions.
 
-### 3.10 Settings (full-page takeover)
+### 3.11 Settings (full-page takeover)
 Settings replaces the whole shell (D063): back-to-app + search + a grouped
 settings rail with concise, parallel destination labels. The Agent group
 contains independent Skills, MCP, and Subagents destinations alongside

@@ -40,6 +40,8 @@ type UseComposerSubmitOptions = {
     | "setValue"
     | "setCursor"
   >;
+  /** Called with the visible text once a send is accepted, for the library. */
+  onAcceptedPrompt?: (text: string) => void;
 };
 
 export type ComposerSubmitController = {
@@ -74,6 +76,7 @@ export function useComposerSubmit({
   steerPrompt,
   showToast,
   draft,
+  onAcceptedPrompt,
 }: UseComposerSubmitOptions): ComposerSubmitController {
   const [enhancingPrompt, setEnhancingPrompt] = useState(false);
   const [enhancementUndoText, setEnhancementUndoText] = useState<string | null>(null);
@@ -301,6 +304,12 @@ export function useComposerSubmit({
       ? await steerPrompt(inlineContent, submittedDraft)
       : await sendPrompt(inlineContent, submittedDraft, submittedSessionId ?? undefined);
     if (!accepted) draft.restoreDraftForKey(submittedDraftKey, submittedDraft);
+    // Only sends that actually went out enter the library; a rejected draft is
+    // still the user's work in progress, not a prompt they chose to reuse.
+    if (accepted && typeof onAcceptedPrompt === "function") {
+      const visibleText = stripInlineComposerFileReferenceTokens(text, activeFileReferences);
+      if (visibleText.trim()) onAcceptedPrompt(visibleText);
+    }
   };
 
   return {
