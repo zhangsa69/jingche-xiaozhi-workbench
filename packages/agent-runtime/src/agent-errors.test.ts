@@ -320,4 +320,58 @@ describe("classifyAgentError", () => {
       ).details,
     ).not.toHaveProperty("networkHost");
   });
+
+  it("reads quota wording behind 402/403 as a retryable rate limit", () => {
+    // Gateways in front of OpenAI-compatible APIs report an exhausted window
+    // with a status that normally means "your key is wrong". Re-sending later
+    // is what recovers it, so it must not become a terminal auth error.
+    expect(classifyAgentError("402: Payment Required")).toMatchObject({
+      code: "PROVIDER_RATE_LIMITED",
+      retriable: true,
+    });
+    expect(
+      classifyAgentError(
+        '403: {"error":{"message":"You exceeded your current quota"}}',
+      ),
+    ).toMatchObject({ code: "PROVIDER_RATE_LIMITED", retriable: true });
+    expect(
+      classifyAgentError("403: usage limit reached for this billing period"),
+    ).toMatchObject({ code: "PROVIDER_RATE_LIMITED", retriable: true });
+
+    // A key that is actually rejected stays terminal in both statuses.
+    expect(classifyAgentError("403: invalid api key")).toMatchObject({
+      code: "PROVIDER_UNAUTHORIZED",
+      retriable: false,
+    });
+    expect(classifyAgentError("401: insufficient_quota")).toMatchObject({
+      code: "PROVIDER_UNAUTHORIZED",
+      retriable: false,
+    });
+  });
+
+  it("does not mistake a context overflow for a rate limit", () => {
+    // "limit exceeded" is also quota wording, so size has to win: retrying a
+    // prompt that is too long would burn the whole budget and still fail.
+    expect(classifyAgentError("token limit exceeded")).toMatchObject({
+      code: "CONTEXT_TOO_LARGE",
+      retriable: false,
+    });
+    expect(
+      classifyAgentError("This model's maximum context length is 128000 tokens"),
+    ).toMatchObject({ code: "CONTEXT_TOO_LARGE", retriable: false });
+  });
+
+  it("recognises quota wording that never mentions the word rate", () => {
+    expect(classifyAgentError("insufficient_quota")).toMatchObject({
+      code: "PROVIDER_RATE_LIMITED",
+      retriable: true,
+    });
+    expect(classifyAgentError("RESOURCE_EXHAUSTED: try again in 30s")).toMatchObject(
+      { code: "PROVIDER_RATE_LIMITED", retriable: true },
+    );
+    expect(classifyAgentError("请求过于频繁，请稍后再试")).toMatchObject({
+      code: "PROVIDER_RATE_LIMITED",
+      retriable: true,
+    });
+  });
 });

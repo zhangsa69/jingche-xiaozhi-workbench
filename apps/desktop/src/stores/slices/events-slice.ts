@@ -688,6 +688,15 @@ export function createEventsSlice({
                   : [...messages, assistantErrorMessage(event.error)],
             };
           });
+          // A Stop is a decision, never a failure: only real failures arm the
+          // renderer-side continuation. The slice itself declines codes that
+          // re-sending cannot fix and sessions the user is not looking at.
+          if (!aborted) {
+            get().scheduleAutoRetry({
+              code: event.error.code,
+              sessionId: envelope.sessionId,
+            });
+          }
           break;
         }
         default:

@@ -173,6 +173,7 @@ import type {
   ToastVariant,
 } from "./app-state";
 import { createAnnotationSlice } from "./slices/annotation-slice";
+import { createAutoRetrySlice } from "./slices/auto-retry-slice";
 import { createSideChatSlice } from "./slices/side-chat-slice";
 import { createSessionSlice } from "./slices/session-slice";
 import { createQueueSlice } from "./slices/queue-slice";
@@ -721,6 +722,7 @@ export const useAppStore = create<AppState>((set, get) => {
   },
 
   ...createAnnotationSlice({ get, set }),
+  ...createAutoRetrySlice({ get, set }),
   ...createSideChatSlice({ get, set, commitForkedSession, withoutRecordKey }),
   ...createWorkPanelSlice({
     get,

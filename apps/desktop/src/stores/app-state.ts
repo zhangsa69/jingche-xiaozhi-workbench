@@ -104,6 +104,15 @@ export type DraftSessionConfiguration = {
 import type { SideChatMap } from "../lib/side-chat";
 import type { ResponseAnnotationEditor, ResponseAnnotationMap } from "../lib/response-annotations";
 
+/** A pending renderer-side retry; `round` is 1-based against the schedule. */
+export type AutoRetryPlan = {
+  round: number;
+  delayMs: number;
+  dueAt: number;
+  sessionId: string;
+  errorCode: string;
+};
+
 export type AppState = {
   ready: boolean;
   version?: AppVersionInfo;
@@ -183,6 +192,12 @@ export type AppState = {
   errorCode?: string | null;
   /** Whether the current error is worth a one-click retry. */
   errorRetriable?: boolean | null;
+  /**
+   * A retry the renderer scheduled after the runtime's own budget ran out, or
+   * null when nothing is pending. Holds the absolute `dueAt` so the notice can
+   * count down without the store ticking.
+   */
+  autoRetry?: AutoRetryPlan | null;
   bootstrap: () => Promise<void>;
   refreshSessions: (options?: RefreshSessionsOptions) => Promise<void>;
   prefetchSession: (id: string) => Promise<void>;
@@ -236,6 +251,12 @@ export type AppState = {
   ) => Promise<boolean>;
   retryLastPrompt: () => Promise<void>;
   clearError: () => void;
+  /** Arm the renderer-side retry for a retryable failure of `sessionId`. */
+  scheduleAutoRetry: (input: { code: string; sessionId: string }) => void;
+  /** Drop a pending auto retry and forget this session's spent rounds. */
+  cancelAutoRetry: () => void;
+  /** Skip the remaining wait and re-send now (the notice's "retry now"). */
+  retryAutoNow: () => void;
   activateMessageRevision: (rootUserId: string, revisionIndex: number) => Promise<void>;
   deleteMessage: (messageId: string) => Promise<void>;
   rollbackWorkspaceChange: (

@@ -1,6 +1,7 @@
 import {
   memo,
   useCallback,
+  useEffect,
   useId,
   useLayoutEffect,
   useMemo,
@@ -29,6 +30,11 @@ import {
   type ToolAction,
 } from "../../../lib/tool-display";
 import { calculateTokenRate } from "../../../lib/context-usage";
+import {
+  AUTO_RETRY_MAX_ROUNDS,
+  autoRetrySecondsLeft,
+  isAutoRetryableCode,
+} from "../../../lib/auto-retry";
 import { useAppStore } from "../../../stores/app-store";
 import { Markdown, useCopy } from "../../../components/Markdown";
 import {
@@ -160,6 +166,52 @@ export function MessageMeta({
   );
 }
 
+/**
+ * The runtime retries a limited number of times inside one turn; when that
+ * budget runs out while the provider window is still closed, the store arms one
+ * more round in the renderer. This is the visible half: a countdown, a way to
+ * go now, and a way to stop. Without it an unattended turn would look stuck.
+ */
+function AutoRetryNotice({ code }: { code: string }) {
+  const { t } = useTranslation();
+  const plan = useAppStore((state) => state.autoRetry);
+  const [now, setNow] = useState(() => Date.now());
+  const active = plan?.errorCode === code;
+
+  useEffect(() => {
+    if (!active) return;
+    const id = setInterval(() => setNow(Date.now()), 1_000);
+    return () => clearInterval(id);
+  }, [active]);
+
+  if (!plan || !active) return null;
+  return (
+    <div className="message-error-autoretry" role="status">
+      <span>
+        {t("chat.autoRetryPending", {
+          seconds: autoRetrySecondsLeft(plan.dueAt, now),
+          round: plan.round,
+          max: AUTO_RETRY_MAX_ROUNDS,
+        })}
+      </span>
+      <button
+        type="button"
+        className="copy-btn"
+        onClick={() => useAppStore.getState().retryAutoNow()}
+      >
+        {t("chat.autoRetryNow")}
+      </button>
+      <button
+        type="button"
+        className="copy-btn"
+        onClick={() => useAppStore.getState().cancelAutoRetry()}
+      >
+        {t("chat.autoRetryCancel")}
+      </button>
+    </div>
+  );
+}
+
 export function AssistantErrorMessage({ message }: { message: UiMessage }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(true);
@@ -202,6 +254,18 @@ export function AssistantErrorMessage({ message }: { message: UiMessage }) {
         <div className="message-error-actions">
           <button
             type="button"
+            className="copy-btn"
+            onClick={() => {
+              // A hand-driven retry starts a fresh budget: the user decided the
+              // wait is over, so the schedule must not resume mid-way.
+              useAppStore.getState().cancelAutoRetry();
+              void useAppStore.getState().retryAssistantMessage(message.id);
+            }}
+          >
+            {t("chat.retryResponse")}
+          </button>
+          <button
+            type="button"
             ref={detailsToggleRef}
             className="message-error-toggle"
             aria-expanded={open}
@@ -242,6 +306,9 @@ export function AssistantErrorMessage({ message }: { message: UiMessage }) {
           ) : null}
         </div>
       </div>
+      {isAutoRetryableCode(error.code) ? (
+        <AutoRetryNotice code={error.code} />
+      ) : null}
       <div
         id={detailsId}
         className={`message-error-details ${open ? "open" : ""}`}

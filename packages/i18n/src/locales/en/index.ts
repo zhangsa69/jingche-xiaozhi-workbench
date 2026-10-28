@@ -503,6 +503,11 @@ export const en = {
     compactingContext: "Compacting context…",
     recoveringTurn: "Recovering empty response…",
     retryingModel: "Retrying in {{delaySeconds}}s · attempt {{attempt}}/{{maxAttempts}}",
+    autoRetryPending:
+      "Rate limited. Retrying in {{seconds}}s (round {{round}}/{{max}}).",
+    autoRetryNow: "Retry now",
+    autoRetryCancel: "Cancel auto retry",
+    retryResponse: "Retry",
     waitingForSubagentNamed: "Waiting for {{name}}",
     waitingForSubagents_one: "Waiting for {{count}} subagent",
     waitingForSubagents_other: "Waiting for {{count}} subagents",
