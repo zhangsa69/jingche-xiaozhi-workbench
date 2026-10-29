@@ -246,6 +246,7 @@ export const tr = {
     requesting: "Mikrofon izni bekleniyor…",
     denied: "Mikrofon izni reddedildi",
     error: "Dikte başarısız oldu",
+    unreachable: "Konuşma tanıma servisine ulaşılamıyor — dikte, tanıyıcının erişebildiği bir ağ gerektirir",
     unsupported: "Bu sürümde konuşma motoru yok",
   },
   contextPins: {

@@ -237,6 +237,7 @@ export const es = {
     "requesting": "Esperando acceso al micrófono…",
     "denied": "Se denegó el acceso al micrófono",
     "error": "El dictado falló",
+    "unreachable": "No se puede alcanzar el servicio de voz: el dictado necesita una red accesible para el reconocedor",
     "unsupported": "Esta versión no incluye motor de voz",
   },
   "contextPins": {

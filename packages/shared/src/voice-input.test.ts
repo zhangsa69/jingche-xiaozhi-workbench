@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   INITIAL_VOICE_STATE,
+  VOICE_TIMEOUT_REASON,
   initialVoiceState,
   insertDictation,
   voiceCanPress,
@@ -119,6 +120,36 @@ describe("voiceReduce", () => {
     );
     expect(voiceLabelKey({ status: "error", partial: "", message: null })).toBe("voice.error");
     expect(voiceLabelKey(initialVoiceState(false))).toBe("voice.unsupported");
+  });
+
+  it("lets a press cancel a request the engine never answered", () => {
+    // Chromium accepts `start()` and then stays silent when its remote speech
+    // service is unreachable. The button has to stay pressable, or the user is
+    // stuck in "requesting" until the composer remounts.
+    const requesting = run([{ type: "press" }]).state;
+    expect(voiceCanPress(requesting)).toBe(true);
+    expect(run([{ type: "press" }, { type: "press" }]).state.status).toBe("idle");
+  });
+
+  it("reports a silent engine as unreachable, not as a microphone refusal", () => {
+    const { state, committed } = run([
+      { type: "press" },
+      { type: "permission-granted" },
+      { type: "partial", text: "半句话" },
+      { type: "timeout" },
+    ]);
+    expect(state.status).toBe("error");
+    expect(state.message).toBe(VOICE_TIMEOUT_REASON);
+    expect(state.partial).toBe("");
+    expect(committed).toEqual([]);
+    expect(voiceLabelKey(state)).toBe("voice.unreachable");
+    // The retry path must stay open after a timeout.
+    expect(voiceCanPress(state)).toBe(true);
+  });
+
+  it("ignores a timeout once the session already ended", () => {
+    const { state } = run([{ type: "timeout" }]);
+    expect(state.status).toBe("idle");
   });
 });
 

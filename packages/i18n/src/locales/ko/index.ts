@@ -246,6 +246,7 @@ export const ko = {
     requesting: "마이크 권한을 기다리는 중…",
     denied: "마이크 권한이 거부되었습니다",
     error: "받아쓰기에 실패했습니다",
+    unreachable: "음성 인식 서비스에 연결할 수 없습니다 — 받아쓰기에는 인식기가 접속할 수 있는 네트워크가 필요합니다",
     unsupported: "이 버전에는 음성 엔진이 없습니다",
   },
   contextPins: {

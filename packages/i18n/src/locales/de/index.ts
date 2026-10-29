@@ -237,6 +237,7 @@ export const de = {
     "requesting": "Warte auf Mikrofonzugriff…",
     "denied": "Mikrofonzugriff wurde abgelehnt",
     "error": "Diktat fehlgeschlagen",
+    "unreachable": "Spracherkennungsdienst nicht erreichbar – Diktat braucht ein Netz, das der Erkenner erreicht",
     "unsupported": "Diese Version hat keine Spracherkennung",
   },
   "contextPins": {

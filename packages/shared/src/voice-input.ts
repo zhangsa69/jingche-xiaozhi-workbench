@@ -26,6 +26,12 @@ export type VoiceEvent =
   | { type: "partial"; text: string }
   | { type: "final"; text: string }
   | { type: "stop" }
+  /**
+   * The recogniser accepted `start()` but then went quiet. Chromium's engine
+   * uploads audio to a remote service, so a blocked or refused network looks
+   * exactly like this: no result, no error, no end — forever.
+   */
+  | { type: "timeout" }
   | { type: "error"; message?: string }
   | { type: "reset" };
 
@@ -51,9 +57,19 @@ export function initialVoiceState(
     : { status: "unsupported", partial: "", message: null };
 }
 
-/** Whether the button should be pressable. */
+/**
+ * Whether the button should be pressable. `requesting` is included on purpose:
+ * if the engine never answers, the press that started it must stay undoable —
+ * a disabled button would trap the user in a state they cannot leave.
+ */
 export function voiceCanPress(state: VoiceState): boolean {
-  return state.status === "idle" || state.status === "listening" || state.status === "error" || state.status === "denied";
+  return (
+    state.status === "idle" ||
+    state.status === "requesting" ||
+    state.status === "listening" ||
+    state.status === "error" ||
+    state.status === "denied"
+  );
 }
 
 /**
@@ -68,7 +84,7 @@ export function voiceReduce(
   switch (event.type) {
     case "press": {
       if (state.status === "unsupported") return { state, committed: "" };
-      if (state.status === "listening") {
+      if (state.status === "listening" || state.status === "requesting") {
         return {
           state: { status: "idle", partial: "", message: null },
           committed: "",
@@ -114,6 +130,15 @@ export function voiceReduce(
         committed: "",
       };
     }
+    case "timeout": {
+      if (state.status !== "requesting" && state.status !== "listening") {
+        return { state, committed: "" };
+      }
+      return {
+        state: { status: "error", partial: "", message: VOICE_TIMEOUT_REASON },
+        committed: "",
+      };
+    }
     case "error": {
       // An error during a dictation ends it; an error while idle is stale news
       // and would otherwise replace the resting state with a permanent banner.
@@ -139,6 +164,9 @@ export function voiceIsLive(state: VoiceState): boolean {
   return state.status === "requesting" || state.status === "listening";
 }
 
+/** Sentinel stored in `message` when the engine never answered (see `timeout`). */
+export const VOICE_TIMEOUT_REASON = "timeout";
+
 /** i18n key for the button tooltip, one per state. */
 export function voiceLabelKey(state: VoiceState): string {
   switch (state.status) {
@@ -151,7 +179,11 @@ export function voiceLabelKey(state: VoiceState): string {
     case "denied":
       return "voice.denied";
     case "error":
-      return "voice.error";
+      // A silent engine and a refused one need different advice: the first is
+      // a network problem, the second is a microphone problem.
+      return state.message === VOICE_TIMEOUT_REASON
+        ? "voice.unreachable"
+        : "voice.error";
     default:
       return "voice.start";
   }

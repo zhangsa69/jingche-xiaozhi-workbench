@@ -237,6 +237,7 @@ export const fr = {
     "requesting": "En attente de l'accès au micro…",
     "denied": "L'accès au micro a été refusé",
     "error": "La dictée a échoué",
+    "unreachable": "Service de reconnaissance vocale injoignable — la dictée exige un réseau accessible au moteur",
     "unsupported": "Cette version n'inclut pas de moteur vocal",
   },
   "contextPins": {

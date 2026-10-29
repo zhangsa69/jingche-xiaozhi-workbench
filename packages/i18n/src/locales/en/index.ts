@@ -244,6 +244,7 @@ export const en = {
     requesting: "Waiting for microphone access…",
     denied: "Microphone access was denied",
     error: "Dictation failed",
+    unreachable: "Speech service unreachable — dictation needs a network the recogniser can reach",
     unsupported: "This build has no speech engine",
   },
   contextPins: {
