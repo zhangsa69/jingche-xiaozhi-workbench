@@ -231,17 +231,6 @@ export const de = {
     referenceUnavailable: "Sitzung nicht verfügbar",
     sessionMissing: "Diese Sitzung existiert nicht mehr",
   },
-  "voice": {
-    "start": "Diktat starten",
-    "listening": "Diktat beenden",
-    "transcribing": "Transkribiere …",
-    "requesting": "Warte auf Mikrofonzugriff…",
-    "denied": "Mikrofonzugriff wurde abgelehnt",
-    "error": "Diktat fehlgeschlagen",
-    "unreachable": "Transkriptionsdienst nicht erreichbar",
-    "empty": "Keine Sprache erkannt",
-    "unsupported": "Diese Version kann kein Audio aufnehmen",
-  },
   "contextPins": {
     "title": "Angehefteter Kontext",
     "open": "Frühere Beiträge anheften",

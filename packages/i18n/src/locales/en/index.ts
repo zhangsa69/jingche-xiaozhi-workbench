@@ -238,17 +238,6 @@ export const en = {
     referenceUnavailable: "Session unavailable",
     sessionMissing: "That session no longer exists",
   },
-  voice: {
-    start: "Start dictation",
-    listening: "Stop dictation",
-    transcribing: "Transcribing…",
-    requesting: "Waiting for microphone access…",
-    denied: "Microphone access was denied",
-    error: "Dictation failed",
-    unreachable: "Transcription service unreachable",
-    empty: "No speech detected",
-    unsupported: "This build cannot record audio",
-  },
   contextPins: {
     title: "Pinned context",
     open: "Pin earlier turns",

@@ -21,7 +21,6 @@ import {
   IconArrowUp,
   IconCheck,
   IconChevronDown,
-  IconMic,
   IconPlus,
   IconSparkles,
   IconStop,
@@ -35,7 +34,6 @@ import {
   nextMode,
 } from "./model";
 import type { useComposerModelMenu } from "./hooks/useComposerModelMenu";
-import type { VoiceDictation } from "../../../hooks/use-voice-dictation";
 
 type ModelMenuController = ReturnType<typeof useComposerModelMenu>;
 type ContextUsage = Parameters<typeof ContextUsageInspector>[0];
@@ -74,7 +72,6 @@ export type ComposerToolbarProps = {
   /** Ticked turns replayed verbatim with the next prompt (W-33). */
   contextPicker: ContextPickerController;
   /** Dictation: press to listen, press again to stop (W-31). */
-  voice: VoiceDictation;
   abort: AppState["abort"];
   submit: () => Promise<void>;
 };
@@ -112,7 +109,6 @@ export function ComposerToolbar({
   hasDraftContent,
   promptLibrary,
   contextPicker,
-  voice,
   abort,
   submit,
 }: ComposerToolbarProps) {
@@ -256,20 +252,6 @@ export function ComposerToolbar({
         </AnchoredMenu>
         <ContextPickerSheet t={t} controller={contextPicker} />
         <PromptLibrarySheet t={t} controller={promptLibrary} />
-        <TooltipButton
-          type="button"
-          className={`icon-btn composer-voice-btn${voice.live ? " is-live" : ""}${
-            voice.busy ? " is-busy" : ""
-          }`}
-          tooltip={t(voice.labelKey)}
-          ariaLabel={t(voice.labelKey)}
-          aria-pressed={voice.live}
-          aria-busy={voice.busy}
-          disabled={voice.disabled}
-          onClick={voice.press}
-        >
-          <IconMic size={15} aria-hidden="true" />
-        </TooltipButton>
       </div>
 
       <div className="composer-right">

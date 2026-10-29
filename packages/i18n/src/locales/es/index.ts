@@ -231,17 +231,6 @@ export const es = {
     referenceUnavailable: "Sesión no disponible",
     sessionMissing: "Esa sesión ya no existe",
   },
-  "voice": {
-    "start": "Iniciar dictado",
-    "listening": "Detener dictado",
-    "transcribing": "Transcribiendo…",
-    "requesting": "Esperando acceso al micrófono…",
-    "denied": "Se denegó el acceso al micrófono",
-    "error": "El dictado falló",
-    "unreachable": "Servicio de transcripción inaccesible",
-    "empty": "No se detectó voz",
-    "unsupported": "Esta versión no puede grabar audio",
-  },
   "contextPins": {
     "title": "Contexto fijado",
     "open": "Fijar turnos anteriores",

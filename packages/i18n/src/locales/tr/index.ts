@@ -240,17 +240,6 @@ export const tr = {
     referenceUnavailable: "Oturum kullanılamıyor",
     sessionMissing: "Bu oturum artık mevcut değil",
   },
-  voice: {
-    start: "Dikteyi başlat",
-    listening: "Dikteyi durdur",
-    transcribing: "Yazıya dökülüyor…",
-    requesting: "Mikrofon izni bekleniyor…",
-    denied: "Mikrofon izni reddedildi",
-    error: "Dikte başarısız oldu",
-    unreachable: "Deşifre servisine ulaşılamıyor",
-    empty: "Konuşma algılanmadı",
-    unsupported: "Bu sürüm ses kaydedemiyor",
-  },
   contextPins: {
     title: "Sabitlenen bağlam",
     open: "Önceki turları sabitle",

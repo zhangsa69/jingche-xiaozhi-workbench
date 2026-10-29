@@ -47,7 +47,6 @@ import {
   Link,
   ListChecks,
   LogOut,
-  Mic,
   Minus,
   MessageSquare,
   MessageSquarePlus,
@@ -211,7 +210,6 @@ export const IconAudio = icon(Music);
 export const IconVideo = icon(Video);
 export const IconReview = icon(RefreshCw);
 export const IconKeyboard = icon(Keyboard);
-export const IconMic = icon(Mic);
 export const IconPlug = icon(Plug);
 export const IconSlash = icon(Slash);
 export const IconUser = icon(UserRound);

@@ -373,33 +373,7 @@ actually controls. Eight turns and 1,600 characters per prompt; a turn that does
 not fit is dropped rather than cut in half, and the ticks clear once the message
 is accepted so the same history is not quietly resent.
 
-### 3.13 Voice input
-
-The microphone in the composer toolbar dictates into the draft at the caret, and
-the words appear **while the user is still speaking**. Recording happens locally
-and 16 kHz mono PCM goes to a FunASR-compatible streaming service in 60 ms
-frames; the recognised text comes back as it is produced. It does not use the
-platform's speech recogniser — that one uploads to a vendor service which, when
-unreachable, neither answers nor fails, so the button pulsed and no text ever
-arrived. The service address belongs to the host, so the page cannot redirect it.
-
-The draft is **rebuilt** on every update rather than appended to: the service
-keeps revising the sentence it is listening to, so appending would leave every
-earlier version in the box. Pressing again ends the session; the last rebuild
-stays as ordinary draft text and stops changing.
-
-The states the user sees are idle, requesting permission, recording, transcribing,
-denied and failed. Recording shows a pulsing dot; a press ends it, and the text
-settles about a second after the service's last sentence. Transcribing shows a
-spinner and cannot be pressed again. Where the stream cannot be opened the app
-falls back to uploading the whole recording, which only produces text at the end.
-A recording longer than two minutes stops by itself and keeps what was heard.
-An empty transcript ("heard nothing") and an unreachable service are separate
-messages: the first suggests speaking again, the second suggests checking the
-service.
-
-Dictation writes plain draft text. It never sends on the user's behalf, and a
-message sent right after dictating goes through the same submit path as typing.
+<!-- 3.13 removed on 2026-10-29: the voice input feature was deleted at the user's request. The number is left vacant so the remaining 3.14+ references stay valid. -->
 
 ### 3.14 Extensions
 

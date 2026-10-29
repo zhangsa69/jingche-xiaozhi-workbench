@@ -66,12 +66,6 @@ import type {
   LogTailResult,
   PdfRenderRequest,
   PdfRenderResult,
-  VoiceStreamAudioRequest,
-  VoiceStreamStartResult,
-  VoiceStreamStopResult,
-  VoiceStreamUpdate,
-  VoiceTranscribeRequest,
-  VoiceTranscribeResult,
   ProjectMemory,
   ProjectMemoryEntry,
   ProjectWorkspace,
@@ -968,30 +962,6 @@ export const api = {
   /** Render finished HTML into a PDF inside the session's scratch dir (W-13). */
   pdfRender: (request: PdfRenderRequest) =>
     invoke<PdfRenderResult>(IPC.invoke.pdfRender, request),
-  /**
-   * Send recorded dictation audio to the host's transcription service (W-31).
-   * The endpoint lives in the main process, so the renderer cannot point this
-   * at an address of its own choosing.
-   */
-  voiceTranscribe: (request: VoiceTranscribeRequest) =>
-    invoke<VoiceTranscribeResult>(IPC.invoke.voiceTranscribe, request),
-  /**
-   * Streaming dictation (W-31). The host owns the socket and assembles the text,
-   * so a reconnect cannot splice two half-transcripts together.
-   */
-  voiceStreamStart: () =>
-    invoke<VoiceStreamStartResult>(IPC.invoke.voiceStreamStart),
-  voiceStreamAudio: (request: VoiceStreamAudioRequest) =>
-    invoke<{ ok: boolean }>(IPC.invoke.voiceStreamAudio, request),
-  voiceStreamStop: () =>
-    invoke<VoiceStreamStopResult>(IPC.invoke.voiceStreamStop),
-  voiceStreamCancel: () => invoke<{ ok: true }>(IPC.invoke.voiceStreamCancel),
-  onVoiceStream: (listener: (update: VoiceStreamUpdate) => void) => {
-    if (!window.piDesktop?.on) return () => undefined;
-    return window.piDesktop.on(IPC.event.voiceStreamText, (payload) =>
-      listener(payload as VoiceStreamUpdate),
-    );
-  },
   /**
    * Flatten a `.docx` / `.xlsx` / `.pptx` into panel blocks (W-19). The host
    * parses; the renderer never reads these bytes as text.

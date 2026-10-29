@@ -243,7 +243,7 @@
 | W-28 | **自动模式选模型**：按模式/任务长度/是否含图/工具需求做规则路由，UI 增「自动」项 | 42 | `ComposerModelPicker.tsx:66`、`provider-presets.ts:28` | M |
 | W-29 | **多任务并行标签**：顶部会话标签栏，标签显示步骤进度与运行态；`activeSessionId` 单值改造 | 4/12 | `app-state.ts:125,139-141`、`Sidebar.tsx:1441` | L |
 | W-30 | **`#` 会话/片段引用** | 输入侧 | `composer-trigger.ts:15`（现只有 `/`、`@`） | M |
-| W-31 | **语音输入**：系统级录音 + 转写（可先只做 Windows/macOS 原生） | 44 前置 | `ComposerToolbar.tsx:113` | M |
+| W-31 | **语音输入**：系统级录音 + 转写（可先只做 Windows/macOS 原生） | 44 前置 | **已移除（2026-10-29 用户要求）**：两版都试过（浏览器识别器、自建 FunASR 流式），链路实测通但 app 内始终无输入；`shared/voice-input.ts` / `voice-stream.ts` / `voice-wav.ts`、主进程 `voice-ipc.ts`、录音 hook、工具栏按钮与 8 语言文案已整批删除，无数据表残留；服务器上的 FunASR 未改动 | M |
 | W-32 | **本地模型预设**：Ollama / LM Studio 探测与一键添加 | 42 | `settings/ProviderSetupDialog.tsx:157`、`provider-presets.ts` | S |
 | W-33 | **上下文挑选注入**：勾选消息/文件进入上下文，而非只看用量环 | 输入侧 | `ContextUsageInspector.tsx:38`、`lib/context-usage.ts:95` | M |
 | W-34 | **连接器市场**：MCP 一键安装目录（把现有插件/MCP 能力产品化） | 41 | `mcp-control.ts:56-58,821`、`features/plugins/MarketplacePanel.tsx` | M |
@@ -371,7 +371,7 @@ WorkBuddy 独有的两点这版补上：**每条回复独立计时并定格**（
 | **M2 任务与模式** | W-01 / W-03 / W-04 / W-05 / W-10 | Ask/Plan/Craft 三选一生效（Ask 不写文件）；右上角浮层可用；步骤 `第 3/8 步`；循环确认可暂停 | M1（复用 steps 与计时） | M–L |
 | **M3 交付闭环** | W-11 / W-12 / W-13 / W-14 / W-19 | 产物标签可用；docx/xlsx/pptx 能生成并预览；可另存到用户目录 | M2 | L |
 | **M4 交付收尾** | W-15 / W-16 / W-17 / W-18 / W-20 / W-21（W-22 已移除） | 命令（只读）/ 日志两个新标签；任务历史可重跑；首次授权引导 | M3 | M |
-| **M5 生态** | W-23 – W-34 | 专家中心 12 预设；资料库可引用；多任务标签；自动选模型 | M4 | L |
+| **M5 生态** | W-23 – W-34（W-31 已移除） | 专家中心 12 预设；资料库可引用；多任务标签；自动选模型 | M4 | L |
 | **M6 本地跨端** | W-35 – W-40（全部可选，按需裁剪） | 手机页可下发任务并取产物；本地备份恢复；定时调度 | M5 | XL |
 
 > 路线图已剔除账号、计费、云同步：M1–M6 全部为单机可交付。M6 若不做，产品仍是完整形态。

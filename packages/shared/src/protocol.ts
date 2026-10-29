@@ -259,20 +259,6 @@ export const IPC = {
     logTail: "pi-desktop/log/tail",
     /** Parse a `.docx` / `.xlsx` / `.pptx` file into a flat preview (W-19). */
     documentPreview: "pi-desktop/preview/document",
-    /**
-     * Transcribe recorded dictation audio (W-31). The host owns the endpoint:
-     * the renderer sends bytes, never a URL, so this channel cannot be turned
-     * into a request forger.
-     */
-    voiceTranscribe: "pi-desktop/voice/transcribe",
-    /** Open a streaming transcription session on the same service. */
-    voiceStreamStart: "pi-desktop/voice/stream/start",
-    /** Push one PCM frame into the open streaming session. */
-    voiceStreamAudio: "pi-desktop/voice/stream/audio",
-    /** Close the session and return the finished transcript. */
-    voiceStreamStop: "pi-desktop/voice/stream/stop",
-    /** Close the session and throw the transcript away. */
-    voiceStreamCancel: "pi-desktop/voice/stream/cancel",
     windowSetWorkPanelReservation:
       "pi-desktop/window/setWorkPanelReservation",
     windowSetWorkPanelChatWidth: "pi-desktop/window/setWorkPanelChatWidth",
@@ -284,8 +270,6 @@ export const IPC = {
     nativeMenuAction: "pi-desktop/menu/nativeAction",
   },
   event: {
-    /** Assembled dictation text while a streaming session is open (W-31). */
-    voiceStreamText: "pi-desktop/voice/event/stream",
     pluginChanged: "pi-desktop/event/pluginChanged",
     /** Host-originated app settings mutation (e.g. plugin `app.setTheme`). */
     settingsChanged: "pi-desktop/app/event/settingsChanged",

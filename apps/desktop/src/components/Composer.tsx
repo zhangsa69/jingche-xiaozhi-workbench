@@ -13,7 +13,6 @@ import type {
 import {
   buildContextPinBlock,
   buildContextReferenceBlock,
-  insertDictation,
   contextPinCandidates,
   contextPinUsage,
   findContextReferences,
@@ -43,7 +42,6 @@ import {
   useComposerAutocomplete,
 } from "../hooks/use-composer-autocomplete";
 import { usePromptLibrary } from "../hooks/use-prompt-library";
-import { useVoiceDictation } from "../hooks/use-voice-dictation";
 import { ComposerAutocomplete } from "./ComposerAutocomplete";
 import type { ContextPickerController } from "./ContextPickerSheet";
 import { AskToolCard } from "./AskToolCard";
@@ -413,37 +411,6 @@ export function Composer({
   const hasDraftContent = Boolean(value.trim()) || hasAnnotations;
   const promptLibrary = usePromptLibrary();
   /**
-   * Dictation lands at the caret and grows as the user speaks.
-   *
-   * The draft is rebuilt from `anchor` (the text that was there when dictation
-   * started) on every update, not appended to: the service keeps revising the
-   * sentence it is listening to, so appending would leave every earlier version
-   * in the box. When the session ends, the last rebuild is kept as ordinary
-   * draft text.
-   */
-  const voiceAnchor = useRef<{ value: string; cursor: number } | null>(null);
-  const voice = useVoiceDictation({
-    onInterim: (text: string) => {
-      const anchor = voiceAnchor.current ?? { value, cursor };
-      voiceAnchor.current = anchor;
-      if (!text) {
-        setValue(anchor.value);
-        setCursor(anchor.cursor);
-        return;
-      }
-      const inserted = insertDictation(anchor.value, anchor.cursor, text);
-      setValue(inserted.value);
-      setCursor(inserted.cursor);
-    },
-    onCommitted: (text: string) => {
-      const anchor = voiceAnchor.current ?? { value, cursor };
-      voiceAnchor.current = null;
-      const inserted = insertDictation(anchor.value, anchor.cursor, text);
-      setValue(inserted.value);
-      setCursor(inserted.cursor);
-    },
-  });
-  /**
    * `#` references resolve here, at send time, so the draft stays editable text
    * and the model only receives what this workspace can actually show.
    */
@@ -779,7 +746,6 @@ export function Composer({
             hasDraftContent={hasDraftContent}
             promptLibrary={promptLibrary}
             contextPicker={contextPicker}
-            voice={voice}
             abort={abort}
             submit={submit}
           />

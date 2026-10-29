@@ -231,17 +231,6 @@ export const fr = {
     referenceUnavailable: "Session indisponible",
     sessionMissing: "Cette session n'existe plus",
   },
-  "voice": {
-    "start": "Démarrer la dictée",
-    "listening": "Arrêter la dictée",
-    "transcribing": "Transcription…",
-    "requesting": "En attente de l'accès au micro…",
-    "denied": "L'accès au micro a été refusé",
-    "error": "La dictée a échoué",
-    "unreachable": "Service de transcription injoignable",
-    "empty": "Aucune parole détectée",
-    "unsupported": "Cette version ne peut pas enregistrer l'audio",
-  },
   "contextPins": {
     "title": "Contexte épinglé",
     "open": "Épingler des tours précédents",

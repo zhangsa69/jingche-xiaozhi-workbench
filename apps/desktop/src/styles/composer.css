@@ -402,60 +402,6 @@
   color: var(--ds-text-primary);
 }
 
-/* Dictation: a live mic reads as a state, not as a pressed button. */
-.composer-voice-btn {
-  position: relative;
-}
-
-/* Uploading the recording: busy, not listening. The spinner says the audio left
- * the machine, so a slow CPU-side transcription does not look like a stuck mic. */
-.composer-voice-btn.is-busy svg {
-  animation: composer-voice-spin 900ms linear infinite;
-  opacity: 0.7;
-}
-
-@keyframes composer-voice-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.composer-voice-btn.is-live {
-  color: var(--ds-error);
-}
-
-.composer-voice-btn.is-live::after {
-  content: "";
-  position: absolute;
-  inset-inline-end: 3px;
-  inset-block-start: 3px;
-  width: 5px;
-  height: 5px;
-  border-radius: var(--radius-full);
-  background: var(--ds-error);
-  animation: voice-pulse 1.2s var(--motion-ease-standard) infinite;
-}
-
-@keyframes voice-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.25;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .composer-voice-btn.is-live::after {
-    animation: none;
-  }
-
-  .composer-voice-btn.is-busy svg {
-    animation: none;
-  }
-}
-
 .send-btn {
   display: inline-flex;
   height: 28px;
