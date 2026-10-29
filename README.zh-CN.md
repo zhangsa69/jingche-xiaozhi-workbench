@@ -1,111 +1,90 @@
 <div align="center">
 
-<img src="docs/image/readme/logo.png" alt="PI-Desktop" width="108" />
+<img src="docs/image/readme/app-icon.png" alt="京车小智工作台" width="112" />
 
-# PI-Desktop
+# 京车小智工作台
 
-### 给 AI 编程 Agent 一个真正的桌面工作台。
+### 给 AI Agent 一个本地优先的桌面工作台。
 
-**模型随便换，项目直接开，Agent 放手干活，而你始终掌控。**
+**模型随便换，项目直接开，Agent 放手干活，审批权始终在你手上。**
 
-本地优先 · 模型自由 · 可扩展 · macOS / Windows / Linux
-
-<br />
-
-[![Release](https://img.shields.io/github/v/release/vastsa/PI-Desktop?label=release)](https://github.com/vastsa/PI-Desktop/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/vastsa/PI-Desktop/total?label=downloads)](https://github.com/vastsa/PI-Desktop/releases)
-[![Stars](https://img.shields.io/github/stars/vastsa/PI-Desktop?style=flat&label=stars)](https://github.com/vastsa/PI-Desktop/stargazers)
-[![CI](https://github.com/vastsa/PI-Desktop/actions/workflows/ci.yml/badge.svg)](https://github.com/vastsa/PI-Desktop/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/vastsa/PI-Desktop)](LICENSE)
+本地优先 · 模型自由 · 可扩展 · Windows / macOS / Linux
 
 <br />
 
-**[立即下载](https://github.com/vastsa/PI-Desktop/releases/latest)** ·
-[使用文档](https://pi-docs.aiuo.net/) ·
+[![Release](https://img.shields.io/github/v/release/zhangsa69/jingche-xiaozhi-workbench?label=release)](https://github.com/zhangsa69/jingche-xiaozhi-workbench/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/zhangsa69/jingche-xiaozhi-workbench/total?label=downloads)](https://github.com/zhangsa69/jingche-xiaozhi-workbench/releases)
+[![Stars](https://img.shields.io/github/stars/zhangsa69/jingche-xiaozhi-workbench?style=flat&label=stars)](https://github.com/zhangsa69/jingche-xiaozhi-workbench/stargazers)
+[![CI](https://github.com/zhangsa69/jingche-xiaozhi-workbench/actions/workflows/ci.yml/badge.svg)](https://github.com/zhangsa69/jingche-xiaozhi-workbench/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/zhangsa69/jingche-xiaozhi-workbench)](LICENSE)
+
+<br />
+
+**[立即下载](https://github.com/zhangsa69/jingche-xiaozhi-workbench/releases/latest)** ·
+[规格文档](docs/spec/README.md) ·
 [界面预览](docs/guide/screenshots.md) ·
 [开发插件](docs/plugin-development.md) ·
 [English](README.md)
 
 <br />
 
-<img src="docs/image/readme/home.webp" alt="PI-Desktop 桌面工作台" width="94%" />
+<img src="docs/image/readme/home_zh.webp" alt="京车小智工作台" width="94%" />
 
 <br />
 
-**不绑 PI-Desktop 账号 · 不强制走中转服务 · 不锁定编辑器**
+**不绑账号 · 不强制走中转 · 不锁定编辑器**
 
-<sub>项目和会话留在你的电脑里，模型请求直接发送到你自己配置的服务商或 API Endpoint。</sub>
-
-<br /><br />
-
-<a href="https://trendshift.io/repositories/178787?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-178787" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/178787" alt="vastsa/PI-Desktop | Trendshift" width="230" height="51"/></a>
-&nbsp;
-<a href="https://www.producthunt.com/products/pi-desktop?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-pi-desktop" target="_blank" rel="noopener noreferrer"><img alt="PI-Desktop on Product Hunt" width="230" height="50" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1245457&amp;theme=dark&amp;t=1788955688339"/></a>
+<sub>项目和会话留在你的电脑里，模型请求直接发到你配置的服务商或 Endpoint。</sub>
 
 </div>
 
 ---
 
 > [!IMPORTANT]
-> **PI-Desktop 目前仍处于 Early Preview 阶段。**
-> 它已经可以承担真实的编程工作流，但 API、扩展接口和部分桌面行为仍会持续演进。
+> **京车小智工作台目前处于早期预览阶段。** 当前版本：`0.14.8-native.1`。日常干活已经够用，但接口与部分桌面行为仍在演进。
 
-## 不是又一个 AI 聊天框
+## 不是又一个聊天框
 
-现在很多 Coding Agent，要么塞在终端里，要么绑在某个 IDE 里，要么必须依赖云端服务。
-
-**PI-Desktop 想做的，是给 AI Agent 一个真正属于自己的桌面工作台。**
-
-项目、会话、文件、Diff、预览、模型、权限、插件、长任务，全都放在一个独立桌面环境里。
-
-你可以继续用自己喜欢的编辑器，也可以随时换模型、换 Provider、接本地模型。
-
-**不绑编辑器，不绑模型，不绑云端。**
+项目、会话、文件、Diff、预览、模型、权限、扩展和长任务，都在同一个桌面环境里。
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
-### 🧠 模型你自己选
+### 模型你自己选
 
-OpenAI、Anthropic、本地模型、自建网关、OpenAI Compatible API，都可以接。
+OpenAI、Anthropic、本地模型、自建网关、OpenAI Compatible API 都能接。
 
-每个模型都可以独立配置上下文长度、最大输出、Reasoning / Thinking 等级，以及模型特有参数。
-
-会话不用重建，直接在输入框里切模型。
+每个模型可以单独配置上下文长度、最大输出、推理等级和模型特有行为；会话不用重建，直接在输入框里换模型。Ollama 与 LM Studio 在「本地模型预设」里一键添加。
 
 </td>
 <td width="50%" valign="top">
 
-### 📁 项目就在本地
+### 项目就在本地
 
-直接打开本地仓库或任意项目目录。
+打开本地仓库或任意项目目录，会话、文件、Review、预览和 Agent 的执行过程都在一处。
 
-项目、会话、文件、Review、预览、Agent 执行过程，都集中在一个工作区里。
-
-已经在用 Claude Code、Codex、OpenCode 或 Pi？可以直接导入已有本地会话。
+已经在用 Claude Code、Codex、OpenCode 或 Pi？可以导入已有的本地会话。
 
 </td>
 </tr>
 <tr>
 <td width="50%" valign="top">
 
-### 🛡️ Agent 能干活，但不是乱来
+### 能干活的 Agent，也有刹车
 
-Agent 可以读文件、改代码、跑命令。
+Agent 可以读文件、改代码、跑命令，高权限操作一律经过权限层。
 
-但涉及高权限操作时，会经过 PI-Desktop 的权限层。
-
-你可以看 Diff、看命令输出、看执行结果，也可以决定这个会话到底放多大的权限。
+你可以看 Diff、看命令输出，决定这个会话放多大的权限。应用内还有一页隐私说明，讲清什么会上行、什么只留在本机。
 
 </td>
 <td width="50%" valign="top">
 
-### 🧩 不够用？自己扩展
+### 不够用就自己扩展
 
-Skills、MCP、Subagents、pi extensions、Plugins 都可以接。
+Skills、MCP、Subagents、pi extensions、插件都可以接。
 
-你不仅可以给 Agent 增加工具，还可以给整个桌面工作台增加新面板、新视图、新服务、新主题，甚至长期运行的后台能力。
+不只是给 Agent 加工具，还能给整个桌面加新面板、新视图、新主题、常驻服务。
 
 </td>
 </tr>
@@ -113,562 +92,187 @@ Skills、MCP、Subagents、pi extensions、Plugins 都可以接。
 
 ---
 
-## 一个工作台，三种做事方式
+## 一个工作台，四种做事方式
 
-同一个 Agent，不同的控制边界。
+同一个 Agent，不同的审批边界。
 
-| | **Agent** | **Plan** | **Goal** |
-| --- | --- | --- | --- |
-| **你需要确认什么** | 不额外确认 | 实施方案 | 最终目标与验收条件 |
-| **Agent 会怎么做** | 读代码、改文件、跑命令、测试、继续迭代 | 先研究仓库，产出冻结的实施计划，再等你批准 | 自己选择实现路径，持续推进到目标完成 |
-| **适合场景** | 日常快速改代码 | 大型改动、高风险重构 | 你只关心结果，不想管过程 |
+| | **智能体** | **规划** | **目标** | **问一问** |
+| --- | --- | --- | --- | --- |
+| **你批什么** | 不用额外批 | 这份实施计划 | 结果与验收标准 | 不用批——它不能写 |
+| **Agent 做什么** | 读、改、跑命令、测试、迭代 | 先读仓库，产出一份冻结的计划，然后等你 | 自己选路径，朝目标推进 | 只回答关于项目的问题 |
+| **适合** | 日常开发 | 大改、风险改动 | 结果导向的任务 | 安全地读懂代码 |
 
-### Agent
-
-最直接的模式。
-
-让它读项目、改代码、跑命令、测结果，像一个真正干活的工程师一样持续往前推进。
-
-### Plan
-
-先把方案给你看，再开始动手。
-
-适合架构改造、大规模重构、重要功能开发，或者你不想让 Agent 一上来就直接改代码的场景。
-
-### Goal
-
-你只定义：
-
-> **我要什么结果。**
-
-然后把目标和验收条件锁定，具体怎么做交给 Agent 自己判断。
-
-无论哪种模式，高权限工具仍然会经过权限系统。
+任何模式下，高权限工具仍然要过权限层。
 
 ---
 
-## 不只是回答你，而是把活干出来
+## 这个工作台多做了什么
+
+Agent 循环之外，那些平时容易掉在地上的环节，这里都有落点：
+
+| 领域 | 你得到什么 |
+| --- | --- |
+| **交付** | 产物标签、`docx` / `xlsx` / `pptx` 与 PDF 面板内预览、另存到你选的目录 |
+| **过程可见** | 命令与日志两个标签、回复墙钟、思考计时、带序号与单次耗时的工具行 |
+| **工作历史** | 按天分组的任务历史，可重跑、只复用输入、复用工作空间 |
+| **专家** | 专家中心 12 份领域预设，专家团把多位专家的结果汇总成一份交付物 |
+| **上下文** | 本地资料库用 `@` 引用、历史会话与片段用 `#` 引用、显式挑选上下文（带字符预算） |
+| **复用** | 提示词库：收藏、标签、空输入框按 `↑` 倒序回溯 |
+| **会话** | 会话标签栏，以及不打断主对话的侧边聊天 |
+| **文件** | `@` 文件引用、斜杠命令、拖放、大段粘贴落成会话临时文件 |
+
+### 看得到过程，不只看结论
 
 <table>
 <tr>
 <td width="50%">
 
-<img src="docs/image/readme/chat_en.png" alt="PI-Desktop 会话" />
+<img src="docs/image/readme/chat_zh.png" alt="长会话与转写导航" />
 
-<p align="center"><sub>长会话、消息导航、持续工作流</sub></p>
+<p align="center"><sub>长会话也能翻回去看清楚</sub></p>
 
 </td>
 <td width="50%">
 
-<img src="docs/image/readme/model_en.png" alt="PI-Desktop 模型切换" />
+<img src="docs/image/readme/model_zh.png" alt="模型选择" />
 
-<p align="center"><sub>每个会话都可以自由切换模型、Provider 与推理等级</sub></p>
+<p align="center"><sub>每个会话独立选服务商、模型与推理等级</sub></p>
 
 </td>
 </tr>
 <tr>
 <td width="50%">
 
-<img src="docs/image/readme/plugins_en.png" alt="PI-Desktop 插件市场" />
+<img src="docs/image/readme/plugins_zh.png" alt="插件市场" />
 
-<p align="center"><sub>通过插件市场扩展整个桌面工作台</sub></p>
+<p align="center"><sub>通过插件市场扩展工作台</sub></p>
 
 </td>
 <td width="50%">
 
-<img src="docs/image/readme/addmodel_en.png" alt="PI-Desktop 模型配置" />
+<img src="docs/image/readme/addmodel_zh.png" alt="模型配置" />
 
-<p align="center"><sub>接入你自己的模型与 API</sub></p>
+<p align="center"><sub>添加服务商、接入模型</sub></p>
 
 </td>
 </tr>
 </table>
 
 <p align="center">
-<a href="docs/guide/screenshots.md"><strong>查看更多界面截图 →</strong></a>
+<a href="docs/guide/screenshots.md"><strong>查看全部界面预览 →</strong></a>
 </p>
 
 ---
 
-## 它是为“长任务”设计的
+## 扩展工作台，而不是重造工作台
 
-很多 AI 工具擅长一问一答。
+| 层 | 能做什么 |
+| --- | --- |
+| **插件** | Agent 工具、命令、Skills、工作区面板、主题、MCP 服务、Subagents、常驻服务、插件间消息；打成 `.piplug`，可从插件市场安装 |
+| **Skills** | 可复用的指令与工作流，全局或按项目启用 |
+| **MCP** | 通过 Model Context Protocol 接外部工具与服务 |
+| **pi extensions** | 为 [pi](https://github.com/badlogic/pi-mono) CLI 写的扩展可以原样跑，受 `agent.extension` 权限约束 |
+| **Subagents** | 把独立工作派给后台子代理，各自拥有独立上下文 |
 
-PI-Desktop 更关心的是另一件事：
+内置插件：`pi.office`（文档交付）、`pi.browser`、`pi.file-manager`。
 
-> **一个任务跑半小时、一个小时，甚至跨多次会话之后，它还能不能继续干。**
-
-因此，PI-Desktop 从一开始就围绕项目、Session 和长期任务来设计。
-
-你可以：
-
-- 同时管理多个项目与多个会话
-- 固定、归档、分支会话
-- 搜索历史对话
-- Agent 工作时继续排队发送下一条 Prompt
-- 使用 `@` 引用项目文件
-- 使用 Slash Commands
-- 查看代码修改与命令输出
-- 对流式响应持续做 Checkpoint
-- 在应用重启或异常后尽可能恢复现场
-
-### 大任务交给 Subagents
-
-真正复杂的任务，不应该全部塞进一个上下文窗口里。
-
-PI-Desktop 可以把独立工作委派给后台 Subagents，例如：
-
-- 探索大型代码库
-- 多文件实现
-- 技术研究与调查
-- 测试分析
-- 对抗式 Review
-- 独立方案验证
-
-每个 Subagent 都有自己的上下文，完成后再把结果汇报给主 Agent。
-
-**主 Agent 负责统筹，Subagent 负责分头干活。**
-
----
-
-## 插件不是“装饰”，而是 PI-Desktop 的第二条主线
-
-我不希望 PI-Desktop 最后变成一个什么都内置、什么都越来越重的软件。
-
-更理想的方式是：
-
-> **核心保持克制，能力交给生态扩展。**
-
-PI-Desktop 提供多层扩展能力，从简单的 Agent 指令，到完整的桌面级插件都可以覆盖。
-
-### Plugins
-
-插件可以扩展：
-
-| Agent 能力 | 桌面能力 | 平台能力 |
-| --- | --- | --- |
-| Agent Tools | Commands | MCP Servers |
-| Skills | Workspace Panels | Subagents |
-| pi extensions | Work-panel Views | Resident Services |
-|  | Themes | 插件间通信 |
-
-插件可以本地安装，也可以通过插件市场使用 `.piplug` 包分发。
-
-### 对话编排：Session Orchestrator
-
-官方 `pi.session-orchestrator` 插件让 Agent 可以并行协调多个持久 Worker 会话。在 Plugins 插件市场安装 `pi.session-orchestrator` 后，即可使用 `SessionTask` 工具创建、派发、监督、查询状态、等待有界结果、接收报告、取消和列出 Worker。
-
-Worker 会继承父会话的项目、Provider、模型、Thinking 等级和权限模式；它们仍是普通的 PI-Desktop 会话，可以随时打开并查看完整上下文。工作关系按父会话隔离，单个父会话最多同时运行 4 个 Worker，插件总计最多 16 个。
-
-<table>
-<tr>
-<td width="50%">
-
-<img src="docs/image/readme/session-orchestrator-overview.png" alt="PI-Desktop 对话编排插件协调多个 Worker 会话" />
-
-<p align="center"><sub>在一个会话中协调多个持久 Worker</sub></p>
-
-</td>
-<td width="50%">
-
-<img src="docs/image/readme/session-orchestrator-worker.png" alt="PI-Desktop 对话编排插件的 Worker 会话" />
-
-<p align="center"><sub>打开 Worker 会话，独立查看执行进度</sub></p>
-
-</td>
-</tr>
-</table>
-
-**[开发你的第一个 PI-Desktop 插件 →](docs/plugin-development.md)**
+也可以用外部 MCP Agent 驱动本应用：以 `PI_DESKTOP_MCP_CONTROL=1` 启动，从 Electron 用户数据目录下的 `mcp-control.json` 读取回环地址与 bearer token。该能力默认关闭、只绑回环，且授予调用方与桌面同等的权限；`confirm: true` 不等于弹窗确认。
 
 > [!NOTE]
-> 插件进程拥有权限控制，并与 Renderer 隔离，但它仍属于用户主动信任的代码，而不是完整的操作系统级沙箱。请只安装你信任的插件。
-
-### Skills
-
-把常用 Prompt、工作流程和执行规范做成可复用能力。
-
-Skills 可以全局安装，也可以只在某个项目里启用。
-
-### MCP
-
-通过 Model Context Protocol 接入外部工具和服务，不需要把所有功能都硬编码进 PI-Desktop。
-
-PI-Desktop 本身也可以被外部 MCP Agent 控制。
-
-启动时设置：
-
-```bash
-PI_DESKTOP_MCP_CONTROL=1
-```
-
-随后从 Electron user-data 目录下的 `mcp-control.json` 获取 loopback endpoint 与 bearer token。
-
-控制端点支持项目、Session、Agent 工作流，以及经过审核的桌面操作目录。
-
-它默认关闭、仅绑定 loopback，并且调用它的本地 Agent 会获得与桌面端相同级别的对应操作权限。`confirm: true` 并不代表弹出用户确认框。
-
-### pi extensions
-
-为 [pi](https://github.com/badlogic/pi-mono) CLI 编写的扩展，可以直接运行在 PI-Desktop Agent 中。
-
-插件可以通过 `contributes.agentExtensions` 声明扩展，也可以在：
-
-**Plugins → Import pi extension**
-
-直接把现有 extension 文件或目录包装成 PI-Desktop 插件。若目录声明了生产或可选 npm `dependencies`，`PATH` 中的系统 `npm` 会在首次加载前执行有界的 registry-only 安装（`--ignore-scripts`，绝不运行第三方安装脚本）；发布版不包含独立 Node/npm。
-
-这些扩展可以注册：
-
-- Agent Tools
-- Slash Commands
-- Turn Hooks
-- Tool Call Hooks
-- Provider Request Hooks
-
-它们拥有与 Agent 自身工具相同级别的访问能力，并由 `agent.extension` 权限控制。
+> 插件进程有权限门禁、与渲染进程隔离，但插件仍是用户自担风险的代码，不是操作系统级沙箱。只装你信任的插件。
 
 ---
 
-## 模型只是零件，不应该绑死你的工作流
-
-PI-Desktop 不维护一份“官方指定模型列表”。
-
-你可以使用：
-
-- OpenAI
-- Anthropic
-- OpenAI Compatible API
-- 各类 Hosted Gateway
-- Ollama
-- LM Studio
-- 自建模型服务
-- 同一个 Provider 下的多个模型
-- Provider OAuth（支持时）
-
-每个模型可以配置：
-
-- Context Window
-- Max Output
-- Reasoning / Thinking Level
-- Temperature
-- 模型专属参数
-
-而且你可以直接在 Composer 里切换模型，不需要重新创建会话。
-
-**今天哪个模型好用，就接哪个。**
-
-**模型应该是可替换部件，而不是把整个工作流锁死的前提。**
-
----
-
-## Local-first，但不玩文字游戏
-
-PI-Desktop 是 **Local-first**。
-
-但 Local-first 不等于“永远不联网”。
+## 本地优先，具体到每一项
 
 | 数据 | 行为 |
 | --- | --- |
-| 会话 | 本地 JSONL 存储，并使用 SQLite 建索引 |
-| 设置 | 保存在你的电脑 |
-| API 密钥 | 保存在操作系统 Keychain |
+| 会话 | 本地 JSONL，配 SQLite 索引 |
+| 设置 | 存在你的电脑上 |
+| API 凭据 | 操作系统钥匙串 |
 | 日志 | 本地 |
-| PI-Desktop Telemetry | 无 |
-| 模型请求 | 直接发送到你配置的模型服务或 API Endpoint |
+| 遥测 | 无 |
+| 模型请求 | 直接发往你配置的服务商或 Endpoint |
 
-PI-Desktop 不要求注册账号，也没有强制的 PI-Desktop 云端中转层。
-
-如果你使用远程模型，那么模型请求所需的上下文自然会被发送给对应 Provider，具体数据处理方式取决于该 Provider 自己的隐私政策。
-
----
-
-## 5 步开始干活
-
-### 1. 下载
-
-从 [GitHub Releases](https://github.com/vastsa/PI-Desktop/releases/latest) 获取最新版本。
-
-### 2. 接入模型
-
-打开：
-
-**Settings → Model configuration**
-
-选择 Provider 或 Compatible API，然后填写自己的凭据。
-
-### 3. 打开项目
-
-从侧边栏添加任意本地仓库或项目目录。
-
-### 4. 选择 Agent / Plan / Goal
-
-想直接开干就用 Agent。
-
-想先看方案就用 Plan。
-
-只想定义结果就用 Goal。
-
-### 5. Review
-
-在 Review 面板检查改动、查看命令输出、预览程序，然后继续和 Agent 协作。
-
-整个过程不用离开 PI-Desktop。
+不需要账号，也没有强制经过的托管中转。使用远端服务商时，这次请求所需的上下文会按该服务商自己的隐私政策发给他们。
 
 ---
 
 ## 下载
 
-### **[下载最新版本 →](https://github.com/vastsa/PI-Desktop/releases/latest)**
-
-| 平台 | 架构 | 安装包 |
+| 平台 | 架构 | 包 |
 | --- | --- | --- |
-| macOS | Apple Silicon | `.dmg` / `.zip` |
-| macOS | Intel | `.dmg` / `.zip` |
-| Windows | x64 | NSIS Installer / Portable `.exe` |
-| Linux | x64 | `.AppImage` / `.deb` / `.rpm` / `.asar` |
+| Windows | x64 | NSIS 安装包 · 便携版 `.exe` |
+| macOS | Apple Silicon / Intel | `.dmg` · `.zip` |
+| Linux | x64 | `.AppImage` · `.deb` · `.rpm` · `.asar` |
 
-打包版本会检查 GitHub Releases，并在应用内提示新版本。
-
-Windows NSIS 与 Linux AppImage 可以在应用内下载并安装更新。
-
-macOS、Linux deb/rpm，以及 Windows Portable 版本会跳转到 Releases 页面。
+Windows 产物命名为 `JingcheWorkbench-Setup-<版本>.exe` 与 `JingcheWorkbench-Portable-<版本>.exe`。
 
 <details>
-<summary><strong>Linux 兼容性说明</strong></summary>
+<summary><strong>Windows 说明</strong></summary>
 
 <br />
 
-Linux x64 安装包要求 **glibc 2.35** 或更高版本。
+安装包默认按当前用户安装，可自选安装目录，开始菜单快捷方式名为「京车小智工作台」。便携版是单个 exe，数据仍写在 Electron 常规的用户数据目录。
 
-例如：
-
-- Ubuntu 22.04+
-- Debian 12+
-- Fedora 36+
-
-Ubuntu 20.04、Debian 11、Fedora 35 以及更旧的发行版无法加载当前 bundled host。
-
-可以通过下面的命令检查：
-
-```bash
-ldd --version
-```
-
-Linux 同时提供 `.asar` 资产，方便使用系统 Electron 重新打包：
-
-```bash
-electron PI-Desktop-<version>-linux-x64.asar
-```
-
-目标发行版仍需要准备对应的 native host 和 packaged resources。
+打包版本可以检查 GitHub Releases 并提示新版本：NSIS 安装版能直接下载安装，便携版则打开 releases 页面。
 
 </details>
 
 <details>
-<summary><strong>macOS 未签名版本说明</strong></summary>
+<summary><strong>macOS 说明</strong></summary>
 
 <br />
 
-当前 tagged-release workflow 默认发布未签名的 macOS 构建。
-
-如果你确认安装包来自可信的 PI-Desktop Release：
-
-1. 将 `PI-Desktop.app` 移动到 `/Applications`
-2. 如果 macOS 提示 App 已损坏或无法打开，运行：
+带标签的发布默认产出未签名的 macOS 产物。如果系统提示应用已损坏，先把它移到 `/Applications`，然后执行：
 
 ```bash
-xattr -r -d com.apple.quarantine /Applications/PI-Desktop.app
+xattr -r -d com.apple.quarantine "/Applications/京车小智工作台.app"
 ```
 
-3. 再次打开 PI-Desktop
-
-DMG 内包含 `If app won't open, read this.txt`。
-
-ZIP 包也包含 `PI-Desktop-macOS-open.command`，在应用移动到 Applications 后可以执行相同的 trusted-source fallback。
-
-这个命令只会移除 Apple 的 quarantine 属性。
-
-**不要对来源不可信的 App 使用。**
-
-使用 `sign_macos: true` 手动触发发布流程时，可以通过 Developer ID 对 macOS 产物完成签名、公证与 stapling；已签名版本不需要这套 fallback。
+这条命令只是去掉 Apple 的隔离属性，不要用在来路不明的应用上。
 
 </details>
 
-### Windows 代码签名
-
-PI-Desktop 的 Windows Release 使用 [SignPath.io](https://signpath.io/) 提供的免费代码签名服务，并通过 [SignPath Foundation](https://signpath.org/) 的证书完成签名。
-
 ---
 
-## 以前的会话，不用从零开始
-
-已经在使用其它 Coding Agent？
-
-PI-Desktop 支持导入本地历史会话：
-
-- Claude Code
-- Codex
-- OpenCode
-- Pi
-
-打开：
-
-**Settings → Import**
-
-即可把已有工作带进 PI-Desktop。
-
----
-
-## 架构
-
-PI-Desktop 刻意把 UI、桌面高权限能力与 Agent Loop 分开。
-
-```mermaid
-flowchart TB
-    UI["React Renderer<br/>Chat · Projects · Reviews · Settings"]
-    Electron["Electron Main<br/>Desktop orchestration"]
-    Rust["Rust Host Core<br/>Permissions · Filesystem · SQLite · Secrets"]
-    Agent["pi Agent Sidecar<br/>Agent loop · Models · Streaming"]
-    Provider["Model Provider<br/>Cloud or Local"]
-
-    UI --> Electron
-    Electron --> Rust
-    Electron --> Agent
-    Agent <--> Rust
-    Agent --> Provider
-```
-
-Renderer 不启用 Node integration。
-
-**Rust Host Core** 负责：
-
-- 高权限 Workspace 操作
-- Permission
-- Filesystem
-- Persistence
-- Secrets
-
-**pi Agent Sidecar** 负责：
-
-- Agent Loop
-- Model Interaction
-- Streaming
-
-Electron 负责桌面生命周期与不同组件之间的协调。
-
-**[阅读完整架构说明 →](docs/spec/02-architecture/01-architecture.md)**
-
----
-
-## PI-Desktop 和 Pi 是什么关系？
-
-PI-Desktop 构建在优秀的 [pi-mono](https://github.com/badlogic/pi-mono) 开源生态之上。
-
-Agent Runtime 使用：
-
-- `pi-ai`
-- `pi-agent-core`
-
-如果要一句话解释：
-
-> **Pi 负责让 Agent 跑起来，PI-Desktop 负责让 Agent 真正变成一个长期可用的桌面工作台。**
-
-PI-Desktop 在此基础上增加了：
-
-- 项目与 Session 管理
-- 桌面 UI
-- 权限体系
-- Review
-- 文件工作区
-- Subagent 可视化与协作
-- 插件系统
-- MCP
-- Skills
-- 长任务恢复
-- 跨平台桌面分发
-
-桌面端同时使用了 Electron、React、TypeScript、Rust、SQLite、Vite、Tailwind CSS、Shiki、Mermaid、KaTeX、TypeBox、i18next 等技术。
-
----
-
-## 当前状态
-
-PI-Desktop 目前仍处于 Early Preview，并在高频迭代。
-
-当前 **0.14.x** 已包含：
-
-- Desktop Shell
-- Streaming Agent Runtime
-- Agent / Plan / Goal
-- 权限感知的 Workspace Tools
-- Project / Session 管理
-- Session Import
-- Local MCP Control
-- MCP / Skills / Subagents
-- Background Delegation
-- 多 Provider 模型配置
-- Plugins 与 Marketplace
-- Context Checkpoints
-- Notifications
-- Release Notes
-- macOS / Windows / Linux 打包
-
-目前重点继续解决：
-
-- macOS Release 签名与分发体验
-- Installer 升级与回滚可靠性
-- Runtime / Session Recovery 稳定性
-- 更强的 Plugin Sandbox 与 Publisher Verification
-- 更完整的 UI E2E 覆盖
-
-开发进度：
-
-[Project Board](docs/project/BOARD.md) ·
-[Milestones](docs/spec/06-delivery/01-mvp-milestones.md)
-
----
-
-## 本地开发
-
-<details open>
-<summary><strong>在本地运行 PI-Desktop</strong></summary>
-
-<br />
+## 从源码构建
 
 ### 环境要求
 
-- Node.js `>=22.19`
+- Node.js `>=22.19`（CI 与发布构建用 Node 24）
 - pnpm `>=10`
-- stable Rust toolchain
+- 稳定的 Rust 工具链
 
-当前仓库固定使用 pnpm 11，CI 与 Release Build 使用 Node 24。
-
-### 启动
+### 跑起来
 
 ```bash
-git clone https://github.com/vastsa/PI-Desktop.git
-cd PI-Desktop
+git clone https://github.com/zhangsa69/jingche-xiaozhi-workbench.git
+cd jingche-xiaozhi-workbench
 
 pnpm install
-
 cargo build -p host-core
 pnpm build:js
-
 pnpm dev
 ```
 
-### 提交前检查
+### 打 Windows 安装包
 
 ```bash
-pnpm typecheck
-pnpm lint
-pnpm test
+cd apps/desktop
+pnpm dist:win
 ```
 
-Protocol、Plan、Supervision、Subagent 与 Electron E2E 等测试说明，可以在仓库 Specification 中查看。
+依次执行依赖构建、Rust host 的 release 构建、agent-runtime 打包、Electron/Vite 构建，最后用 electron-builder 产出 `nsis` 与 `portable`，产物在 `apps/desktop/release/`。
 
-</details>
+其他平台用 `pnpm dist:mac` 或 `pnpm dist:linux`。若访问 GitHub 慢导致 Electron 下载卡住，可以在当次终端设置 `ELECTRON_MIRROR` 再打包。
+
+### 提交前校验
+
+```bash
+node scripts/run-gates.mjs          # 桌面全量 + 样式令牌 + 类型
+node scripts/run-gates.mjs --all    # 另外跑 shared / agent-runtime / i18n / host-core
+```
 
 ### 文档
 
@@ -677,117 +281,87 @@ pnpm docs:dev
 pnpm docs:check
 ```
 
-常用文档：
+常用入口：
 
-- [使用文档](https://pi-docs.aiuo.net/)
-- [Specification Index](docs/spec/README.md)
-- [Architecture](docs/spec/02-architecture/01-architecture.md)
-- [Product Scope](docs/spec/01-product/01-product-scope.md)
-- [Plugin Development](docs/plugin-development.md)
-- [E2E Test Plan](docs/spec/06-delivery/04-e2e-test-plan.md)
-- [Release Runbook](docs/spec/06-delivery/06-release-runbook.md)
-- [Repository Agent Guide](AGENTS.md)
+- [规格索引](docs/spec/README.md)
+- [架构](docs/spec/02-architecture/01-architecture.md)
+- [产品范围](docs/spec/01-product/01-product-scope.md)
+- [插件开发](docs/plugin-development.md)
+- [发布手册](docs/spec/06-delivery/06-release-runbook.md)
+- [仓库协作指南](AGENTS.md)
 
 ---
 
-## 一起来折腾
+## 项目状态
 
-欢迎所有形式的参与：
+当前版本：**`0.14.8-native.1`**。
 
-- 提 Issue
-- 报 Bug
-- 提功能建议
-- 改代码
-- 补文档
-- 写插件
-- 做 Skill
-- 接 MCP
-- 完善主题
-- 优化体验
+已交付：桌面外壳、流式 Agent 运行时、智能体 / 规划 / 目标 / 问一问四种模式、带权限的工作区工具、项目与会话、会话导入、本地 MCP 控制、插件 / Skills / MCP / Subagents、多服务商模型配置与本地模型预设、上下文检查点、通知、更新日志、跨平台打包，以及上面列出的交付、历史、专家、上下文与提示词复用能力。
 
-对于规模比较大的改动，建议先开 Issue，方便提前对齐架构和产品边界。
+不在当前版本里：
 
-如果准备直接改仓库，请先看：
+- 模板体系与语音输入曾实现，后按要求整体移除；
+- 自动选模型与连接器市场已取消，不再排期；
+- 手机端页面、webhook、本地备份、多窗口、LSP 工具、定时调度都还没开工。
 
-[AGENTS.md](AGENTS.md) 和 [Specification Index](docs/spec/README.md)。
-
-**[提交 Issue](https://github.com/vastsa/PI-Desktop/issues/new/choose)** ·
-[查看 Open Issues](https://github.com/vastsa/PI-Desktop/issues) ·
-[开发插件](docs/plugin-development.md)
+进展看[项目看板](docs/project/BOARD.md)与[自驱动队列](docs/自驱动队列.md)。
 
 ---
 
-## 这项目是怎么搓出来的？
+## 架构
 
-> **Not by a lone genius, but by a token-powered construction crew.**
->
-> 不是一个天才单枪匹马写出来的，而是一支烧 Token 的 AI 包工队一起搓出来的。
+```mermaid
+flowchart TB
+    UI["React 渲染进程<br/>对话 · 项目 · Review · 设置"]
+    Electron["Electron 主进程<br/>桌面编排"]
+    Rust["Rust Host Core<br/>权限 · 文件系统 · SQLite · 密钥"]
+    Agent["pi Agent Sidecar<br/>Agent 循环 · 模型 · 流式"]
+    Provider["模型服务商<br/>云端或本地"]
 
-PI-Desktop 前后经过大量模型共同参与开发、重构、Review、设计与调试。
+    UI --> Electron
+    Electron --> Rust
+    Electron --> Agent
+    Agent <--> Rust
+    Agent --> Provider
+```
 
-<details>
-<summary><strong>查看模型用量 — 已统计 27,144,044,009 Tokens</strong></summary>
-
-<br />
-
-| Provider | Model | Tokens |
-| --- | --- | ---: |
-| OpenAI | `gpt-5.6-luna` | 5,304,019,817 |
-| OpenAI | `gpt-5.6-sol` | 4,825,458,273 |
-| OpenAI | `gpt-5.4` | 4,213,269,324 |
-| Anthropic | `claude-opus-5` | 3,909,952,653 |
-| OpenAI | `gpt-5.5` | 3,800,382,171 |
-| xAI | `grok-4.5` | 1,947,736,115 |
-| xAI | `grok-4.6` | 797,233,571 |
-| DeepSeek | `deepseek-v4-flash` | 329,790,234 |
-| OpenAI | `gpt-5.2-codex` | 320,983,170 |
-| Xiaomi | `mimo-v2.5-pro` | 304,822,052 |
-| Anthropic | `claude-fable-5-1` | 302,580,552 |
-| OpenAI | `gpt-5.6-terra` | 274,107,085 |
-| OpenAI | `gpt-5.3-codex` | 255,366,945 |
-| OpenAI | `gpt-5.1-codex-max` | 220,947,212 |
-| OpenAI | `gpt-5.1` | 142,533,699 |
-| — | `Unknown model` | 69,801,632 |
-| Anthropic | `claude-opus-4.6` | 55,223,768 |
-| Zhipu | `stealth/ox-alpha` | 22,954,876 |
-| Anthropic | `claude-fable-5` | 16,116,907 |
-| OpenAI | `gpt-5.1-codex-mini` | 12,895,478 |
-| Xiaohongshu | `dots-3-note-prev` | 10,166,895 |
-| OpenAI | `gpt-5.1-codex` | 3,916,509 |
-| Xiaomi | `mimo-v2.5` | 3,785,071 |
-
-**已统计模型总计：27,144,044,009 Tokens。**
-
-</details>
+渲染进程没有 Node 集成。**Rust Host Core** 负责高权限的工作区操作、权限、持久化与密钥；**pi Agent Sidecar** 负责模型交互与 Agent 循环；Electron 负责桌面生命周期编排。
 
 ---
 
-## 社区
+## 建在 pi 之上
 
-- [Linux.Do](https://linux.do/) — 欢迎讨论、反馈、分享使用体验。
+Agent 运行时使用 [`pi-ai` 与 `pi-agent-core`](https://github.com/badlogic/pi-mono)。
+
+本项目从 [PI-Desktop](https://github.com/vastsa/PI-Desktop) 起步，之后完成了品牌与主题替换，并加上了上文所述的交付、专家、资料库、提示词、会话标签与上下文能力。
+
+另外用到的技术：Electron、React、TypeScript、Rust、SQLite、Vite、Tailwind CSS、Shiki、Mermaid、KaTeX、TypeBox、i18next。
 
 ---
 
-## License
+## 参与贡献
 
-PI-Desktop 使用 **GNU Lesser General Public License v3.0** 开源。
+欢迎提 issue、报 bug、提需求、改文档、写插件 / Skills / MCP 集成，也欢迎直接开 PR。改动较大时建议先开一个 issue，便于和既有架构与产品契约对齐。
 
-详见 [LICENSE](LICENSE)。
+动手前先读 [AGENTS.md](AGENTS.md) 与[规格索引](docs/spec/README.md)。
+
+**[提交 issue](https://github.com/zhangsa69/jingche-xiaozhi-workbench/issues/new/choose)** ·
+[查看已有 issue](https://github.com/zhangsa69/jingche-xiaozhi-workbench/issues)
+
+---
+
+## 许可证
+
+**GNU Lesser General Public License v3.0**，详见 [LICENSE](LICENSE)。
 
 ---
 
 <div align="center">
 
-### 用你喜欢的模型，干你自己的活。
+### 用你想用的模型，留住你自己的流程。
 
-**[下载 PI-Desktop](https://github.com/vastsa/PI-Desktop/releases/latest)**
+**[下载京车小智工作台](https://github.com/zhangsa69/jingche-xiaozhi-workbench/releases/latest)**
 
-<sub>macOS · Windows · Linux</sub>
-
-<br /><br />
-
-**如果 PI-Desktop 对你有帮助，欢迎点一个 ⭐ Star。**
-
-它会让更多人看到这个项目，也会让我知道这件事值得继续做下去。
+<sub>Windows · macOS · Linux</sub>
 
 </div>
