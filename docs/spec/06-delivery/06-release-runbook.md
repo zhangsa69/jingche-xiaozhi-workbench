@@ -41,7 +41,9 @@ renderer imports the same PNG through `BrandLogo`. The PNG is canonical;
 `scripts/make-icon.py` derives the multi-size Windows ICO, the 512px
 Windows/Linux package PNG, the
 transparent monochrome `build/tray-icon-mac.png` template, and the iconset/ICNS
-when macOS `iconutil` is available, without overwriting the canonical source.
+— through macOS `iconutil` when it is present and through the bundled PNG-chunk
+writer otherwise, so a Windows or Linux checkout can refresh the ICNS too —
+without overwriting the canonical source.
 
 ## 2. Prerequisites (release lane)
 
@@ -76,9 +78,10 @@ when macOS `iconutil` is available, without overwriting the canonical source.
   independently of Chromium locales.
 - App icons `build/icon.icns` and `build/icon.ico` (derived from canonical
   `build/icon_1024.png` by `scripts/make-icon.py`).
-- macOS menu bar template `build/tray-icon-mac.png`, derived from the dark PI
-  mark with a transparent background; Windows/Linux use the product PNG tray
-  resource.
+- macOS menu bar template `build/tray-icon-mac.png`: a monochrome face glyph
+  drawn on a transparent background by the same script (the icon tile itself is
+  a photo on a light backdrop, so reusing it would paste that backdrop into the
+  menu bar); Windows/Linux use the product PNG tray resource.
 
 ## 4. Release steps
 

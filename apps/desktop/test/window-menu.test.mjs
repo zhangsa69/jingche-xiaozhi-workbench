@@ -301,7 +301,10 @@ test("Windows/Linux explicit minimize paths use the native taskbar", () => {
     },
   ]);
   assert.match(iconScriptSource, /tray-icon-mac\.png/);
-  assert.match(iconScriptSource, /ImageChops\.multiply/);
+  // The tile is a photo on a light backdrop, so the template is drawn as a
+  // monochrome glyph rather than thresholded out of the artwork.
+  assert.match(iconScriptSource, /def tray_template\(size: int\)/);
+  assert.match(iconScriptSource, /mark\.putalpha\(/);
 });
 
 test("Windows taskbar minimize keeps the taskbar entry", () => {

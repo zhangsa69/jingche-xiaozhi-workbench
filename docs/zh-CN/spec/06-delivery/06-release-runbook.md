@@ -38,8 +38,9 @@ Electron 43+ 上的首次 `pnpm dev` 会按需下载 Electron 二进制文件
 打包通道在 macOS 上通过 electron-builder 使用 `build/icon.icns`，并在
 Windows 可执行文件和原生窗口图标中使用 `build/icon.ico`。渲染器通过
 `BrandLogo` 导入相同的 PNG。PNG 是规范来源；`scripts/make-icon.py` 派生
-多尺寸 Windows ICO、512px Windows/Linux 包 PNG，以及 iconset/ICNS（当 macOS
-`iconutil` 可用时），无需覆盖规范来源。
+多尺寸 Windows ICO、512px Windows/Linux 包 PNG，以及 iconset/ICNS（macOS 有
+`iconutil` 时用它，否则用脚本内置的 PNG 分块写入器，非 macOS 机器也能刷新
+ICNS），无需覆盖规范来源。
 
 ## 2. 先决条件（发布通道）
 
@@ -71,6 +72,9 @@ Windows 可执行文件和原生窗口图标中使用 `build/icon.ico`。渲染�
   保持捆绑状态，独立于 Chromium 区域设置。
 - 应用程序图标 `build/icon.icns` 和 `build/icon.ico`（源自规范
   `build/icon_1024.png`，由 `scripts/make-icon.py` 生成）。
+- macOS 菜单栏模板 `build/tray-icon-mac.png`：由同一脚本绘制的单色面孔字形，
+  背景透明（图标本体是带浅色底的照片，直接用会把底片整块塞进菜单栏）；
+  Windows/Linux 使用产品 PNG 托盘资源。
 
 ## 4. 发布步骤
 
