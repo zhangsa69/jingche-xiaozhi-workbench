@@ -376,15 +376,19 @@ is accepted so the same history is not quietly resent.
 ### 3.13 Voice input
 
 The microphone in the composer toolbar dictates into the draft at the caret. The
-speech engine belongs to the platform: a build either exposes a recogniser or it
-does not, and when it does not the button is disabled with a tooltip saying so
-instead of failing on press.
+app records locally and sends the audio to a FunASR-compatible transcription
+service; it does not use the platform's speech recogniser. That recogniser
+uploads to a vendor service which, when unreachable, neither answers nor fails —
+the button pulsed and no text ever arrived. The service address belongs to the
+host, so the page cannot redirect it.
 
-The states the user sees are idle, requesting permission, listening, denied and
-failed; listening shows a pulsing dot and pressing again stops. Only a **final**
-transcript is inserted. Interim text is shown in the tooltip and thrown away,
-because a recogniser that revises "ship it" into "shipped" would otherwise leave
-both words in the box and the user could not tell which one the model will read.
+The states the user sees are idle, requesting permission, recording, transcribing,
+denied and failed. Recording shows a pulsing dot and pressing again stops and
+uploads; a recording longer than two minutes stops by itself and is transcribed
+anyway. Transcribing shows a spinner and cannot be pressed again, so one recording
+is never submitted twice. An empty transcript ("heard nothing") and an unreachable
+service are separate messages: the first suggests speaking again, the second
+suggests checking the service.
 
 Dictation writes plain draft text. It never sends on the user's behalf, and a
 message sent right after dictating goes through the same submit path as typing.

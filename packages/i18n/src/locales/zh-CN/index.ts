@@ -236,11 +236,13 @@ export const zhCN = {
   voice: {
     start: "开始语音输入",
     listening: "停止语音输入",
+    transcribing: "正在转写…",
     requesting: "正在请求麦克风权限…",
     denied: "麦克风权限被拒绝",
     error: "语音输入失败",
-    unreachable: "语音识别服务不可达：听写需要识别器能连上的网络",
-    unsupported: "当前版本没有可用的语音引擎",
+    unreachable: "转写服务不可达",
+    empty: "没有识别到语音",
+    unsupported: "当前版本无法录音",
   },
   contextPins: {
     title: "已固定的上下文",

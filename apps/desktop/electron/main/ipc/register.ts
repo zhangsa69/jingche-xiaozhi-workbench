@@ -16,6 +16,7 @@ import { registerNotificationIpc } from "./notification-ipc";
 import { registerPluginIpc } from "./plugin-ipc";
 import { registerPluginUiIpc } from "./plugin-ui-ipc";
 import { registerPreviewIpc } from "./preview-ipc";
+import { registerVoiceIpc } from "./voice-ipc";
 import { registerProviderIpc } from "./provider-ipc";
 import { registerPullsIpc } from "./pulls-ipc";
 import { registerScheduledIpc } from "./scheduled-ipc";
@@ -404,6 +405,7 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
 
   registerPreviewIpc({ registrar, getHost, dataDir });
 
+  registerVoiceIpc({ registrar });
 
   return async (channel: string, args: readonly unknown[] = []) => {
     const handler = ipcHandlers.get(channel);

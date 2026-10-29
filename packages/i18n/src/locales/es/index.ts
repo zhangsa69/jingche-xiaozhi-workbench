@@ -234,11 +234,13 @@ export const es = {
   "voice": {
     "start": "Iniciar dictado",
     "listening": "Detener dictado",
+    "transcribing": "Transcribiendo…",
     "requesting": "Esperando acceso al micrófono…",
     "denied": "Se denegó el acceso al micrófono",
     "error": "El dictado falló",
-    "unreachable": "No se puede alcanzar el servicio de voz: el dictado necesita una red accesible para el reconocedor",
-    "unsupported": "Esta versión no incluye motor de voz",
+    "unreachable": "Servicio de transcripción inaccesible",
+    "empty": "No se detectó voz",
+    "unsupported": "Esta versión no puede grabar audio",
   },
   "contextPins": {
     "title": "Contexto fijado",

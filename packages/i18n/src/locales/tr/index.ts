@@ -243,11 +243,13 @@ export const tr = {
   voice: {
     start: "Dikteyi başlat",
     listening: "Dikteyi durdur",
+    transcribing: "Yazıya dökülüyor…",
     requesting: "Mikrofon izni bekleniyor…",
     denied: "Mikrofon izni reddedildi",
     error: "Dikte başarısız oldu",
-    unreachable: "Konuşma tanıma servisine ulaşılamıyor — dikte, tanıyıcının erişebildiği bir ağ gerektirir",
-    unsupported: "Bu sürümde konuşma motoru yok",
+    unreachable: "Deşifre servisine ulaşılamıyor",
+    empty: "Konuşma algılanmadı",
+    unsupported: "Bu sürüm ses kaydedemiyor",
   },
   contextPins: {
     title: "Sabitlenen bağlam",

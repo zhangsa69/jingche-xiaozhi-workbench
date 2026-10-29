@@ -258,10 +258,13 @@ export function ComposerToolbar({
         <PromptLibrarySheet t={t} controller={promptLibrary} />
         <TooltipButton
           type="button"
-          className={`icon-btn composer-voice-btn${voice.live ? " is-live" : ""}`}
+          className={`icon-btn composer-voice-btn${voice.live ? " is-live" : ""}${
+            voice.busy ? " is-busy" : ""
+          }`}
           tooltip={t(voice.labelKey)}
           ariaLabel={t(voice.labelKey)}
           aria-pressed={voice.live}
+          aria-busy={voice.busy}
           disabled={voice.disabled}
           onClick={voice.press}
         >

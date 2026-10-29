@@ -243,11 +243,13 @@ export const ko = {
   voice: {
     start: "받아쓰기 시작",
     listening: "받아쓰기 중지",
+    transcribing: "전사 중…",
     requesting: "마이크 권한을 기다리는 중…",
     denied: "마이크 권한이 거부되었습니다",
     error: "받아쓰기에 실패했습니다",
-    unreachable: "음성 인식 서비스에 연결할 수 없습니다 — 받아쓰기에는 인식기가 접속할 수 있는 네트워크가 필요합니다",
-    unsupported: "이 버전에는 음성 엔진이 없습니다",
+    unreachable: "전사 서비스에 연결할 수 없습니다",
+    empty: "음성이 감지되지 않았습니다",
+    unsupported: "이 버전은 오디오를 녹음할 수 없습니다",
   },
   contextPins: {
     title: "고정된 컨텍스트",

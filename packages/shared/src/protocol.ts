@@ -259,6 +259,12 @@ export const IPC = {
     logTail: "pi-desktop/log/tail",
     /** Parse a `.docx` / `.xlsx` / `.pptx` file into a flat preview (W-19). */
     documentPreview: "pi-desktop/preview/document",
+    /**
+     * Transcribe recorded dictation audio (W-31). The host owns the endpoint:
+     * the renderer sends bytes, never a URL, so this channel cannot be turned
+     * into a request forger.
+     */
+    voiceTranscribe: "pi-desktop/voice/transcribe",
     windowSetWorkPanelReservation:
       "pi-desktop/window/setWorkPanelReservation",
     windowSetWorkPanelChatWidth: "pi-desktop/window/setWorkPanelChatWidth",

@@ -234,11 +234,13 @@ export const de = {
   "voice": {
     "start": "Diktat starten",
     "listening": "Diktat beenden",
+    "transcribing": "Transkribiere …",
     "requesting": "Warte auf Mikrofonzugriff…",
     "denied": "Mikrofonzugriff wurde abgelehnt",
     "error": "Diktat fehlgeschlagen",
-    "unreachable": "Spracherkennungsdienst nicht erreichbar – Diktat braucht ein Netz, das der Erkenner erreicht",
-    "unsupported": "Diese Version hat keine Spracherkennung",
+    "unreachable": "Transkriptionsdienst nicht erreichbar",
+    "empty": "Keine Sprache erkannt",
+    "unsupported": "Diese Version kann kein Audio aufnehmen",
   },
   "contextPins": {
     "title": "Angehefteter Kontext",

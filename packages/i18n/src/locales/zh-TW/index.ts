@@ -236,11 +236,13 @@ export const zhTW = {
   voice: {
     start: "開始語音輸入",
     listening: "停止語音輸入",
+    transcribing: "正在轉寫…",
     requesting: "正在請求麥克風權限…",
     denied: "麥克風權限被拒絕",
     error: "語音輸入失敗",
-    unreachable: "語音辨識服務無法連線：聽寫需要辨識器能連上的網路",
-    unsupported: "目前版本沒有可用的語音引擎",
+    unreachable: "轉寫服務無法連線",
+    empty: "沒有辨識到語音",
+    unsupported: "目前版本無法錄音",
   },
   contextPins: {
     title: "已固定的上下文",

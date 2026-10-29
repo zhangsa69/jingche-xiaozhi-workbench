@@ -66,6 +66,8 @@ import type {
   LogTailResult,
   PdfRenderRequest,
   PdfRenderResult,
+  VoiceTranscribeRequest,
+  VoiceTranscribeResult,
   ProjectMemory,
   ProjectMemoryEntry,
   ProjectWorkspace,
@@ -962,6 +964,13 @@ export const api = {
   /** Render finished HTML into a PDF inside the session's scratch dir (W-13). */
   pdfRender: (request: PdfRenderRequest) =>
     invoke<PdfRenderResult>(IPC.invoke.pdfRender, request),
+  /**
+   * Send recorded dictation audio to the host's transcription service (W-31).
+   * The endpoint lives in the main process, so the renderer cannot point this
+   * at an address of its own choosing.
+   */
+  voiceTranscribe: (request: VoiceTranscribeRequest) =>
+    invoke<VoiceTranscribeResult>(IPC.invoke.voiceTranscribe, request),
   /**
    * Flatten a `.docx` / `.xlsx` / `.pptx` into panel blocks (W-19). The host
    * parses; the renderer never reads these bytes as text.

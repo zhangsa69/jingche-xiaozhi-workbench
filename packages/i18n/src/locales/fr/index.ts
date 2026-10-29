@@ -234,11 +234,13 @@ export const fr = {
   "voice": {
     "start": "Démarrer la dictée",
     "listening": "Arrêter la dictée",
+    "transcribing": "Transcription…",
     "requesting": "En attente de l'accès au micro…",
     "denied": "L'accès au micro a été refusé",
     "error": "La dictée a échoué",
-    "unreachable": "Service de reconnaissance vocale injoignable — la dictée exige un réseau accessible au moteur",
-    "unsupported": "Cette version n'inclut pas de moteur vocal",
+    "unreachable": "Service de transcription injoignable",
+    "empty": "Aucune parole détectée",
+    "unsupported": "Cette version ne peut pas enregistrer l'audio",
   },
   "contextPins": {
     "title": "Contexte épinglé",

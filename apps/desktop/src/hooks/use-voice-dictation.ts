@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   initialVoiceState,
   voiceCanPress,
+  voiceIsBusy,
   voiceIsLive,
   voiceLabelKey,
   voiceReduce,
@@ -10,51 +11,46 @@ import {
 } from "@pi-desktop/shared";
 
 import {
+  canRecord,
+  errorIsMissingDevice,
   errorIsPermissionDenial,
-  finalTranscript,
-  interimTranscript,
-  resolveSpeechEngine,
-  type SpeechRecognizer,
+  transcribeRecording,
 } from "../lib/voice-dictation";
+import { startRecording, type VoiceRecorder } from "../lib/voice-recorder";
 
 /**
- * How long the button waits for the recogniser to say anything at all.
- *
- * Chromium's engine uploads audio to a remote service, so a blocked network is
- * silent rather than broken: `start()` succeeds, the microphone opens, and then
- * nothing. Ten seconds is long enough for a slow first result and short enough
- * that the button does not pulse forever with no explanation.
+ * A dictation longer than this is almost certainly a forgotten button. Stopping
+ * on our own keeps the upload small and tells the user what happened, instead
+ * of failing at the service's size limit minutes later.
  */
-const FIRST_RESULT_TIMEOUT_MS = 10_000;
+const MAX_RECORDING_MS = 120_000;
 
 export type VoiceDictation = {
   status: VoiceState["status"];
   labelKey: string;
+  /** Microphone open or request in flight: the button pulses. */
   live: boolean;
+  /** Waiting on the transcription service: the button spins. */
+  busy: boolean;
   disabled: boolean;
-  /** Uncommitted text, for the tooltip while the user is still speaking. */
-  partial: string;
   press: () => void;
 };
 
 /**
- * One recogniser per composer. The engine is resolved once because a build
- * either has the speech service or does not; re-checking per press would only
- * make the button flicker between states.
+ * One recorder per composer. Recording and uploading are sequential, so a press
+ * during `transcribing` is ignored rather than queued: sending the audio twice
+ * would append the same paragraph twice.
  */
 export function useVoiceDictation(options: {
   onCommitted: (text: string) => void;
-  lang: string;
 }): VoiceDictation {
-  const engine = useMemo(() => resolveSpeechEngine(), []);
-  const [state, setState] = useState<VoiceState>(() => initialVoiceState(engine.available));
+  const available = useMemo(() => canRecord(), []);
+  const [state, setState] = useState<VoiceState>(() => initialVoiceState(available));
   const stateRef = useRef(state);
-  const recognizerRef = useRef<SpeechRecognizer | null>(null);
-  const watchdogRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const recorderRef = useRef<VoiceRecorder | null>(null);
+  const limitRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onCommittedRef = useRef(options.onCommitted);
   onCommittedRef.current = options.onCommitted;
-  const langRef = useRef(options.lang);
-  langRef.current = options.lang;
 
   const apply = useCallback((event: VoiceEvent): VoiceState => {
     const { state: next, committed } = voiceReduce(stateRef.current, event);
@@ -64,120 +60,110 @@ export function useVoiceDictation(options: {
     return next;
   }, []);
 
-  const clearWatchdog = useCallback(() => {
-    if (watchdogRef.current !== null) {
-      clearTimeout(watchdogRef.current);
-      watchdogRef.current = null;
+  const clearLimit = useCallback(() => {
+    if (limitRef.current !== null) {
+      clearTimeout(limitRef.current);
+      limitRef.current = null;
     }
   }, []);
 
-  const releaseRecognizer = useCallback(() => {
-    const recognizer = recognizerRef.current;
-    recognizerRef.current = null;
-    if (!recognizer) return;
-    recognizer.onresult = null;
-    recognizer.onerror = null;
-    recognizer.onend = null;
-    recognizer.abort();
-  }, []);
+  const discardRecorder = useCallback(async () => {
+    const recorder = recorderRef.current;
+    recorderRef.current = null;
+    clearLimit();
+    if (recorder) await recorder.cancel();
+  }, [clearLimit]);
 
-  const stopListening = useCallback(() => {
-    clearWatchdog();
-    releaseRecognizer();
-  }, [clearWatchdog, releaseRecognizer]);
+  const finishRecording = useCallback(async () => {
+    const recorder = recorderRef.current;
+    recorderRef.current = null;
+    clearLimit();
+    if (!recorder) {
+      apply({ type: "reset" });
+      return;
+    }
 
-  /**
-   * Arm the silence timer. Every transcript event re-arms it, so a long
-   * dictation is never cut off — only an engine that answers with nothing.
-   */
-  const armWatchdog = useCallback(() => {
-    clearWatchdog();
-    watchdogRef.current = setTimeout(() => {
-      watchdogRef.current = null;
-      if (!voiceIsLive(stateRef.current)) return;
-      // Stop the microphone first: leaving it open behind an error state would
-      // keep the OS recording indicator lit after the feature gave up.
-      releaseRecognizer();
-      apply({ type: "timeout" });
-    }, FIRST_RESULT_TIMEOUT_MS);
-  }, [apply, clearWatchdog, releaseRecognizer]);
+    const recording = await recorder.stop();
+    if (!recording) {
+      apply({ type: "transcribe-failed", message: "empty" });
+      return;
+    }
 
-  const startRecognizer = useCallback(() => {
-    if (!engine.available) return;
-    releaseRecognizer();
-    const recognizer = engine.create();
-    recognizer.lang = langRef.current;
-    recognizer.continuous = true;
-    recognizer.interimResults = true;
-    recognizer.onresult = (event) => {
-      // Any transcript — interim included — proves the service is reachable.
-      clearWatchdog();
-      const final = finalTranscript(event);
-      if (final) {
-        apply({ type: "final", text: final });
+    const result = await transcribeRecording(recording.wav);
+    if (result.ok) {
+      apply({ type: "transcribed", text: result.text });
+      return;
+    }
+    apply({ type: "transcribe-failed", message: result.error });
+  }, [apply, clearLimit]);
+
+  const beginRecording = useCallback(async () => {
+    try {
+      const recorder = await startRecording();
+      recorderRef.current = recorder;
+      const next = apply({ type: "permission-granted" });
+      // The press may have been cancelled while the device was opening; in that
+      // case the microphone must close again rather than stay open unowned.
+      if (next.status !== "listening") {
+        recorderRef.current = null;
+        await recorder.cancel();
         return;
       }
-      apply({ type: "partial", text: interimTranscript(event) });
-      armWatchdog();
-    };
-    recognizer.onerror = (event) => {
-      clearWatchdog();
-      if (errorIsPermissionDenial(event.error)) {
+      limitRef.current = setTimeout(() => {
+        limitRef.current = null;
+        // Reaching the limit ends the recording the same way a second press
+        // would, so the user still gets their text.
+        apply({ type: "stop" });
+        void finishRecording();
+      }, MAX_RECORDING_MS);
+    } catch (error) {
+      if (errorIsPermissionDenial(error)) {
         apply({ type: "permission-denied" });
         return;
       }
       apply({
-        type: "error",
-        message: event.message?.trim() || event.error,
+        type: "transcribe-failed",
+        message: errorIsMissingDevice(error)
+          ? "no-input-device"
+          : error instanceof Error
+            ? error.message
+            : String(error),
       });
-    };
-    // The engine ends sessions on its own when it hears silence; leaving the
-    // button pulsing after that would be a lie about the microphone.
-    recognizer.onend = () => {
-      clearWatchdog();
-      if (voiceIsLive(stateRef.current)) apply({ type: "stop" });
-    };
-    recognizerRef.current = recognizer;
-    try {
-      recognizer.start();
-    } catch (error) {
-      // A throwing `start()` used to leave the state machine parked on
-      // `requesting` with the button disabled — unrecoverable without a remount.
-      releaseRecognizer();
-      apply({
-        type: "error",
-        message: error instanceof Error ? error.message : String(error),
-      });
-      return;
     }
-    apply({ type: "permission-granted" });
-    armWatchdog();
-  }, [apply, armWatchdog, clearWatchdog, engine, releaseRecognizer]);
+  }, [apply, finishRecording]);
 
   const press = useCallback(() => {
     const next = apply({ type: "press" });
     if (next.status === "requesting") {
-      startRecognizer();
+      void beginRecording();
       return;
     }
-    if (next.status === "idle") stopListening();
-  }, [apply, startRecognizer, stopListening]);
+    if (next.status === "transcribing") {
+      void finishRecording();
+      return;
+    }
+    if (next.status === "idle") {
+      void discardRecorder();
+    }
+  }, [apply, beginRecording, discardRecorder, finishRecording]);
 
-  // Switching pages while the microphone is open must not leave it open.
+  // Leaving the page with the microphone open must close it.
   useEffect(
     () => () => {
-      clearWatchdog();
-      releaseRecognizer();
+      const recorder = recorderRef.current;
+      recorderRef.current = null;
+      if (limitRef.current !== null) clearTimeout(limitRef.current);
+      void recorder?.cancel();
     },
-    [clearWatchdog, releaseRecognizer],
+    [],
   );
 
   return {
     status: state.status,
     labelKey: voiceLabelKey(state),
     live: voiceIsLive(state),
+    busy: voiceIsBusy(state),
     disabled: !voiceCanPress(state),
-    partial: state.partial,
     press,
   };
 }

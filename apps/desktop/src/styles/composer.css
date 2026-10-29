@@ -407,6 +407,19 @@
   position: relative;
 }
 
+/* Uploading the recording: busy, not listening. The spinner says the audio left
+ * the machine, so a slow CPU-side transcription does not look like a stuck mic. */
+.composer-voice-btn.is-busy svg {
+  animation: composer-voice-spin 900ms linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes composer-voice-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .composer-voice-btn.is-live {
   color: var(--ds-error);
 }
@@ -435,6 +448,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .composer-voice-btn.is-live::after {
+    animation: none;
+  }
+
+  .composer-voice-btn.is-busy svg {
     animation: none;
   }
 }

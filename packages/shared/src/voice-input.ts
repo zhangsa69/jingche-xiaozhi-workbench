@@ -1,14 +1,16 @@
 /**
  * Voice dictation state machine (W-31).
  *
- * The transcription engine is the platform's, not ours: the desktop shell either
- * exposes a speech recogniser or it does not. What this module owns is the part
- * that has to be right either way — what a press may do in each state, when text
- * is committed to the draft, and when a partial transcript must be thrown away.
+ * The app records locally and hands the audio to a transcription service; it
+ * does not use the browser's speech recogniser. Chromium's engine uploads to a
+ * service the app cannot reach from every network, and when that service is
+ * unreachable it neither answers nor fails — measured behaviour was silence for
+ * twenty seconds after `start()`. A local recorder plus an explicit HTTP call
+ * turns that into a normal request with a normal error.
  *
- * Partial text is never committed. A recogniser that revises "ship it" into
- * "shipped" would otherwise leave both words in the box, and the user has no way
- * to tell which one the model will read.
+ * What this module owns is the part that has to be right either way: what a
+ * press may do in each state, when text is committed to the draft, and how a
+ * failure is reported without losing the recording the user just made.
  */
 
 export type VoiceStatus =
@@ -16,6 +18,7 @@ export type VoiceStatus =
   | "idle"
   | "requesting"
   | "listening"
+  | "transcribing"
   | "denied"
   | "error";
 
@@ -23,44 +26,39 @@ export type VoiceEvent =
   | { type: "press" }
   | { type: "permission-granted" }
   | { type: "permission-denied" }
-  | { type: "partial"; text: string }
-  | { type: "final"; text: string }
+  /** The recogniser finished: the recording goes to the transcription service. */
   | { type: "stop" }
-  /**
-   * The recogniser accepted `start()` but then went quiet. Chromium's engine
-   * uploads audio to a remote service, so a blocked or refused network looks
-   * exactly like this: no result, no error, no end — forever.
-   */
-  | { type: "timeout" }
-  | { type: "error"; message?: string }
+  | { type: "transcribed"; text: string }
+  | { type: "transcribe-failed"; message?: string }
   | { type: "reset" };
 
 export type VoiceState = {
   status: VoiceStatus;
-  /** Live, uncommitted transcript for the button's tooltip. */
-  partial: string;
-  /** Set when the engine reported a failure; cleared on the next press. */
+  /** Why the last attempt failed; cleared on the next press. */
   message: string | null;
 };
 
 export const INITIAL_VOICE_STATE: VoiceState = {
   status: "idle",
-  partial: "",
   message: null,
 };
 
-export function initialVoiceState(
-  engineAvailable: boolean,
-): VoiceState {
+/** Set in `message` when the service answered but heard nothing usable. */
+export const VOICE_EMPTY_REASON = "empty";
+/** Set in `message` when the request never reached the service. */
+export const VOICE_UNREACHABLE_REASON = "unreachable";
+
+export function initialVoiceState(engineAvailable: boolean): VoiceState {
   return engineAvailable
     ? INITIAL_VOICE_STATE
-    : { status: "unsupported", partial: "", message: null };
+    : { status: "unsupported", message: null };
 }
 
 /**
- * Whether the button should be pressable. `requesting` is included on purpose:
- * if the engine never answers, the press that started it must stay undoable —
- * a disabled button would trap the user in a state they cannot leave.
+ * Whether the button should be pressable. `requesting` is included so a press
+ * that opened the microphone can be undone; `transcribing` is not, because that
+ * request is already in flight and cancelling it would throw away the audio the
+ * user just recorded.
  */
 export function voiceCanPress(state: VoiceState): boolean {
   return (
@@ -84,72 +82,55 @@ export function voiceReduce(
   switch (event.type) {
     case "press": {
       if (state.status === "unsupported") return { state, committed: "" };
-      if (state.status === "listening" || state.status === "requesting") {
-        return {
-          state: { status: "idle", partial: "", message: null },
-          committed: "",
-        };
+      if (state.status === "transcribing") return { state, committed: "" };
+      if (state.status === "requesting") {
+        return { state: { status: "idle", message: null }, committed: "" };
       }
-      // A press after a failure is a retry, not a second concurrent session.
-      return {
-        state: { status: "requesting", partial: "", message: null },
-        committed: "",
-      };
+      // A second press while recording ends the recording and starts the upload;
+      // any other press begins (or retries) a session.
+      if (state.status === "listening") {
+        return { state: { status: "transcribing", message: null }, committed: "" };
+      }
+      return { state: { status: "requesting", message: null }, committed: "" };
     }
     case "permission-granted": {
       if (state.status !== "requesting") return { state, committed: "" };
-      return { state: { status: "listening", partial: "", message: null }, committed: "" };
+      return { state: { status: "listening", message: null }, committed: "" };
     }
     case "permission-denied": {
       if (state.status !== "requesting") return { state, committed: "" };
-      return {
-        state: { status: "denied", partial: "", message: null },
-        committed: "",
-      };
+      return { state: { status: "denied", message: null }, committed: "" };
     }
-    case "partial": {
+    case "stop": {
       if (state.status !== "listening") return { state, committed: "" };
-      return { state: { ...state, partial: event.text }, committed: "" };
+      return { state: { status: "transcribing", message: null }, committed: "" };
     }
-    case "final": {
-      if (state.status !== "listening") return { state, committed: "" };
-      const text = event.text.replace(/\s+/g, " ").trim();
-      return {
-        state: { status: "idle", partial: "", message: null },
-        committed: text,
-      };
+    case "transcribed": {
+      if (state.status !== "transcribing") return { state, committed: "" };
+      const text = normalizeTranscript(event.text);
+      if (!text) {
+        return {
+          state: { status: "error", message: VOICE_EMPTY_REASON },
+          committed: "",
+        };
+      }
+      return { state: { status: "idle", message: null }, committed: text };
     }
-    case "stop":
-    case "reset": {
+    case "transcribe-failed": {
+      if (state.status !== "transcribing") return { state, committed: "" };
       return {
         state: {
-          status: state.status === "unsupported" ? "unsupported" : "idle",
-          partial: "",
-          message: null,
+          status: "error",
+          message: event.message?.trim() || VOICE_UNREACHABLE_REASON,
         },
         committed: "",
       };
     }
-    case "timeout": {
-      if (state.status !== "requesting" && state.status !== "listening") {
-        return { state, committed: "" };
-      }
-      return {
-        state: { status: "error", partial: "", message: VOICE_TIMEOUT_REASON },
-        committed: "",
-      };
-    }
-    case "error": {
-      // An error during a dictation ends it; an error while idle is stale news
-      // and would otherwise replace the resting state with a permanent banner.
-      if (state.status !== "requesting" && state.status !== "listening") {
-        return { state, committed: "" };
-      }
+    case "reset": {
       return {
         state: {
-          status: "error",
-          partial: "",
-          message: event.message ?? null,
+          status: state.status === "unsupported" ? "unsupported" : "idle",
+          message: null,
         },
         committed: "",
       };
@@ -159,13 +140,15 @@ export function voiceReduce(
   }
 }
 
-/** Whether the button shows a live dot. */
+/** Whether the button shows a live dot (microphone open or request in flight). */
 export function voiceIsLive(state: VoiceState): boolean {
   return state.status === "requesting" || state.status === "listening";
 }
 
-/** Sentinel stored in `message` when the engine never answered (see `timeout`). */
-export const VOICE_TIMEOUT_REASON = "timeout";
+/** Whether the button shows a busy spinner while the audio is transcribed. */
+export function voiceIsBusy(state: VoiceState): boolean {
+  return state.status === "transcribing";
+}
 
 /** i18n key for the button tooltip, one per state. */
 export function voiceLabelKey(state: VoiceState): string {
@@ -176,17 +159,99 @@ export function voiceLabelKey(state: VoiceState): string {
       return "voice.requesting";
     case "listening":
       return "voice.listening";
+    case "transcribing":
+      return "voice.transcribing";
     case "denied":
       return "voice.denied";
     case "error":
-      // A silent engine and a refused one need different advice: the first is
-      // a network problem, the second is a microphone problem.
-      return state.message === VOICE_TIMEOUT_REASON
-        ? "voice.unreachable"
-        : "voice.error";
+      // "I heard nothing" and "I could not reach the service" need different
+      // advice, so the reason decides the label.
+      return state.message === VOICE_EMPTY_REASON
+        ? "voice.empty"
+        : "voice.unreachable";
     default:
       return "voice.start";
   }
+}
+
+/** One spoken stretch as the transcription service reports it. */
+export type VoiceTranscribeSegment = {
+  text: string;
+  start: number;
+  end: number;
+  speaker?: string;
+};
+
+export type VoiceTranscribeRequest = {
+  audio: Uint8Array;
+  mimeType?: string;
+};
+
+export type VoiceTranscribeResult =
+  | { ok: true; text: string; segments: VoiceTranscribeSegment[] }
+  | { ok: false; error: string };
+
+/**
+ * Turn FunASR's `{ success, data: [{ text, speaker, time_range }] }` into one
+ * draft-ready string.
+ *
+ * Segments are joined with a newline: the service already split them at pauses,
+ * and running them into one line would hide that it heard two separate
+ * utterances. A failure payload returns null so the caller reports the service's
+ * own message instead of an empty transcript.
+ */
+export function parseRecognizeResponse(
+  payload: unknown,
+): { text: string; segments: VoiceTranscribeSegment[] } | null {
+  if (!payload || typeof payload !== "object") return null;
+  const record = payload as { success?: unknown; data?: unknown };
+  if (record.success === false) return null;
+  if (!Array.isArray(record.data)) return null;
+
+  const segments: VoiceTranscribeSegment[] = [];
+  for (const entry of record.data) {
+    if (!entry || typeof entry !== "object") continue;
+    const item = entry as {
+      text?: unknown;
+      speaker?: unknown;
+      start?: unknown;
+      time_range?: unknown;
+    };
+    if (typeof item.text !== "string") continue;
+    const text = normalizeTranscript(item.text);
+    if (!text) continue;
+    const range = Array.isArray(item.time_range) ? item.time_range : [];
+    const start = typeof item.start === "number" ? item.start : Number(range[0]) || 0;
+    const end = Number(range[1]);
+    segments.push({
+      text,
+      start,
+      end: Number.isFinite(end) ? end : start,
+      ...(typeof item.speaker === "string" && item.speaker
+        ? { speaker: item.speaker }
+        : {}),
+    });
+  }
+  return { text: segments.map((segment) => segment.text).join("\n"), segments };
+}
+
+const CJK = "\\u3000-\\u303f\\u4e00-\\u9fff\\uff00-\\uffef";
+const SPACE_BEFORE_CJK = new RegExp(`\\s+(?=[${CJK}])`, "g");
+const SPACE_AFTER_CJK = new RegExp(`(?<=[${CJK}])\\s+`, "g");
+
+/**
+ * Clean a transcript from a token-per-word engine.
+ *
+ * FunASR returns "正 是 因 为" — one space per token. Chinese has no word
+ * spaces, so those must go; English words keep theirs. Punctuation is CJK
+ * punctuation, hence the same rule applies around it.
+ */
+export function normalizeTranscript(text: string): string {
+  return text
+    .replace(/\s+/g, " ")
+    .replace(SPACE_BEFORE_CJK, "")
+    .replace(SPACE_AFTER_CJK, "")
+    .trim();
 }
 
 /**

@@ -90,7 +90,7 @@ export function Composer({
   variant?: "home" | "docked";
   prefill?: ComposerPrefill | null;
 }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const sendPromptRaw = useAppStore((s) => s.sendPrompt);
   const steerPrompt = useAppStore((s) => s.steerPrompt);
   const removeQueuedPrompt = useAppStore((s) => s.removeQueuedPrompt);
@@ -417,7 +417,6 @@ export function Composer({
    * transcript, so a word the engine is still revising never enters the draft.
    */
   const voice = useVoiceDictation({
-    lang: i18n.language || "en",
     onCommitted: (text: string) => {
       const inserted = insertDictation(value, cursor, text);
       setValue(inserted.value);
