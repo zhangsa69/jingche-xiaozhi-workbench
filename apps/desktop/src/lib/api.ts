@@ -66,6 +66,10 @@ import type {
   LogTailResult,
   PdfRenderRequest,
   PdfRenderResult,
+  VoiceStreamAudioRequest,
+  VoiceStreamStartResult,
+  VoiceStreamStopResult,
+  VoiceStreamUpdate,
   VoiceTranscribeRequest,
   VoiceTranscribeResult,
   ProjectMemory,
@@ -971,6 +975,23 @@ export const api = {
    */
   voiceTranscribe: (request: VoiceTranscribeRequest) =>
     invoke<VoiceTranscribeResult>(IPC.invoke.voiceTranscribe, request),
+  /**
+   * Streaming dictation (W-31). The host owns the socket and assembles the text,
+   * so a reconnect cannot splice two half-transcripts together.
+   */
+  voiceStreamStart: () =>
+    invoke<VoiceStreamStartResult>(IPC.invoke.voiceStreamStart),
+  voiceStreamAudio: (request: VoiceStreamAudioRequest) =>
+    invoke<{ ok: boolean }>(IPC.invoke.voiceStreamAudio, request),
+  voiceStreamStop: () =>
+    invoke<VoiceStreamStopResult>(IPC.invoke.voiceStreamStop),
+  voiceStreamCancel: () => invoke<{ ok: true }>(IPC.invoke.voiceStreamCancel),
+  onVoiceStream: (listener: (update: VoiceStreamUpdate) => void) => {
+    if (!window.piDesktop?.on) return () => undefined;
+    return window.piDesktop.on(IPC.event.voiceStreamText, (payload) =>
+      listener(payload as VoiceStreamUpdate),
+    );
+  },
   /**
    * Flatten a `.docx` / `.xlsx` / `.pptx` into panel blocks (W-19). The host
    * parses; the renderer never reads these bytes as text.

@@ -48,6 +48,7 @@ export * from "./session-tabs.js";
 export * from "./context-reference.js";
 export * from "./context-pins.js";
 export * from "./voice-input.js";
+export * from "./voice-stream.js";
 export * from "./voice-wav.js";
 export * from "./expert-presets.js";
 export * from "./expert-panel.js";
