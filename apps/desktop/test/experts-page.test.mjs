@@ -15,6 +15,7 @@ const appState = read("../src/stores/app-state.ts");
 const shell = read("../src/features/app/AppShell.tsx");
 const sidebar = read("../src/components/Sidebar.tsx");
 const search = read("../src/components/SearchDialog.tsx");
+const css = read("../src/styles/experts.css");
 
 const EXPERT_IDS = [
   "proposal-writer",
@@ -90,6 +91,15 @@ test("interactive elements are real buttons and a real input", () => {
   assert.match(page, /aria-pressed=\{category === id\}/);
   assert.match(page, /<textarea/);
   assert.doesNotMatch(page, /role="button"/);
+});
+
+test("the page reserves the floating titlebar band so the search row stays reachable", () => {
+  assert.match(page, /className="experts-page"/);
+  assert.match(css, /\.experts-page \{[\s\S]*?overflow-y: auto;/);
+  assert.match(
+    css,
+    /:root\[data-platform="win32"\] \.experts-page,[\s\S]*?padding-top: calc\(var\(--ds-toolbar-height\) \+ 8px\);/,
+  );
 });
 
 test("the page is reachable from state, the shell, the footer and search", () => {

@@ -1,8 +1,20 @@
 /* Experts: category rail, card grid, and a panel bar that stays in reach. */
 .experts-page {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 28px 28px 48px;
+}
+
+/* Same reservation as the library page: this page owns its frame, so without
+ * it the search row and the count sit under the opaque titlebar band. */
+:root[data-platform="win32"] .experts-page,
+:root[data-platform="linux"] .experts-page,
+:root[data-platform="darwin"] .experts-page {
+  padding-top: calc(var(--ds-toolbar-height) + 8px);
 }
 
 .experts-head {

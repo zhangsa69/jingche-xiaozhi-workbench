@@ -1683,6 +1683,7 @@ sklm: {
       "Des dossiers à portée de main quelle que soit la tâche. Les entrées sont des pointeurs : les retirer n'efface rien.",
     "addFolder": "Ajouter un dossier",
     "adding": "Sélection…",
+    "pickFailed": "Impossible d'ouvrir le sélecteur de dossier",
     "added": "{{count}} dossier(s) ajouté(s)",
     "removed": "{{name}} retiré",
     "empty": "Aucun dossier pour l'instant",

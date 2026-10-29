@@ -47,8 +47,16 @@ export function LibraryPage() {
   const addFolders = async () => {
     if (picking) return;
     setPicking(true);
-    const result = await api.pickProjectFolders();
-    setPicking(false);
+    let result: { folders: string[]; canceled?: boolean };
+    try {
+      result = await api.pickProjectFolders();
+    } catch {
+      // A failed picker must not leave the button stuck in "Adding…".
+      showToast(t("library.pickFailed"), { variant: "error" });
+      return;
+    } finally {
+      setPicking(false);
+    }
     if (result.canceled) return;
     let next = sources;
     let added = 0;

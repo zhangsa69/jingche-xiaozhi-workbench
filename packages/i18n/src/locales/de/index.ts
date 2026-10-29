@@ -1683,6 +1683,7 @@ sklm: {
       "Ordner, die Sie unabhängig von der Aufgabe zur Hand haben. Einträge sind Zeiger — Entfernen löscht nichts.",
     "addFolder": "Ordner hinzufügen",
     "adding": "Auswahl läuft …",
+    "pickFailed": "Der Ordnerdialog konnte nicht geöffnet werden",
     "added": "{{count}} Ordner hinzugefügt",
     "removed": "{{name}} entfernt",
     "empty": "Noch keine Ordner",

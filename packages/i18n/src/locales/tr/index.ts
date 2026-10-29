@@ -1704,6 +1704,7 @@ sklm: {
       "Hangi görevde olursanız olun elinizin altında tuttuğunuz klasörler. Girdiler yalnızca işaretçidir — çıkarmak hiçbir şeyi silmez.",
     addFolder: "Klasör ekle",
     adding: "Seçiliyor…",
+    pickFailed: "Klasör seçici açılamadı",
     added: "{{count}} klasör eklendi",
     removed: "{{name}} çıkarıldı",
     empty: "Henüz klasör yok",

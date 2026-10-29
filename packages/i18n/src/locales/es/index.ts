@@ -1683,6 +1683,7 @@ sklm: {
       "Carpetas que tienes a mano en cualquier tarea. Las entradas son punteros: quitarlas no borra nada.",
     "addFolder": "Añadir carpeta",
     "adding": "Eligiendo…",
+    "pickFailed": "No se pudo abrir el selector de carpetas",
     "added": "{{count}} carpeta(s) añadida(s)",
     "removed": "{{name}} quitada",
     "empty": "Aún no hay carpetas",

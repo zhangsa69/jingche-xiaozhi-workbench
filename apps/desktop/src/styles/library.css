@@ -1,8 +1,22 @@
 /* Library: pointer list on the left, one folder's facts on the right. */
+/* This page owns its frame instead of using `.page-frame`, so it has to reserve
+ * the floating titlebar band itself. Without the reservation the header — the
+ * only place "Add folder" lives — renders underneath the opaque 46px band and
+ * cannot be clicked, which reads to the user as "there is no button". */
 .library-page {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 28px 28px 48px;
+}
+
+:root[data-platform="win32"] .library-page,
+:root[data-platform="linux"] .library-page,
+:root[data-platform="darwin"] .library-page {
+  padding-top: calc(var(--ds-toolbar-height) + 8px);
 }
 
 .library-head {

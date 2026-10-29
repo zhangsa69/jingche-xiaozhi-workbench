@@ -1712,6 +1712,7 @@ sklm: {
       "Folders you keep on hand, whichever task you are in. Entries are pointers — removing one never deletes anything.",
     addFolder: "Add folder",
     adding: "Choosing…",
+    pickFailed: "Could not open the folder picker",
     added: "Added {{count}} folder(s)",
     removed: "Removed {{name}}",
     empty: "No folders yet",

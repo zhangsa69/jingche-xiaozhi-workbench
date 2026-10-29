@@ -8,6 +8,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const read = (relative) => readFileSync(resolve(here, relative), "utf8");
 
 const page = read("../src/pages/LibraryPage.tsx");
+const css = read("../src/styles/library.css");
 const store = read("../src/lib/library-store.ts");
 const hook = read("../src/hooks/use-composer-autocomplete.ts");
 const appState = read("../src/stores/app-state.ts");
@@ -51,6 +52,23 @@ test("stored entries are re-validated so a bad blob cannot poison the list", () 
   assert.match(store, /parseLibrarySources/);
   assert.match(store, /if \(!path\) continue;/);
   assert.match(store, /seen\.has\(id\)/);
+});
+
+test("the page reserves the floating titlebar band so its header stays reachable", () => {
+  // This page owns its frame instead of using `.page-frame`. Without the
+  // reservation the opaque titlebar band covers the header — where the only
+  // "Add folder" button lives — and the page looks like it has no controls.
+  assert.match(page, /className="library-page"/);
+  assert.match(css, /\.library-page \{[\s\S]*?overflow-y: auto;/);
+  assert.match(
+    css,
+    /:root\[data-platform="win32"\] \.library-page,[\s\S]*?padding-top: calc\(var\(--ds-toolbar-height\) \+ 8px\);/,
+  );
+});
+
+test("a failed folder picker releases the button instead of leaving it spinning", () => {
+  assert.match(page, /try \{[\s\S]*?api\.pickProjectFolders\(\)[\s\S]*?\} finally \{\s*setPicking\(false\);/);
+  assert.match(page, /t\("library\.pickFailed"\)/);
 });
 
 test("the page is reachable from state, the shell, the footer and search", () => {
