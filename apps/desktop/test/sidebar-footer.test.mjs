@@ -31,11 +31,13 @@ test("the sidebar footer is an action bar, not a fabricated identity", () => {
   }
 });
 
-test("footer exposes settings, tasks, templates, library, plugins and notifications in one row", () => {
+test("footer exposes settings, tasks, library, plugins and notifications in one row", () => {
   assert.match(sidebarSource, /className="footer-actions"/);
   assert.match(sidebarSource, /data-nav="settings"/);
   assert.match(sidebarSource, /data-nav="tasks"/);
-  assert.match(sidebarSource, /data-nav="templates"/);
+  // Templates were removed as a product feature; nothing should reintroduce the
+  // destination without also bringing back its page.
+  assert.doesNotMatch(sidebarSource, /data-nav="templates"/);
   assert.match(sidebarSource, /data-nav="library"/);
   assert.match(sidebarSource, /data-nav="experts"/);
   assert.match(sidebarSource, /data-nav="plugins"/);
@@ -54,7 +56,7 @@ test("footer exposes settings, tasks, templates, library, plugins and notificati
   const actions = sidebarSource
     .split("<TooltipButton")
     .filter((chunk) => /className=(?:"footer-action"|\{`footer-action )/.test(chunk));
-  assert.equal(actions.length, 6);
+  assert.equal(actions.length, 5);
   for (const action of actions) {
     const attrs = action.slice(0, action.indexOf(">"));
     assert.match(attrs, /tooltip=/);
@@ -77,10 +79,6 @@ test("footer exposes settings, tasks, templates, library, plugins and notificati
   assert.match(
     footerAttributes('data-nav="tasks"'),
     /aria-pressed=\{page === "tasks"\}/,
-  );
-  assert.match(
-    footerAttributes('data-nav="templates"'),
-    /aria-pressed=\{page === "templates"\}/,
   );
   assert.match(
     footerAttributes('data-nav="library"'),

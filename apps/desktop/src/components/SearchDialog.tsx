@@ -13,7 +13,6 @@ import type { SessionMeta } from "../lib/sidebar-preferences";
 import {
   IconAt,
   IconClock,
-  IconFileText,
   IconFolder,
   IconNewSession,
   IconPullRequest,
@@ -28,7 +27,6 @@ const PAGE_ENTRIES = [
   { page: "pulls", labelKey: "pulls.title", icon: IconPullRequest },
   { page: "scheduled", labelKey: "scheduled.title", icon: IconClock },
   { page: "tasks", labelKey: "tasks.title", icon: IconClock },
-  { page: "templates", labelKey: "templates.title", icon: IconFileText },
   { page: "library", labelKey: "library.title", icon: IconFolder },
   { page: "experts", labelKey: "experts.title", icon: IconSparkles },
   { page: "plugins", labelKey: "nav.plugins", icon: IconAt },

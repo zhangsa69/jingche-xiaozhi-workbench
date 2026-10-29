@@ -229,7 +229,7 @@
 | W-19 | **富格式预览**：docx/xlsx/pptx 转 HTML 交给内嵌浏览器；PDF 用 Electron 自带 viewer | 27/33 | `browser-host.ts:60`、`protocol.ts:240-245`。**已实施（形态调整）**：不走「转 HTML 交内嵌浏览器」——仓库无 `mammoth`/SheetJS 且无离线包，且 HTML 通道要额外做注入清洗；改为主进程零依赖解析成结构化 JSON（ZIP 支持 store/deflate、xlsx 认 `sharedStrings`），渲染端用 `<table>`/`<p>`/`<li>` 画。失败回落 `unsupported{extension,corrupt,too-large}` + 「用系统程序打开」，超限置 `truncated` 提示。PDF 仍走既有 `PdfView` | M |
 | W-20 | **首次授权引导 + 空间概念**：新任务时选择/授权工作目录，展示文件落点 | 5/49 | `workspace-roots.ts:44-82`、`plugin-fs-consent.ts:21-51` | M |
 | W-21 | **应用内隐私说明页**：明确哪些内容上行、哪些只在本机 | 50 | `docs/privacy-policy.md`、`features/settings/SettingsPage.tsx` | S |
-| W-22 | **模板体系**：文档/PPT 模板目录 + 变量 + 批量套用（先文件模板，后可视化编辑） | 36 | `workspace-ipc.ts:66`（现有模板加载）、`agent-runtime/src/prompt-templates.ts` | M |
+| W-22 | **模板体系**：文档/PPT 模板目录 + 变量 + 批量套用（先文件模板，后可视化编辑） | 36 | **已移除（2026-10-29 用户要求）**：曾落 `shared/template-presets.ts` / `template-apply.ts` / `pages/TemplatesPage.tsx`，现已整批删除，无后端与数据表残留；相邻的斜杠命令模板与插件脚手架模板不受影响 | M |
 
 ### 4.3 P2 — 扩展生态（M5）
 
@@ -370,7 +370,7 @@ WorkBuddy 独有的两点这版补上：**每条回复独立计时并定格**（
 | **M1 感知** | W-02 / W-06 / W-07 / W-08 / W-09 | 思考行有计时与呼吸态；回复尾部有定格耗时；工具行 `#n · 1.2s`；静默 20/45/120s 三档且只推一次 | — | S–M |
 | **M2 任务与模式** | W-01 / W-03 / W-04 / W-05 / W-10 | Ask/Plan/Craft 三选一生效（Ask 不写文件）；右上角浮层可用；步骤 `第 3/8 步`；循环确认可暂停 | M1（复用 steps 与计时） | M–L |
 | **M3 交付闭环** | W-11 / W-12 / W-13 / W-14 / W-19 | 产物标签可用；docx/xlsx/pptx 能生成并预览；可另存到用户目录 | M2 | L |
-| **M4 交付收尾** | W-15 / W-16 / W-17 / W-18 / W-20 / W-21 / W-22 | 命令（只读）/ 日志两个新标签；任务历史可重跑；首次授权引导；模板套用 | M3 | M |
+| **M4 交付收尾** | W-15 / W-16 / W-17 / W-18 / W-20 / W-21（W-22 已移除） | 命令（只读）/ 日志两个新标签；任务历史可重跑；首次授权引导 | M3 | M |
 | **M5 生态** | W-23 – W-34 | 专家中心 12 预设；资料库可引用；多任务标签；自动选模型 | M4 | L |
 | **M6 本地跨端** | W-35 – W-40（全部可选，按需裁剪） | 手机页可下发任务并取产物；本地备份恢复；定时调度 | M5 | XL |
 

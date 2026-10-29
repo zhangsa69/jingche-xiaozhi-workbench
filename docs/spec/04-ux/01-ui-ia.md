@@ -267,22 +267,8 @@ External Pi transcripts are listed read-only. Rerunning never rewrites history:
 the original row stays in the list, and the page is reachable from the sidebar
 footer and from search.
 
-### 3.6 Templates
-
-Templates are structure, not prose: a catalogue of document, sheet and slide
-shapes with named blanks. The page lists templates on the left grouped by kind,
-renders the selected template's variables as a plain form on the right, and
-shows the filled result underneath before anything is sent. Filling is a preview
-of the actual text — an unresolved placeholder stays literal and is listed as
-missing, and adjustments (over-long values, placeholders with no variable) are
-named rather than silently applied.
-
-**Insert into composer** appends the filled skeleton as a draft; it does not send
-and does not start a task, so the user keeps the last word. **Fill many at once**
-accepts pasted rows separated by tab or comma, matches a header row naming the
-variables, and reports per-row skips with the values that row lacked; when a
-table shape cannot confirm its column order it says so instead of guessing
-silently. The page is reachable from the sidebar footer and from search.
+<!-- 3.6 removed on 2026-10-29: the templates feature was deleted at the user's
+request. The number is left vacant so the remaining 3.7+ references stay valid. -->
 
 ### 3.7 Library
 

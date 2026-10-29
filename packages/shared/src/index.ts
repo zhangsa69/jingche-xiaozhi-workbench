@@ -42,8 +42,6 @@ export * from "./rpc-limits.js";
 export * from "./subagent-definition.js";
 export * from "./subagent-presets.js";
 export * from "./provider-presets.js";
-export * from "./template-presets.js";
-export * from "./template-apply.js";
 export * from "./library.js";
 export * from "./prompt-library.js";
 export * from "./session-tabs.js";

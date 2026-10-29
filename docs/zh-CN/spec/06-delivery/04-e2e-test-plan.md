@@ -4553,7 +4553,7 @@ IPC 请求无法关闭。
 - **关联规范**：`03-runtime/01-ipc-protocol.md` §12a–§12d、
   `03-runtime/02-agent-runtime.md` §5f、
   `03-runtime/13-model-catalog-and-selection.md` §2（子智能体编辑器）、
-  `04-ux/01-ui-ia.md` §3.5–§3.6、
+  `04-ux/01-ui-ia.md` §3.5、
   `04-ux/06-settings-ia.md` §2（智能体能力页面）、§4.21–§4.25、
   `07-plugins/01-plugin-system.md` §12.2–§12.3、
   `08-meta/decisions-log.md`（D193、D194、D202、D257）、ADR 0112、ADR 0126

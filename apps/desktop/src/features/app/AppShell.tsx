@@ -44,11 +44,6 @@ const TasksPage = lazy(() =>
     default: module.TasksPage,
   })),
 );
-const TemplatesPage = lazy(() =>
-  import("../../pages/TemplatesPage").then((module) => ({
-    default: module.TemplatesPage,
-  })),
-);
 const LibraryPage = lazy(() =>
   import("../../pages/LibraryPage").then((module) => ({
     default: module.LibraryPage,
@@ -266,10 +261,6 @@ export function AppShell() {
               ) : page === "tasks" ? (
                 <div className="route-surface route-page">
                   <TasksPage />
-                </div>
-              ) : page === "templates" ? (
-                <div className="route-surface route-page">
-                  <TemplatesPage />
                 </div>
               ) : page === "library" ? (
                 <div className="route-surface route-page">

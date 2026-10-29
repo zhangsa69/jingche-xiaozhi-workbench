@@ -192,7 +192,6 @@ export type AppState = {
     | "scheduled"
     | "plugins"
     | "tasks"
-    | "templates"
     | "library"
     | "experts"
     | "settings";
