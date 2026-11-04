@@ -118,7 +118,9 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--ds-border-strong);
-  border-radius: var(--radius-xs);
+  /* On a 14px box the 8px step clamps to a circle, which reads as a radio dot
+     although the rows are independent checkboxes. */
+  border-radius: var(--radius-3xs);
   color: var(--ds-bg-base);
 }
 

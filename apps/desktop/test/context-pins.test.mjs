@@ -86,6 +86,13 @@ test("the docked surface is fixed and gated until it is measured", () => {
   );
 });
 
+test("the tick reads as a checkbox, not a radio dot", () => {
+  // A 14px box with the 8px radius step clamps to 7px and renders as a filled
+  // circle, which tells the user only one row can be picked.
+  assert.match(css, /\.context-pins-box \{[^}]*border-radius: var\(--radius-3xs\);/);
+  assert.match(sheet, /role="checkbox"/);
+});
+
 test("the picker speaks all eight locales", () => {
   for (const locale of LOCALES) {
     const source = read(`../../../packages/i18n/src/locales/${locale}/index.ts`);
