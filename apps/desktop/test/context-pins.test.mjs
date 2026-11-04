@@ -62,6 +62,30 @@ test("the picker is reachable from the composer toolbar", () => {
   assert.doesNotMatch(css, /#[0-9a-fA-F]{3,8}\b/);
 });
 
+test("the docked surface is fixed and gated until it is measured", () => {
+  const composerMenus = read("../src/styles/composer-menus.css");
+  /*
+    AnchoredMenu portals the surface to <body>, so it leaves the flow of a
+    100%-tall `#root` inside a clipping body. Without `position: fixed` it
+    lands below the window and the click reads as doing nothing — which is
+    exactly what shipped before the shared base existed.
+  */
+  const base = composerMenus.match(/\.composer-menu \{([^}]*)\}/);
+  assert.ok(base, "composer-menus.css defines the shared .composer-menu base");
+  assert.match(base[1], /position: fixed;/);
+  assert.match(base[1], /visibility: hidden;/);
+  assert.match(
+    composerMenus,
+    /\.composer-menu\.is-open \{[^}]*visibility: visible;/,
+  );
+  // Both composer-docked sheets ride on that one base.
+  assert.match(sheet, /menuClassName="composer-menu context-pins-menu"/);
+  assert.match(
+    read("../src/components/PromptLibrarySheet.tsx"),
+    /menuClassName="composer-menu prompt-library-menu"/,
+  );
+});
+
 test("the picker speaks all eight locales", () => {
   for (const locale of LOCALES) {
     const source = read(`../../../packages/i18n/src/locales/${locale}/index.ts`);

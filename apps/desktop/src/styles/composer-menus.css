@@ -39,6 +39,38 @@
   position: relative;
 }
 
+/*
+  Shared base for the composer-docked dialogs — the context picker and the
+  prompt library. Both ride on `AnchoredMenu`, which portals its surface to
+  `<body>`: leaving `#root` costs the fixed layer and the elevation, and a
+  statically positioned surface lands after a 100%-tall `#root` inside a
+  clipping body, i.e. nowhere. `is-open` is the measurement gate — the menu
+  adds it only once positioned, so hiding it here prevents a flash at the
+  viewport origin.
+*/
+.composer-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 40;
+  border-radius: var(--radius-lg);
+  background: var(--ds-bg-elevated-opaque);
+  box-shadow: var(--ds-shadow-dialog);
+  border: 1px solid var(--ds-border-subtle);
+  color: var(--ds-text-primary);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.composer-menu.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
 /* Permission-mode chip menu (D115): anchored left above the mode chips. */
 .composer-permission {
   position: relative;
