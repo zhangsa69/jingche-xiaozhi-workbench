@@ -109,9 +109,9 @@ test("the docked sheets only reference tokens that exist", () => {
 test("the panel's sections clear the surface corner", () => {
   const head = css.match(/\.context-pins-head \{([^}]*)\}/);
   assert.ok(head, "the head section is styled");
-  // 12px inset against the 16px corner, the app's dialog recipe.
-  assert.match(head[1], /padding: 12px 12px 4px;/);
-  assert.match(css, /\.context-pins-row \{[^}]*padding: 6px 8px;/);
+  // One ladder step above the 12px row inset, clearing the 16px corner.
+  assert.match(head[1], /padding: var\(--space-3\) var\(--space-3\) var\(--space-1\);/);
+  assert.match(css, /\.context-pins-row \{[^}]*padding: var\(--space-1-5\) var\(--space-2\);/);
   // Height is floored against the window so the panel cannot run off-screen.
   assert.match(css, /\.context-pins-menu \{[^}]*max-height: min\(440px, calc\(100vh - 160px\)\);/);
 });
