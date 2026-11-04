@@ -4,7 +4,7 @@ export const zhTW = {
   app: {
     name: "京车小智工作台",
     shellName: "京车小智工作台",
-    tagline: "本地 AI 程式設計助手",
+    tagline: "可靠安全的工作夥伴",
     starting: "正在啟動 京车小智工作台…",
     loadingView: "正在載入頁面…",
     uiCrashed: "介面出現了問題",

@@ -4,7 +4,7 @@ export const zhCN = {
   app: {
     name: "京车小智工作台",
     shellName: "京车小智工作台",
-    tagline: "本地 AI 编程助手",
+    tagline: "可靠安全的工作伙伴",
     starting: "正在启动 京车小智工作台…",
     loadingView: "正在加载页面…",
     uiCrashed: "界面出现了问题",

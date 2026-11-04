@@ -194,7 +194,7 @@ test("the locale registry lists English first, then other locales by English nam
   assert.equal(traditional["settings.languageAuto"], "跟隨系統");
   assert.equal(traditional["nav.projects"], "專案");
   assert.equal(traditional["nav.temporarySessions"], "臨時對話");
-  assert.match(traditional["app.tagline"], /程式設計/);
+  assert.equal(traditional["app.tagline"], "可靠安全的工作夥伴");
   assert.equal(flattenCatalog(catalogs.es)["settings.language"], "Idioma");
   assert.equal(flattenCatalog(catalogs.fr)["settings.language"], "Langue");
   assert.equal(flattenCatalog(catalogs.de)["settings.language"], "Sprache");
