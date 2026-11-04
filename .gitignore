@@ -49,3 +49,6 @@ coverage/
 .claude/
 .workbuddy
 electron.vite.config.*.mjs
+
+# Personal documents kept locally, never committed
+*.docx
