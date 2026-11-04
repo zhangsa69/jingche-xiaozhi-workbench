@@ -422,8 +422,16 @@ Weights use `--font-weight-*` tokens only (Codex uses variable-font intermediate
 | `space-2` | 8px | Standard inner padding, list gaps |
 | `space-3` | 12px | Card inner padding, section gaps |
 | `space-4` | 16px | Section margins, composer padding |
+| `space-5` | 20px | Chip and step-dot diameters |
 | `space-6` | 24px | Panel gaps, major separations |
 | `space-8` | 32px | Page-level margins (rare) |
+
+Component CSS reads the scale as `--space-*` from `tokens.css`; a custom
+property name cannot carry the dot the table uses, so half steps take a dash
+(`--space-0-5`, `--space-1-5`). A `var()` with no definition and no fallback is
+dropped at computed-value time rather than reported, which is how a panel can
+render with zero padding while its stylesheet still looks deliberate — the
+style-token gate now fails the build for that.
 
 ### 6.2 Radius scale
 

@@ -956,7 +956,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  background: var(--ds-surface);
+  background: var(--ds-card-surface);
   border-bottom: 1px solid var(--ds-border-subtle);
 }
 
@@ -966,7 +966,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--ds-text);
+  color: var(--ds-text-primary);
   font-size: var(--text-sm);
   font-weight: var(--font-weight-semibold);
   direction: rtl;
@@ -992,12 +992,12 @@
   border-radius: var(--radius-sm);
   font-size: var(--text-2xs);
   cursor: pointer;
-  transition: color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  transition: color var(--motion-duration-fast) ease, border-color var(--motion-duration-fast) ease;
 }
 
 .review-file-rollback:hover:not(:disabled) {
-  color: var(--ds-text);
-  border-color: var(--ds-border);
+  color: var(--ds-text-primary);
+  border-color: var(--ds-border-default);
 }
 
 .review-file-rollback:focus-visible {
@@ -1026,11 +1026,11 @@
   border-radius: var(--radius-sm);
   font-size: var(--text-2xs);
   cursor: pointer;
-  transition: color var(--motion-fast) ease;
+  transition: color var(--motion-duration-fast) ease;
 }
 
 .review-change-locate:hover {
-  color: var(--ds-text);
+  color: var(--ds-text-primary);
 }
 
 .review-change-locate:focus-visible {
@@ -1060,8 +1060,8 @@
 .log-search,
 .log-follow {
   height: 26px;
-  color: var(--ds-text);
-  background: var(--ds-surface);
+  color: var(--ds-text-primary);
+  background: var(--ds-card-surface);
   border: 1px solid var(--ds-border-subtle);
   border-radius: var(--radius-sm);
   font-size: var(--text-2xs);
@@ -1133,7 +1133,7 @@
 }
 
 .log-row:hover {
-  background: var(--ds-surface-hover);
+  background: var(--ds-tile-hover);
 }
 
 .log-time {
@@ -1172,7 +1172,7 @@
 .log-event {
   overflow: hidden;
   max-width: 40vw;
-  color: var(--ds-text);
+  color: var(--ds-text-primary);
   font-family: var(--font-mono);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1197,7 +1197,7 @@
   margin: var(--space-1) 0 0;
   padding: var(--space-2);
   overflow-x: auto;
-  background: var(--ds-surface-sunken);
+  background: var(--ds-bg-inset);
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: var(--text-2xs);

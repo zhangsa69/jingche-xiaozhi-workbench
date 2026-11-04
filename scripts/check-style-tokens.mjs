@@ -44,6 +44,39 @@ function stripVars(value) {
 
 const violations = [];
 
+/*
+  Every `var(--x)` without a fallback has to resolve, because an undefined
+  custom property does not error: the declaration is dropped at computed-value
+  time. The pinned-context sheet spent a `--space-1…5` family that was defined
+  nowhere, so its panel drew with zero padding and zero gaps while the
+  stylesheet still looked deliberate. The properties below are published at
+  runtime by the components named beside them.
+*/
+const RUNTIME_PUBLISHED = new Set([
+  "--work-panel-width", // WorkPanel publishes the resized panel width
+  "--composer-dock-height", // Composer republishes as the draft grows
+  "--minimap-marker-count", // ConversationMinimap publishes its marker tally
+  "--magnify", // ConversationMinimap scales markers on hover
+]);
+const CSS_FILES = walk(srcDir).filter((file) => file.endsWith(".css"));
+const DEFINED_CSS_VARS = new Set();
+for (const file of CSS_FILES) {
+  for (const hit of readFileSync(file, "utf8").matchAll(/(--[a-zA-Z0-9-]+)\s*:/g)) {
+    DEFINED_CSS_VARS.add(hit[1]);
+  }
+}
+for (const file of CSS_FILES) {
+  const rel = relative(root, file);
+  const lines = readFileSync(file, "utf8").split("\n");
+  lines.forEach((line, index) => {
+    for (const hit of line.matchAll(/\bvar\((--[a-zA-Z0-9-]+)\)/g)) {
+      const name = hit[1];
+      if (DEFINED_CSS_VARS.has(name) || RUNTIME_PUBLISHED.has(name)) continue;
+      violations.push(`${rel}:${index + 1} undefined ${name} — declare it in tokens.css or give it a fallback`);
+    }
+  });
+}
+
 for (const file of walk(srcDir)) {
   const rel = relative(root, file);
   const source = readFileSync(file, "utf8");

@@ -27,7 +27,7 @@
 .experts-count {
   flex: none;
   color: var(--ds-text-faint);
-  font-family: var(--ds-font-mono);
+  font-family: var(--font-mono);
   font-size: var(--text-2xs);
 }
 
@@ -54,8 +54,8 @@
   text-align: left;
   cursor: pointer;
   transition:
-    background var(--duration-fast) var(--ease-standard),
-    color var(--duration-fast) var(--ease-standard);
+    background var(--motion-duration-fast) var(--motion-ease-standard),
+    color var(--motion-duration-fast) var(--motion-ease-standard);
 }
 
 .experts-rail-item:hover {
@@ -136,8 +136,8 @@
   border-radius: var(--radius-md);
   background: var(--ds-bg-elevated);
   transition:
-    border-color var(--duration-fast) var(--ease-standard),
-    transform var(--duration-fast) var(--ease-standard);
+    border-color var(--motion-duration-fast) var(--motion-ease-standard),
+    transform var(--motion-duration-fast) var(--motion-ease-standard);
 }
 
 .expert-card:hover {
@@ -174,7 +174,7 @@
   border-radius: var(--radius-sm);
   background: var(--ds-bg-chip);
   color: var(--ds-text-secondary);
-  font-family: var(--ds-font-mono);
+  font-family: var(--font-mono);
   font-size: var(--text-2xs);
   letter-spacing: var(--tracking-wide);
 }
@@ -211,8 +211,8 @@
   color: var(--ds-text-faint);
   cursor: pointer;
   transition:
-    color var(--duration-fast) var(--ease-standard),
-    border-color var(--duration-fast) var(--ease-standard);
+    color var(--motion-duration-fast) var(--motion-ease-standard),
+    border-color var(--motion-duration-fast) var(--motion-ease-standard);
 }
 
 .expert-team-toggle:hover {
@@ -249,7 +249,7 @@
 
 .expert-detail-line {
   margin: 0;
-  font-family: var(--ds-font-mono);
+  font-family: var(--font-mono);
 }
 
 .expert-detail-actions {
@@ -271,8 +271,8 @@
   font-size: var(--text-xs);
   cursor: pointer;
   transition:
-    background var(--duration-fast) var(--ease-standard),
-    opacity var(--duration-fast) var(--ease-standard);
+    background var(--motion-duration-fast) var(--motion-ease-standard),
+    opacity var(--motion-duration-fast) var(--motion-ease-standard);
 }
 
 .expert-use:hover:not(:disabled) {
@@ -318,7 +318,7 @@
 
 .experts-team-count {
   margin-left: auto;
-  font-family: var(--ds-font-mono);
+  font-family: var(--font-mono);
   font-size: var(--text-2xs);
   color: var(--ds-text-faint);
 }
@@ -353,7 +353,7 @@
   padding: 7px 9px;
   border: 1px solid var(--ds-border-subtle);
   border-radius: var(--radius-sm);
-  background: var(--ds-bg-base);
+  background: var(--ds-bg-inset);
   color: var(--ds-text-primary);
   font-family: inherit;
   font-size: var(--text-xs);
