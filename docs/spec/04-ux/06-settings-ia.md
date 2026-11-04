@@ -557,15 +557,15 @@ system while preserving their different data ownership:
   - disabling developer mode closes an open console and disables or removes
     every entry point; Settings search indexes the card, switch, and console
     action
-- The Updates row always exposes a Release notes action. It opens a modal
-  containing the complete shipped stable changelog in newest-first order,
-  localized to the product language and marking the current and available
-  versions when present
+- The Updates row exposes exactly one action: Check for updates, Restart when a
+  build is downloaded, or Open the release page in manual mode. No release-notes
+  entry point: the shipped changelog stays a release-tooling and updater-notes
+  source rather than a Settings surface (D426)
 - When an update is available, downloading, or downloaded and Main attached
   localized product notes, the Updates row shows a compact "What's new"
-  list under the status text (same notes as the ambient banner; D164). The
-  full-history modal remains available when the app is up to date or update
-  checks are disabled in development
+  list under the status text (same notes as the ambient banner; D164). That
+  compact list is the only in-app history surface; with no update pending the
+  row shows status text only
 
 ## 3. Navigation rules
 

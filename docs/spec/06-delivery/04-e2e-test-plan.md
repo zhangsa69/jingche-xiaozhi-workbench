@@ -4093,33 +4093,29 @@ identify the platform validation still needed.
 - **Status**: Unit-covered (`auto-update.test.mjs` asserts
   `allowPrerelease = false`); packaged discovery scenario Draft
 
-#### E2E-067B: Shipped-locale update notes and full changelog dialog (D164/D345/D349)
+#### E2E-067B: Shipped-locale update notes (D164/D345/D349, D426)
 
 - **Preconditions**: The shipped `packages/shared` CHANGELOG contains aligned
   `en`, `zh-CN`, `zh-TW`, and `ko` stable history; product language can be
   switched.
   For the compact update path, use a packaged or fixture updater state with a
   catalogued `availableVersion`.
-- **Steps**: 1) With no available update, open Settings → Info and open Release
-  notes. 2) Inspect the complete history, current-version marker, scrolling,
-  and close behavior by close control, Escape, and backdrop. 3) Force or wait
-  for update discovery so status is manual `available`, in-app `downloading`,
-  or `downloaded`; inspect the ambient banner and Settings Updates row, then
-  reopen Release notes. 4) Switch UI language to zh-CN, then zh-TW, then ko and
-  re-inspect without invoking a new check. 5) Repeat the compact update path
-  with a version absent from the catalog.
+- **Steps**: 1) Force or wait for update discovery so status is manual
+  `available`, in-app `downloading`, or `downloaded`; inspect the ambient
+  banner and Settings → Info Updates row. 2) Switch UI language to zh-CN, then
+  zh-TW, then ko and re-inspect without invoking a new check. 3) Repeat the
+  compact update path with a version absent from the catalog. 4) With no update
+  pending, confirm the row shows status text only and exactly one action.
 - **Expected**: `UpdateState.releaseNotes` is plain multi-line product
   highlights selected by Main from the shipped-locale catalog — never a
   renderer-supplied URL. Both surfaces show a localized "What's new" block
   when notes exist and hide it when they do not. Locale change refreshes notes
-  for the same version. The Release notes action remains available in every
-  updater state and opens a localized, newest-first modal containing every
-  shipped stable entry, with current and available versions identified when
-  present. The modal traps focus, restores it after close, and does not expose
-  a new IPC domain or feed configuration.
+  for the same version. The Updates row exposes one action per state and no
+  release-notes entry or changelog dialog (D426); nothing here adds an IPC
+  domain or feed configuration.
 - **Specs linked**: `04-ux/06-settings-ia.md`, `04-ux/09-interaction-patterns.md`,
   `05-security/01-security.md`, `06-delivery/06-release-runbook.md`,
-  `08-meta/decisions-log.md` (D164), ADR 0022
+  `08-meta/decisions-log.md` (D164, D426), ADR 0022
 - **Acceptance**: A (app startup), Quality
 - **Milestone**: M5
 - **Status**: Unit-covered (`auto-update.test.mjs`, `changelog.test.ts`);

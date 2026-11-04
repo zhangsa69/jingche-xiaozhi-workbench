@@ -527,12 +527,10 @@ may be retained while exactly one workspace supplies the visible shell context.
   from the shipped-locale changelog catalog selected by the product UI locale
   — never from a renderer-supplied feed or remote URL. Missing catalog entries
   omit the section; locale changes re-resolve notes without a new check.
-- Settings → Info keeps a Release notes action available in every updater
-  state. It opens a modal over Settings with the complete local stable
-  changelog in newest-first order, localized from the same shared catalog.
-  The current release and a discovered available release are identified with
-  compact badges. The list scrolls independently, closes by its close control,
-  Escape, or the backdrop, and restores focus to the invoking control.
+- Settings → Info exposes one updater action per state and no changelog dialog:
+  the compact "What's new" list above is the only in-app history surface
+  (D426). The shipped catalog still feeds the updater notes and release checks,
+  so locale changes keep re-resolving them without a new check.
 - D126 tag releases publish all platform manifests and installers. Windows
   NSIS and Linux AppImage therefore use the in-app lane; macOS and Linux deb/rpm
   remain notify-and-link delivery modes.

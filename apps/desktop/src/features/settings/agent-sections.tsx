@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { AgentInstructionFile } from "@pi-desktop/shared";
 import { useAppStore } from "../../stores/app-store";
@@ -12,8 +12,7 @@ import {
   type ImportGroupBy,
 } from "../../lib/import-groups";
 import { Badge, Button, cx } from "../../components/ui";
-import { IconChevronLeft, IconFileText } from "../../components/icons";
-import { ReleaseNotesDialog } from "../../components/ReleaseNotesDialog";
+import { IconChevronLeft } from "../../components/icons";
 import { SettingsMenuSelect } from "../../components/settings/SettingsMenuSelect";
 import { SettingsCard, SettingsRow } from "./primitives";
 
@@ -78,11 +77,9 @@ export function AgentInstructionsSection() {
   );
 }
 
-export function UpdatesRow({ currentVersion }: { currentVersion?: string }) {
+export function UpdatesRow() {
   const { t } = useTranslation();
   const update = useUpdateState();
-  const [releaseNotesOpen, setReleaseNotesOpen] = useState(false);
-  const closeReleaseNotes = useCallback(() => setReleaseNotesOpen(false), []);
   const disabled = !update || update.mode === "disabled";
   const busy = update?.status === "checking" || update?.status === "downloading";
 
@@ -161,16 +158,7 @@ export function UpdatesRow({ currentVersion }: { currentVersion?: string }) {
   return (
     <SettingsRow title={t("updates.title")} description={t("updates.desc")}>
       <div className="flex flex-col items-end gap-1.5">
-        <div className="update-settings-actions">
-          <Button
-            variant="secondary"
-            onClick={() => setReleaseNotesOpen(true)}
-          >
-            <IconFileText size={14} />
-            {t("updates.releaseNotes")}
-          </Button>
-          {action}
-        </div>
+        <div className="update-settings-actions">{action}</div>
         {statusText ? (
           <div className="text-right text-xs-plus text-text-muted">{statusText}</div>
         ) : null}
@@ -181,13 +169,6 @@ export function UpdatesRow({ currentVersion }: { currentVersion?: string }) {
           </div>
         ) : null}
       </div>
-      {releaseNotesOpen ? (
-        <ReleaseNotesDialog
-          currentVersion={update?.currentVersion ?? currentVersion}
-          availableVersion={update?.availableVersion}
-          onClose={closeReleaseNotes}
-        />
-      ) : null}
     </SettingsRow>
   );
 }

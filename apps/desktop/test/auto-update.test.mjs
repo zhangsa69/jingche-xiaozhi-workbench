@@ -19,7 +19,6 @@ const [
   menuSource,
   apiSource,
   bannerSource,
-  releaseNotesDialogSource,
   settingsSource,
   appSource,
   stylesSource,
@@ -36,7 +35,6 @@ const [
   read("../electron/main/application-menu.ts"),
   read("../src/lib/api.ts"),
   read("../src/components/UpdateBanner.tsx"),
-  read("../src/components/ReleaseNotesDialog.tsx"),
   readSettingsSource(),
   readAppSource(),
   loadStyles(),
@@ -170,17 +168,13 @@ test("renderer exposes the updates API, banner and settings row", () => {
   assert.match(bannerSource, /availableVersion}:\$\{update\.status/);
   assert.match(bannerSource, /className="update-notice"/);
   assert.match(bannerSource, /role="progressbar"/);
-  assert.match(settingsSource, /<UpdatesRow currentVersion=/);
+  assert.match(settingsSource, /<UpdatesRow \/>/);
   assert.match(settingsSource, /update-settings-notes/);
   assert.match(settingsSource, /updates\.whatsNew/);
-  assert.match(settingsSource, /updates\.releaseNotes/);
-  assert.match(settingsSource, /<ReleaseNotesDialog/);
-  assert.match(releaseNotesDialogSource, /CHANGELOG\[locale\]/);
-  assert.match(releaseNotesDialogSource, /new Intl\.DateTimeFormat\(locale,/);
-  assert.match(releaseNotesDialogSource, /role="dialog"/);
-  assert.match(releaseNotesDialogSource, /aria-modal="true"/);
-  assert.match(releaseNotesDialogSource, /data-release-version/);
-  assert.match(releaseNotesDialogSource, /event\.key === "Escape"/);
+  // One action per state, and no entry point into the changelog dialog (D426).
+  assert.match(settingsSource, /<div className="update-settings-actions">\{action\}<\/div>/);
+  assert.doesNotMatch(settingsSource, /updates\.releaseNotes/);
+  assert.doesNotMatch(settingsSource, /ReleaseNotesDialog/);
   assert.match(
     appSource,
     /<section className="main-pane">[\s\S]*?<UpdateBanner \/>/,
@@ -204,17 +198,7 @@ test("check-for-updates is reachable from the application menu", () => {
   for (const source of [enSource, zhSource]) {
     assert.match(source, /checkForUpdates:/);
     assert.match(source, /updates: \{/);
-    for (const key of [
-      "upToDate",
-      "downloading",
-      "downloaded",
-      "restart",
-      "whatsNew",
-      "releaseNotes",
-      "closeReleaseNotes",
-      "currentBadge",
-      "availableBadge",
-    ]) {
+    for (const key of ["upToDate", "downloading", "downloaded", "restart", "whatsNew"]) {
       assert.match(source, new RegExp(`${key}:`), key);
     }
   }

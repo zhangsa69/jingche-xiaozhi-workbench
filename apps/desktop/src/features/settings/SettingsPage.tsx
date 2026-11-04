@@ -472,7 +472,7 @@ export function SettingsPage() {
                     {t("settings.openLogs")}
                   </Button>
                 </SettingsRow>
-                <UpdatesRow currentVersion={version?.version} />
+                <UpdatesRow />
               </SettingsCard>
 
               {settings && (
