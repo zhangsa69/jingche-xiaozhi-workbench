@@ -25,6 +25,7 @@ from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
 BUILD = ROOT / "apps" / "desktop" / "build"
+RENDERER_ASSETS = ROOT / "apps" / "desktop" / "src" / "assets" / "brand"
 SOURCE = BUILD / "icon_1024.png"
 
 BASE = 1024
@@ -133,6 +134,14 @@ def main() -> None:
     package_icon = BUILD / "icon.png"
     master.resize((512, 512), Image.LANCZOS).save(package_icon)
 
+    # The renderer must not import installer icons out of ``build/`` (D221), so
+    # the transcript avatar is a separate renderer-sized copy of the same tile
+    # rather than a second master. 96 px keeps a 32 px avatar sharp on a 3x
+    # display while staying far below the 512 px package icon.
+    RENDERER_ASSETS.mkdir(parents=True, exist_ok=True)
+    avatar = RENDERER_ASSETS / "avatar.png"
+    master.resize((96, 96), Image.LANCZOS).save(avatar, optimize=True)
+
     # macOS menu bar icons are template images: the system tints whatever is
     # opaque. The canonical tile is a photo on a light backdrop, so reusing it
     # would drop that backdrop into the menu bar as a square. Draw the mark
@@ -158,6 +167,7 @@ def main() -> None:
         print(f"used {SOURCE}")
         print(f"wrote {windows_icon}")
         print(f"wrote {package_icon}")
+        print(f"wrote {avatar}")
         print(f"wrote {tray_icon_mac_path}")
         print(f"wrote {icns} (python fallback; iconutil is unavailable)")
         return
@@ -168,6 +178,7 @@ def main() -> None:
     print(f"used {SOURCE}")
     print(f"wrote {windows_icon}")
     print(f"wrote {package_icon}")
+    print(f"wrote {avatar}")
     print(f"wrote {tray_icon_mac_path}")
     print(f"wrote {icns}")
 

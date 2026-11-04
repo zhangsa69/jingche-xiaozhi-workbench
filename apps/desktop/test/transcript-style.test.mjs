@@ -5,7 +5,7 @@ import { readComposerSource } from "./helpers/composer-source.mjs";
 import { readMainSource } from "./helpers/main-source.mjs";
 import { loadStyles } from "./helpers/styles.mjs";
 import { readStoreSource } from "./helpers/store-source.mjs";
-import { readTranscriptSource } from "./helpers/transcript-source.mjs";
+import { readTranscriptModule, readTranscriptSource } from "./helpers/transcript-source.mjs";
 import { readSharedTypesSource } from "./helpers/shared-types-source.mjs";
 
 const stylesSource = await loadStyles();
@@ -41,6 +41,66 @@ test("user turns keep a compact right-aligned plate", () => {
 
 test("fork tools use the branch icon", () => {
   assert.match(transcriptSource, /case "fork":\s*return <IconBranch/);
+});
+
+test("every assistant speech carries the product avatar", async () => {
+  const turnSource = await readTranscriptModule("AssistantTurn.tsx");
+  const avatarSource = await readTranscriptModule("AssistantAvatar.tsx");
+  // Each prose fragment is its own speech with its own tile, so the conclusion
+  // that follows a long run of tools still reads as the assistant talking.
+  assert.match(
+    turnSource,
+    /<div className="assistant-speech" key=\{part\.message\.id\}>\s*<AssistantAvatar \/>\s*<div\s+className=\{`message-bubble assistant-turn-fragment/,
+  );
+  // A turn that opens with activity (thinking, first tool call) gets one extra
+  // tile for that run; a turn that opens with prose must not stack two tiles on
+  // the same line, but still has to reserve the same gutter or its speech tiles
+  // would be painted outside the row.
+  assert.match(
+    turnSource,
+    /const leadsWithActivity = entry\.parts\[0\]\?\.kind === "activity";/,
+  );
+  assert.match(
+    turnSource,
+    /\{leadsWithActivity \? \(\s*<AssistantAvatar \/>\s*\) : \(\s*<div className="assistant-avatar-gutter" aria-hidden="true" \/>\s*\)\}/,
+  );
+  assert.equal(turnSource.match(/<AssistantAvatar \/>/g)?.length, 2);
+  // Renderer-sized copy of the canonical tile; installer icons stay in build/
+  // (D221), which is why this is not an import of icon_1024.png.
+  assert.match(
+    avatarSource,
+    /import avatarUrl from "\.\.\/\.\.\/\.\.\/assets\/brand\/avatar\.png";/,
+  );
+  assert.doesNotMatch(avatarSource, /from ".*build\//);
+  assert.match(avatarSource, /aria-hidden="true"/);
+  const tileStyles = stylesSource.match(
+    /\.assistant-avatar,\s*\.assistant-avatar-gutter \{([^}]*)\}/,
+  )?.[1];
+  assert.ok(tileStyles);
+  assert.match(tileStyles, /--assistant-avatar-size: 28px;/);
+  assert.match(tileStyles, /width: var\(--assistant-avatar-size\);/);
+  const avatarStyles = stylesSource.match(/\.assistant-avatar \{([^}]*)\}/)?.[1];
+  assert.ok(avatarStyles);
+  assert.match(avatarStyles, /height: var\(--assistant-avatar-size\);/);
+  assert.match(avatarStyles, /border-radius: var\(--radius-xs\);/);
+  assert.match(
+    stylesSource,
+    /\.assistant-avatar-gutter \{\s*align-self: stretch;/,
+  );
+  const speechStyles = stylesSource.match(/\.assistant-speech \{([^}]*)\}/)?.[1];
+  assert.ok(speechStyles);
+  // The tile is painted in the row gutter, so the bubble keeps the column's
+  // left edge and the 720px measure however many fragments the turn produces.
+  assert.match(speechStyles, /position: relative;/);
+  const speechAvatarStyles = stylesSource.match(
+    /\.assistant-speech > \.assistant-avatar \{([^}]*)\}/,
+  )?.[1];
+  assert.ok(speechAvatarStyles);
+  assert.match(
+    speechAvatarStyles,
+    /left: calc\(-1 \* \(var\(--assistant-avatar-size\) \+ var\(--assistant-avatar-gap\)\)\);/,
+  );
+  assert.match(speechAvatarStyles, /top: 2px;[\s\S]*?margin-top: 0;/);
 });
 
 test("tool rows render structured blocks instead of dumping JSON", async () => {

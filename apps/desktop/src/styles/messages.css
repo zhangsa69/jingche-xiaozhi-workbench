@@ -49,6 +49,70 @@
   align-items: flex-start;
 }
 
+/* The assistant speaks under the product's own face: the app tile clipped to a
+   rounded square. It rides in the row's existing 12px flex gap, so the 720px
+   text column keeps its measure wherever the pane has room for both, and a
+   narrow pane just yields the 40px the tile occupies. */
+.assistant-avatar,
+.assistant-avatar-gutter {
+  /* The tile and the empty slot that replaces it share one width, so the column
+     always starts at the same x no matter which of the two leads the turn. */
+  --assistant-avatar-size: 28px;
+  --assistant-avatar-gap: 12px;
+  flex: 0 0 auto;
+  width: var(--assistant-avatar-size);
+}
+
+.assistant-avatar {
+  align-self: flex-start;
+  /* Assistant bubbles carry no padding, so the bubble's top edge is the first
+     line's top edge plus half-leading (~2px); a matching offset puts the tile's
+     top on that line and lets it overhang into the text below, the way chat
+     avatars conventionally sit. */
+  margin-top: 2px;
+  height: var(--assistant-avatar-size);
+  border-radius: var(--radius-xs);
+  object-fit: cover;
+  /* The tile ships a light backdrop; a hairline keeps it from floating on the
+     dark skins without tinting the mascot. */
+  box-shadow: 0 0 0 1px var(--ds-border-default);
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Turns that open with prose draw their face on the first speech, but the row
+   still has to reserve the same gutter, otherwise the column would start 40px
+   further left and every speech tile would land outside the row. */
+.assistant-avatar-gutter {
+  align-self: stretch;
+}
+
+/* One fragment of speech — a run of prose between two tool runs. Each fragment
+   owns its tile, so a turn that thinks, works, then concludes shows the face
+   both at the start of the work and beside the conclusion.
+   The tile is painted in the row's gutter instead of taking part in flow, which
+   keeps the bubble on the column's left edge and at the 720px measure no matter
+   how many fragments the turn produces. */
+.assistant-speech {
+  position: relative;
+  /* Flex, not block: the bubble stays a flex item exactly as it was when it sat
+     directly in the column, so prose margins neither collapse through this box
+     nor change the row's height. */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.assistant-speech > .assistant-avatar {
+  position: absolute;
+  /* Exactly the tile plus the row's 12px flex gap, i.e. the row tile's column. */
+  left: calc(-1 * (var(--assistant-avatar-size) + var(--assistant-avatar-gap)));
+  /* Same optical offset as the row tile, measured from the fragment's top. */
+  top: 2px;
+  margin-top: 0;
+}
+
 /* Decision cards carry their own opaque plate. They used to be 3.5%-8% washes
    that only read as a card because the chat pane behind them was opaque; the
    wallpaper skin thins that pane, so a wash would let the transcript show

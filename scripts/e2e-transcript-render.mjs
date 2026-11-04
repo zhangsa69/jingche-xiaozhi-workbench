@@ -26,7 +26,8 @@ try {
     jsx: "automatic",
     define: { "process.env.NODE_ENV": '"production"' },
     // Styles are outside the render-count contract; component and hook code is real.
-    loader: { ".css": "empty" },
+    // The assistant avatar is inlined so the bundled turn tree resolves its tile.
+    loader: { ".css": "empty", ".png": "dataurl" },
     alias: {
       "@pi-desktop/i18n": join(root, "packages/i18n/src/index.ts"),
       // The fixture lives outside the desktop package; use its React instance.

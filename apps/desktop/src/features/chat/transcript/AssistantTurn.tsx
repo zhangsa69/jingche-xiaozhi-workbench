@@ -41,6 +41,7 @@ import {
   formatTokenCount,
 } from "./shared";
 import { activityItemsEqual, ActivityGroup } from "./ActivityGroup";
+import { AssistantAvatar } from "./AssistantAvatar";
 import { MessageRow } from "./MessageRow";
 
 type AssistantTurnProps = {
@@ -326,6 +327,14 @@ export const AssistantTurn = memo(function AssistantTurn({
   statusesRef.current = turnDelegationStatuses;
   timingsRef.current = turnDelegationTimings;
 
+  // Every speech of the turn carries the face, not only its opening line: the
+  // tile sits beside each prose fragment, so the conclusion after a long run of
+  // tools still reads as the assistant talking. A turn that opens with activity
+  // (thinking, first tool call) draws one extra tile next to that run, which is
+  // why the row-level tile only appears then — otherwise it would stack on top
+  // of the first speech's own tile.
+  const leadsWithActivity = entry.parts[0]?.kind === "activity";
+
   return (
     <div
       className={`message-row assistant assistant-turn${streaming ? " streaming" : ""}`}
@@ -334,6 +343,11 @@ export const AssistantTurn = memo(function AssistantTurn({
       role="article"
       aria-label={t("chat.assistantMessage")}
     >
+      {leadsWithActivity ? (
+        <AssistantAvatar />
+      ) : (
+        <div className="assistant-avatar-gutter" aria-hidden="true" />
+      )}
       <div className="message-col">
         {entry.parts.map((part, index) =>
           part.kind === "activity" ? (
@@ -351,23 +365,25 @@ export const AssistantTurn = memo(function AssistantTurn({
               turnDelegationTimings={turnDelegationTimings}
             />
           ) : (
-            <div
-              className={`message-bubble assistant-turn-fragment${
-                isActive && part.message.status === "streaming"
-                  ? " streaming"
-                  : ""
-              }`}
-              data-message-id={part.message.id}
-              key={part.message.id}
-            >
-              {part.message.content ? (
-                <div className="prose-chat">
-                  <Markdown source={part.message.content} />
-                </div>
-              ) : null}
-              {part.message.error ? (
-                <AssistantErrorMessage message={part.message} />
-              ) : null}
+            <div className="assistant-speech" key={part.message.id}>
+              <AssistantAvatar />
+              <div
+                className={`message-bubble assistant-turn-fragment${
+                  isActive && part.message.status === "streaming"
+                    ? " streaming"
+                    : ""
+                }`}
+                data-message-id={part.message.id}
+              >
+                {part.message.content ? (
+                  <div className="prose-chat">
+                    <Markdown source={part.message.content} />
+                  </div>
+                ) : null}
+                {part.message.error ? (
+                  <AssistantErrorMessage message={part.message} />
+                ) : null}
+              </div>
             </div>
           ),
         )}
