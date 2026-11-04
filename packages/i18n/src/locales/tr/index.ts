@@ -306,6 +306,7 @@ export const tr = {
     enhancingPrompt: "İyileştiriliyor…",
     undoEnhancement: "İyileştirmeyi geri al",
     enhancementFailed: "İstem iyileştirilemedi",
+    enhancementTimeout: "Model zamanında yanıt vermedi. Tekrar deneyin.",
     dismissEnhancementError: "İyileştirme hatasını kapat",
     abort: "Durdur",
     sendWhileRunning: "Takip mesajı gönder · {{shortcut}} ile yönlendir",

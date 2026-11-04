@@ -297,6 +297,7 @@ export const de = {
     "enhancingPrompt": "Verbesserung…",
     "undoEnhancement": "Verbesserung rückgängig machen",
     "enhancementFailed": "Eingabeaufforderung zur Verbesserung fehlgeschlagen",
+    "enhancementTimeout": "Das Modell hat nicht rechtzeitig geantwortet. Versuch es erneut.",
     "dismissEnhancementError": "Verbesserungsfehler verwerfen",
     "abort": "Stoppen",
     sendWhileRunning: "Folgenachricht senden · {{shortcut}} zum Lenken",

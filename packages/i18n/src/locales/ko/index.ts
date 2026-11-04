@@ -306,6 +306,7 @@ export const ko = {
     enhancingPrompt: "개선 중…",
     undoEnhancement: "개선 취소",
     enhancementFailed: "프롬프트 개선 실패",
+    enhancementTimeout: "모델이 제한 시간 안에 응답하지 않았습니다. 다시 시도하세요.",
     dismissEnhancementError: "프롬프트 개선 오류 닫기",
     abort: "중지",
     sendWhileRunning: "후속 메시지 보내기 · {{shortcut}}로 방향 수정",

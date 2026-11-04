@@ -1,6 +1,6 @@
 import { readComposerSource, readMainSource } from "./helpers/source-contracts.mjs";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import test from "node:test";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
@@ -59,6 +59,35 @@ test("prompt enhancement has complete English-first locale coverage", () => {
     assert.match(source, /enhancingPrompt:/);
     assert.match(source, /undoEnhancement:/);
     assert.match(source, /enhancementFailed:/);
+    assert.match(source, /enhancementTimeout:/);
     assert.match(source, /dismissEnhancementError:/);
   }
+});
+
+test("every shipped locale names the enhancement deadline", async () => {
+  const locales = await readdir(new URL("../../../packages/i18n/src/locales", import.meta.url), {
+    withFileTypes: true,
+  });
+  for (const locale of locales.filter((entry) => entry.isDirectory())) {
+    const source = await read(
+      `../../../packages/i18n/src/locales/${locale.name}/index.ts`,
+    );
+    assert.match(source, /["']?enhancementTimeout["']?\s*:/, locale.name);
+  }
+});
+
+test("an unresponsive provider cannot leave the toolbar spinning", () => {
+  // Main owns the request: it aborts the socket and races the stream result so
+  // a transport that ignores the signal still cannot hold the caller.
+  assert.match(oneShot, /timeoutMs\?: number/);
+  assert.match(oneShot, /new AbortController\(\)/);
+  assert.match(oneShot, /deadlineController\?\.abort\(\)/);
+  assert.match(oneShot, /Promise\.race\(\[stream\.result\(\), deadlineRace\]\)/);
+  assert.match(runtime, /export const PROMPT_ENHANCEMENT_TIMEOUT_MS = 60_000/);
+  assert.match(runtime, /timeoutErrorCode: "PROMPT_ENHANCEMENT_TIMEOUT"/);
+  // The renderer keeps its own backstop for an IPC call that never settles.
+  assert.match(composer, /const ENHANCEMENT_RENDERER_DEADLINE_MS = 75_000/);
+  assert.match(composer, /withEnhancementDeadline\(\s*api\.enhancePrompt\(/);
+  assert.match(composer, /code === ENHANCEMENT_TIMEOUT_CODE/);
+  assert.match(composer, /t\("chat\.enhancementTimeout"\)/);
 });

@@ -297,6 +297,7 @@ export const es = {
     "enhancingPrompt": "Mejorando...",
     "undoEnhancement": "Deshacer mejora",
     "enhancementFailed": "Error en la mejora de solicitud",
+    "enhancementTimeout": "El modelo no respondió a tiempo. Inténtalo de nuevo.",
     "dismissEnhancementError": "Descartar error de mejora",
     "abort": "Detener",
     sendWhileRunning: "Enviar seguimiento · {{shortcut}} para orientar",

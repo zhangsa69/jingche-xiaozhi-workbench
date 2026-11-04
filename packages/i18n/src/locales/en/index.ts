@@ -304,6 +304,7 @@ export const en = {
     enhancingPrompt: "Enhancing…",
     undoEnhancement: "Undo enhancement",
     enhancementFailed: "Prompt enhancement failed",
+    enhancementTimeout: "The model did not respond in time. Try again.",
     dismissEnhancementError: "Dismiss enhancement error",
     abort: "Stop",
     sendWhileRunning: "Send follow-up · {{shortcut}} to steer",

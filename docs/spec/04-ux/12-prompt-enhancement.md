@@ -33,6 +33,11 @@ and a single `Undo enhancement` action restores the exact pre-enhancement text.
 Any user edit, send, or Composer session switch clears the undo action.
 There is no multi-level history, keyboard shortcut, or cancel action.
 
+Because the action has no cancel, the request is bounded instead: main aborts the
+provider call at `PROMPT_ENHANCEMENT_TIMEOUT_MS` (60s) and the renderer stops
+waiting at 75s, so the disabled spinner always resolves into either the
+rewritten draft or an error row (D427).
+
 ## 3. Request and provider boundary
 
 Renderer requests use the allowlisted `pi-desktop/prompt/enhance` invoke
@@ -64,6 +69,15 @@ Empty or whitespace-only output is a `PROMPT_ENHANCEMENT_EMPTY` failure.
 Failures preserve the current draft and render a dismissible Composer error
 bar containing the classified error message and code. Existing provider codes
 such as `PROVIDER_UNAUTHORIZED`, `NETWORK_ERROR`, and `TIMEOUT` are reused.
+
+A provider that accepts the request and then stops sending events never ends a
+stream on its own, so the one-shot path owns a deadline rather than trusting the
+transport: the socket is aborted and the stream result is raced against the same
+timer, which covers a transport that ignores the abort signal. That failure
+surfaces as `PROMPT_ENHANCEMENT_TIMEOUT`; a caller-initiated abort stays
+`TURN_ABORTED` so the two cannot be confused. The renderer's outer deadline
+exists only to unfreeze the toolbar when the IPC call itself never settles, and
+uses the same code so the error row reads the same in either case.
 
 The renderer captures the draft key and an edit generation when starting a
 request. If the draft changes, is sent/cleared, or the user switches sessions

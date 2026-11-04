@@ -297,6 +297,7 @@ export const fr = {
     "enhancingPrompt": "Amélioration…",
     "undoEnhancement": "Annuler l'amélioration",
     "enhancementFailed": "L'amélioration de l'invite a échoué",
+    "enhancementTimeout": "Le modèle n'a pas répondu à temps. Réessayez.",
     "dismissEnhancementError": "Ignorer l'erreur d'amélioration",
     "abort": "Arrêter",
     sendWhileRunning: "Envoyer à la suite · {{shortcut}} pour réorienter",

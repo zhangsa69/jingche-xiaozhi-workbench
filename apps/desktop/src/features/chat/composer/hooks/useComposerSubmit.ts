@@ -16,6 +16,43 @@ import { resolveComposerCommand } from "../../../../hooks/use-composer-autocompl
 import { readEditorValue, setEditorCaret, type ComposerFileReference } from "../editor";
 import type { ComposerDraftController } from "./useComposerDraft";
 
+/**
+ * Main aborts the request at 60s (`PROMPT_ENHANCEMENT_TIMEOUT_MS`). This outer
+ * deadline only unfreezes the toolbar if the IPC call itself never settles — a
+ * crashed main process or a dropped invoke would otherwise leave the button
+ * disabled and spinning forever.
+ */
+const ENHANCEMENT_RENDERER_DEADLINE_MS = 75_000;
+
+const ENHANCEMENT_TIMEOUT_CODE = "PROMPT_ENHANCEMENT_TIMEOUT";
+
+const ENHANCEMENT_FAILED_CODE = "PROMPT_ENHANCEMENT_FAILED";
+
+function deadlineRejection(code: string, message: string) {
+  return Object.assign(new Error(message), { code });
+}
+
+function withEnhancementDeadline<T>(
+  request: Promise<T>,
+  message: string,
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(deadlineRejection(ENHANCEMENT_TIMEOUT_CODE, message));
+    }, ENHANCEMENT_RENDERER_DEADLINE_MS);
+    request.then(
+      (result) => {
+        clearTimeout(timer);
+        resolve(result);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
 type UseComposerSubmitOptions = {
   value: string;
   draftKey: string;
@@ -117,13 +154,16 @@ export function useComposerSubmit({
     setEnhancementUndoText(null);
     setEnhancementError(null);
     try {
-      const result = await api.enhancePrompt({
-        sessionId: activeSessionId,
-        draft: textToEnhance,
-        providerId,
-        modelId,
-        thinkingLevel,
-      });
+      const result = await withEnhancementDeadline(
+        api.enhancePrompt({
+          sessionId: activeSessionId,
+          draft: textToEnhance,
+          providerId,
+          modelId,
+          thinkingLevel,
+        }),
+        t("chat.enhancementTimeout"),
+      );
       const currentKey = draftKeyForSession(useAppStore.getState().activeSessionId);
       if (
         enhancementRequestRef.current !== requestToken ||
@@ -166,9 +206,15 @@ export function useComposerSubmit({
         return;
       }
       const typed = error as Error & { code?: string };
+      const code = typed.code || ENHANCEMENT_FAILED_CODE;
       setEnhancementError({
-        message: typed.message || t("chat.enhancementFailed"),
-        code: typed.code || "PROMPT_ENHANCEMENT_FAILED",
+        // Main reports the deadline in English like every other provider error;
+        // the one code with a fixed cause gets the shell's language.
+        message:
+          code === ENHANCEMENT_TIMEOUT_CODE
+            ? t("chat.enhancementTimeout")
+            : typed.message || t("chat.enhancementFailed"),
+        code,
       });
     } finally {
       if (enhancementRequestRef.current === requestToken) setEnhancingPrompt(false);

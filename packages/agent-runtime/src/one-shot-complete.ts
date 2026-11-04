@@ -44,6 +44,14 @@ export type OneShotCompleteOptions = {
   stream?: OneShotCompleteStream;
   emptyErrorCode?: string;
   emptyErrorMessage?: string;
+  /**
+   * Deadline for the whole completion. A provider that accepts the connection
+   * and then goes quiet never ends its stream, so a one-shot caller with no
+   * user-facing cancel affordance would wait forever.
+   */
+  timeoutMs?: number;
+  timeoutErrorCode?: string;
+  timeoutErrorMessage?: string;
   /** Conversation id forwarded to OpenCode as `x-opencode-session`. */
   sessionId?: string;
 };
@@ -86,10 +94,46 @@ export async function completeOneShot(
   let transientRetryAttempt = 0;
   let rateLimitRetryAttempt = 0;
 
+  /*
+    Abort the socket at the deadline and, because a custom transport is free to
+    ignore the signal, race the stream result against the same deadline. Either
+    way the caller stops waiting; only the winner decides which error surfaces.
+  */
+  const deadlineMs = options.timeoutMs;
+  const deadlineController = deadlineMs === undefined ? undefined : new AbortController();
+  let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
+  let timedOut = false;
+  let rejectOnDeadline: ((error: Error) => void) | undefined;
+  let deadlineRace: Promise<never> | undefined;
+  if (deadlineMs !== undefined) {
+    const timeoutError = completeError(
+      options.timeoutErrorCode ?? "COMPLETION_TIMEOUT",
+      options.timeoutErrorMessage ?? "The completion timed out.",
+      { timeoutMs: deadlineMs },
+    );
+    deadlineRace = new Promise<never>((_, reject) => {
+      rejectOnDeadline = reject;
+    });
+    // The race may settle first; an unobserved rejection here would be noise.
+    deadlineRace.catch(() => undefined);
+    deadlineTimer = setTimeout(() => {
+      timedOut = true;
+      deadlineController?.abort();
+      rejectOnDeadline?.(timeoutError);
+    }, deadlineMs);
+    if (options.signal?.aborted) deadlineController?.abort();
+    else {
+      options.signal?.addEventListener("abort", () => deadlineController?.abort(), {
+        once: true,
+      });
+    }
+  }
+  const requestSignal = deadlineController?.signal ?? options.signal;
+
   const requestOptions: SimpleStreamOptions = withProviderHeaders(
     withOpenCodeSessionHeaders(
       {
-        ...(options.signal ? { signal: options.signal } : {}),
+        ...(requestSignal ? { signal: requestSignal } : {}),
         maxRetries: 0,
         ...(thinkingLevel !== "off" ? { reasoning: thinkingLevel } : {}),
         fetch: captureProviderResponse(undefined, (response) => {
@@ -133,9 +177,21 @@ export async function completeOneShot(
       status: () => providerStatus,
     },
   );
-  const result = await stream.result();
+  const result = await (deadlineRace
+    ? Promise.race([stream.result(), deadlineRace])
+    : stream.result()
+  ).finally(() => {
+    if (deadlineTimer !== undefined) clearTimeout(deadlineTimer);
+  });
 
   if (result.stopReason === "aborted") {
+    if (timedOut) {
+      throw completeError(
+        options.timeoutErrorCode ?? "COMPLETION_TIMEOUT",
+        options.timeoutErrorMessage ?? "The completion timed out.",
+        { timeoutMs: deadlineMs },
+      );
+    }
     throw completeError("TURN_ABORTED", "The completion was aborted.");
   }
   if (result.stopReason === "error") {

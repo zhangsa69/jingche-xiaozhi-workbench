@@ -299,6 +299,7 @@ export const zhCN = {
     enhancingPrompt: "增强中…",
     undoEnhancement: "撤回增强",
     enhancementFailed: "提示词增强失败",
+    enhancementTimeout: "模型没有在限定时间内返回结果，请重试。",
     dismissEnhancementError: "关闭增强错误",
     abort: "停止",
     sendWhileRunning: "发送后续消息 · {{shortcut}} 立即转向",

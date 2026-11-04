@@ -299,6 +299,7 @@ export const zhTW = {
     enhancingPrompt: "增強中…",
     undoEnhancement: "撤回增強",
     enhancementFailed: "提示詞增強失敗",
+    enhancementTimeout: "模型沒有在限定時間內傳回結果，請重試。",
     dismissEnhancementError: "關閉增強錯誤",
     abort: "停止",
     sendWhileRunning: "傳送後續訊息 · {{shortcut}} 立即轉向",

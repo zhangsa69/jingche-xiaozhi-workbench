@@ -106,6 +106,41 @@ describe("prompt enhancement", () => {
     ).rejects.toMatchObject({ errorCode: "PROMPT_ENHANCEMENT_EMPTY" });
   });
 
+  it("stops waiting when the provider accepts the request and never answers", async () => {
+    // The composer exposes no cancel affordance while enhancing, so a stream
+    // that starts and then goes quiet used to hold the toolbar forever.
+    const stalled = createAssistantMessageEventStream();
+    queueMicrotask(() => {
+      stalled.push({ type: "start", partial: assistantMessage([]) });
+    });
+    await expect(
+      enhancePromptDraft(provider, "Keep this", "off", {
+        stream: () => stalled,
+        timeoutMs: 25,
+      }),
+    ).rejects.toMatchObject({ errorCode: "PROMPT_ENHANCEMENT_TIMEOUT" });
+  });
+
+  it("keeps a caller abort distinct from the deadline", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      enhancePromptDraft(provider, "Keep this", "off", {
+        stream: () => streamFor(assistantMessage([{ type: "text", text: "x" }])),
+        signal: controller.signal,
+        timeoutMs: 5_000,
+      }),
+    ).rejects.toMatchObject({ errorCode: "TURN_ABORTED" });
+  });
+
+  it("still resolves a fast answer under the deadline", async () => {
+    const enhanced = await enhancePromptDraft(provider, "Keep this", "off", {
+      stream: () => streamFor(assistantMessage([{ type: "text", text: "  kept  " }])),
+      timeoutMs: 5_000,
+    });
+    expect(enhanced).toBe("kept");
+  });
+
   it("classifies provider failures with the existing error code", async () => {
     await expect(
       enhancePromptDraft(provider, "Keep this", "off", {

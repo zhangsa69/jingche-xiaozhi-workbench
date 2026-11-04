@@ -19,10 +19,19 @@ export type PromptEnhancementStream = (
   options?: SimpleStreamOptions,
 ) => AssistantMessageEventStream;
 
+/**
+ * A rewrite is a short answer, so the composer waits at most this long. The
+ * button disables while the request runs and offers no cancel, so an unbounded
+ * wait is indistinguishable from a broken feature.
+ */
+export const PROMPT_ENHANCEMENT_TIMEOUT_MS = 60_000;
+
 export type PromptEnhancementOptions = {
   signal?: AbortSignal;
   /** Test seam for a provider stream; production uses the resolved model registry. */
   stream?: PromptEnhancementStream;
+  /** Deadline override; production uses `PROMPT_ENHANCEMENT_TIMEOUT_MS`. */
+  timeoutMs?: number;
   /** Conversation id forwarded to OpenCode as `x-opencode-session`. */
   sessionId?: string;
 };
@@ -60,6 +69,10 @@ export async function enhancePromptDraft(
       sessionId: options.sessionId,
       emptyErrorCode: "PROMPT_ENHANCEMENT_EMPTY",
       emptyErrorMessage: "The model returned an empty enhanced draft.",
+      timeoutMs: options.timeoutMs ?? PROMPT_ENHANCEMENT_TIMEOUT_MS,
+      timeoutErrorCode: "PROMPT_ENHANCEMENT_TIMEOUT",
+      timeoutErrorMessage:
+        "The model did not return an enhanced draft before the deadline.",
     },
   );
   return result.text;

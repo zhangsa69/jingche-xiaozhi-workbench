@@ -141,17 +141,34 @@ export function registerAgentIpc({
         ? { resolveAuth: () => vendorOAuth.resolveAuth(launch.providerId) }
         : {}),
     } as RuntimeProviderConfig;
-    const enhancedDraft = await enhancePromptDraft(
-      runtimeProvider,
-      draft,
-      launch.sidecarParams.thinkingLevel,
-      { sessionId: launchSessionId },
-    );
-    logger.app("session", "info", "prompt enhanced", {
-      sessionId: sessionId || undefined,
-      data: { providerId: launch.providerId, modelId: launch.modelId },
-    });
-    return { enhancedDraft };
+    const startedAt = Date.now();
+    try {
+      const enhancedDraft = await enhancePromptDraft(
+        runtimeProvider,
+        draft,
+        launch.sidecarParams.thinkingLevel,
+        { sessionId: launchSessionId },
+      );
+      logger.app("session", "info", "prompt enhanced", {
+        sessionId: sessionId || undefined,
+        data: { providerId: launch.providerId, modelId: launch.modelId },
+      });
+      return { enhancedDraft };
+    } catch (error) {
+      // A silent stall used to be indistinguishable from a broken button, so the
+      // failure path records how long it waited and which provider held it.
+      logger.app("session", "warn", "prompt enhancement failed", {
+        sessionId: sessionId || undefined,
+        data: {
+          code:
+            (error as { errorCode?: string }).errorCode ?? "PROMPT_ENHANCEMENT_FAILED",
+          elapsedMs: Date.now() - startedAt,
+          providerId: launch.providerId,
+          modelId: launch.modelId,
+        },
+      });
+      throw error;
+    }
   });
 
   handle(IPC.invoke.sessionSummarizeTitle, async (req: SessionSummarizeTitleRequest) => {
