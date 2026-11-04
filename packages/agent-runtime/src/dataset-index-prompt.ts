@@ -43,7 +43,8 @@ export function normalizeDatasetPath(path: string): string {
 }
 
 function describeEntry(entry: DatasetIndexEntry): string {
-  const details = [entry.kind];
+  // Widened on purpose: the item tally below joins the kind as plain text.
+  const details: string[] = [entry.kind];
   if (typeof entry.itemCount === "number" && Number.isFinite(entry.itemCount)) {
     details.push(`${entry.itemCount} item${entry.itemCount === 1 ? "" : "s"}`);
   }
