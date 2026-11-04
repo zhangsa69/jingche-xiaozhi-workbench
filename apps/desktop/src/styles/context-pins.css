@@ -20,7 +20,7 @@
   padding: 0 3px;
   border-radius: var(--radius-full);
   background: var(--ds-text-primary);
-  color: var(--ds-bg-base);
+  color: var(--ds-bg-primary);
   font-size: var(--text-2xs);
   font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
@@ -28,21 +28,26 @@
   text-align: center;
 }
 
+/*
+  Section insets are literal because this codebase has no spacing scale — the
+  phantom `--space-*` family this file used to reference is defined nowhere, so
+  every padding and gap on the panel computed to zero and the rows sat straight
+  on the 16px corner. 12px of inset clears the arc; the list keeps 4px so a row
+  can show its own hover plate without moving its text off that 12px line.
+*/
 .context-pins-menu {
   width: 380px;
-  max-height: 440px;
-  padding: var(--space-2);
+  max-height: min(440px, calc(100vh - 160px));
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
   overflow: hidden;
 }
 
 .context-pins-head {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-1) 0;
+  gap: 8px;
+  padding: 12px 12px 4px;
 }
 
 .context-pins-title {
@@ -64,34 +69,37 @@
 
 .context-pins-hint {
   margin: 0;
-  padding: 0 var(--space-2);
+  padding: 0 12px 8px;
   font-size: var(--text-2xs);
-  color: var(--ds-text-faint);
+  line-height: var(--leading-normal);
+  color: var(--ds-text-muted);
 }
 
 .context-pins-list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 4px 6px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .context-pins-row {
   width: 100%;
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-2);
+  gap: 8px;
+  padding: 6px 8px;
   border: 1px solid transparent;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ds-text-secondary);
   font-family: inherit;
   font-size: var(--text-sm);
+  line-height: var(--leading-normal);
   text-align: left;
   cursor: pointer;
   transition: background var(--motion-duration-fast) var(--motion-ease-standard),
@@ -101,10 +109,11 @@
 .context-pins-row:hover {
   background: var(--ds-tile-hover);
   border-color: var(--ds-border-subtle);
+  color: var(--ds-text-primary);
 }
 
 .context-pins-row[data-checked="true"] {
-  background: var(--ds-tile);
+  background: var(--ds-bg-active);
   border-color: var(--ds-border-strong);
   color: var(--ds-text-primary);
 }
@@ -121,7 +130,7 @@
   /* On a 14px box the 8px step clamps to a circle, which reads as a radio dot
      although the rows are independent checkboxes. */
   border-radius: var(--radius-3xs);
-  color: var(--ds-bg-base);
+  color: var(--ds-bg-primary);
 }
 
 .context-pins-row[data-checked="true"] .context-pins-box {
@@ -131,10 +140,17 @@
 
 .context-pins-role {
   flex: none;
-  width: 62px;
+  width: 52px;
+  overflow: hidden;
   font-size: var(--text-2xs);
+  line-height: var(--leading-normal);
   color: var(--ds-text-muted);
-  text-transform: lowercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.context-pins-row[data-checked="true"] .context-pins-role {
+  color: var(--ds-text-secondary);
 }
 
 .context-pins-excerpt {
@@ -144,23 +160,24 @@
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  line-height: var(--line-height-snug);
+  line-height: var(--leading-normal);
 }
 
 .context-pins-empty {
   margin: 0;
-  padding: var(--space-3) var(--space-2);
+  padding: 20px 16px 24px;
   font-size: var(--text-sm);
-  color: var(--ds-text-faint);
+  color: var(--ds-text-muted);
   text-align: center;
 }
 
+/* Footer is a tile band, not a rule (D297) — same recipe as the slash menu. */
 .context-pins-foot {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-1) 0;
-  border-top: 1px solid var(--ds-border-subtle);
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--ds-tile);
 }
 
 .context-pins-selected {
@@ -171,7 +188,7 @@
 
 .context-pins-clear {
   margin-inline-start: auto;
-  padding: 2px var(--space-2);
+  padding: 2px 8px;
   border: 1px solid var(--ds-border-subtle);
   border-radius: var(--radius-full);
   background: transparent;

@@ -86,6 +86,36 @@ test("the docked surface is fixed and gated until it is measured", () => {
   );
 });
 
+test("the docked sheets only reference tokens that exist", () => {
+  /*
+    This file used to spend `--space-1…5`, `--line-height-snug` and
+    `--ds-bg-base`; none of them exist in tokens.css, so every padding and gap
+    computed to zero and the panel drew its title and rows straight onto the
+    16px corner. An undefined custom property is silently fatal, so the guard
+    is the reference set, not a sample of it.
+  */
+  const defined = new Set(
+    [...read("../src/styles/tokens.css").matchAll(/(--[a-z0-9-]+)\s*:/g)].map((m) => m[1]),
+  );
+  for (const file of ["context-pins.css", "prompt-library.css"]) {
+    const source = read(`../src/styles/${file}`);
+    const used = [...source.matchAll(/var\((--[a-z0-9-]+)/g)].map((match) => match[1]);
+    for (const name of new Set(used)) {
+      assert.ok(defined.has(name), `${file} references undefined ${name}`);
+    }
+  }
+});
+
+test("the panel's sections clear the surface corner", () => {
+  const head = css.match(/\.context-pins-head \{([^}]*)\}/);
+  assert.ok(head, "the head section is styled");
+  // 12px inset against the 16px corner, the app's dialog recipe.
+  assert.match(head[1], /padding: 12px 12px 4px;/);
+  assert.match(css, /\.context-pins-row \{[^}]*padding: 6px 8px;/);
+  // Height is floored against the window so the panel cannot run off-screen.
+  assert.match(css, /\.context-pins-menu \{[^}]*max-height: min\(440px, calc\(100vh - 160px\)\);/);
+});
+
 test("the tick reads as a checkbox, not a radio dot", () => {
   // A 14px box with the 8px radius step clamps to 7px and renders as a filled
   // circle, which tells the user only one row can be picked.

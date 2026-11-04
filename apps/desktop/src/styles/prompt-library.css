@@ -4,21 +4,24 @@
   display: inline-flex;
 }
 
+/*
+  Same section recipe as the pinned-context picker next to it: literal insets
+  (this codebase has no spacing scale), 12px clearing the 16px surface corner,
+  and a 4px list gutter so rows can own a hover plate without shifting text.
+*/
 .prompt-library-menu {
   width: 380px;
-  max-height: 460px;
-  padding: var(--space-2);
+  max-height: min(460px, calc(100vh - 160px));
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
   overflow: hidden;
 }
 
 .prompt-library-head {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-1) 0;
+  gap: 8px;
+  padding: 12px 12px 4px;
 }
 
 .prompt-library-title {
@@ -42,8 +45,9 @@
 .prompt-library-search {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: 0 var(--space-2);
+  gap: 8px;
+  margin: 4px 12px 8px;
+  padding: 0 8px;
   border: 1px solid var(--ds-border-subtle);
   border-radius: var(--radius-xs);
   background: var(--ds-bg-inset);
@@ -69,12 +73,12 @@
 .prompt-library-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-1);
-  padding: 0 var(--space-1);
+  gap: 4px;
+  padding: 0 12px 8px;
 }
 
 .prompt-library-filter {
-  padding: 2px var(--space-2);
+  padding: 2px 8px;
   border: 1px solid transparent;
   border-radius: var(--radius-full);
   background: var(--ds-tile);
@@ -99,11 +103,12 @@
 .prompt-library-list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 4px 6px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   min-height: 0;
 }
 
@@ -111,9 +116,9 @@
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-xs);
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
 }
 
@@ -123,7 +128,8 @@
 }
 
 .prompt-library-row[data-pinned="true"] {
-  background: var(--ds-tile);
+  background: var(--ds-bg-active);
+  border-color: var(--ds-border-subtle);
 }
 
 .prompt-library-copy {
@@ -154,7 +160,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-1);
+  gap: 4px;
   color: var(--ds-text-muted);
   font-size: var(--text-2xs);
   font-variant-numeric: tabular-nums;
@@ -162,11 +168,11 @@
 
 .prompt-library-tags {
   display: inline-flex;
-  gap: var(--space-1);
+  gap: 4px;
 }
 
 .prompt-library-tag {
-  padding: 0 var(--space-1);
+  padding: 0 4px;
   border-radius: var(--radius-3xs);
   background: var(--ds-bg-active);
   color: var(--ds-text-secondary);
@@ -198,14 +204,14 @@
 .prompt-library-tag-form {
   flex-basis: 100%;
   display: flex;
-  gap: var(--space-1);
+  gap: 4px;
 }
 
 .prompt-library-tag-input {
   flex: 1;
   min-width: 0;
   height: 24px;
-  padding: 0 var(--space-2);
+  padding: 0 8px;
   border: 1px solid var(--ds-border-strong);
   border-radius: var(--radius-3xs);
   background: var(--ds-bg-inset);
@@ -216,7 +222,7 @@
 }
 
 .prompt-library-tag-save {
-  padding: 0 var(--space-2);
+  padding: 0 8px;
   border: 0;
   border-radius: var(--radius-3xs);
   background: var(--ds-accent);
@@ -227,12 +233,12 @@
 }
 
 .prompt-library-empty {
-  padding: var(--space-4) var(--space-3);
+  padding: 20px 16px 24px;
   text-align: center;
 }
 
 .prompt-library-empty-title {
-  margin: 0 0 var(--space-1);
+  margin: 0 0 4px;
   color: var(--ds-text-secondary);
   font-size: var(--text-sm);
 }
@@ -244,10 +250,11 @@
   line-height: var(--leading-normal);
 }
 
+/* Footer is a tile band, not a rule (D297) — same recipe as the slash menu. */
 .prompt-library-foot {
   margin: 0;
-  padding: var(--space-1) var(--space-2) 0;
-  border-top: 1px solid var(--ds-border-subtle);
+  padding: 7px 12px;
+  background: var(--ds-tile);
   color: var(--ds-text-muted);
   font-size: var(--text-2xs);
   line-height: var(--leading-normal);
