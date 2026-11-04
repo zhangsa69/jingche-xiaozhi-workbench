@@ -97,7 +97,7 @@ export const es = {
   },
   "updates": {
     "title": "Actualizaciones",
-    "desc": "Las actualizaciones se descargan de las versiones de GitHub.",
+    "desc": "Las actualizaciones se comprueban y descargan en la aplicación.",
     "check": "Buscar actualizaciones",
     "checking": "Buscando actualizaciones...",
     "upToDate": "Estás en la última versión.",
@@ -1347,9 +1347,6 @@ sklm: {
     "logs": "Registros",
     "logsDesc": "Abrir registros locales.",
     "openLogs": "Abrir registros",
-    "feedback": "Informar un problema",
-    "feedbackDesc": "Abre GitHub con su versión completa.",
-    "openFeedback": "Abrir GitHub",
     "developer": "Desarrollador",
     "developerMode": "Modo desarrollador",
     "developerModeDesc": "Habilitar herramientas de desarrollador y F12.",

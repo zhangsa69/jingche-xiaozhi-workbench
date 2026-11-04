@@ -44,8 +44,6 @@ describe("Plan protocol contracts", () => {
     expect(IPC_WHITELIST.has(IPC.invoke.providersRefreshModelCatalog)).toBe(true);
     expect(IPC_WHITELIST.has(IPC.invoke.windowSetWorkPanelChatWidth)).toBe(true);
     expect(IPC_WHITELIST.has(IPC.event.windowWorkPanelResize)).toBe(true);
-    expect(IPC.invoke.appOpenFeedback).toBe("pi-desktop/app/openFeedback");
-    expect(IPC_WHITELIST.has(IPC.invoke.appOpenFeedback)).toBe(true);
     expect(IPC.invoke.fsOpen).toBe("pi-desktop/fs/open");
     expect(IPC_WHITELIST.has(IPC.invoke.fsOpen)).toBe(true);
     // W-14: export is a channel of its own — the renderer names the source,

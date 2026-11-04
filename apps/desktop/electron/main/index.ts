@@ -1256,7 +1256,6 @@ function registerIpc() {
     },
     getPluginLauncherWindow: () => pluginLauncherWindow,
     togglePluginLauncher,
-    safeOpenExternal,
     updater,
     dataDir,
     activeTurns,

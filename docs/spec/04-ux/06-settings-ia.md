@@ -543,10 +543,8 @@ system while preserving their different data ownership:
 
 ### Info
 - app/host/protocol versions + open logs
-- **Report a problem** row: one action opens the GitHub bug issue form in
-  the system browser. Electron Main owns the URL (`pi-desktop/app/openFeedback`),
-  prefills app version, OS, and environment from Main-owned version info, and
-  never accepts a renderer-supplied destination (D313 / ADR 0157)
+- no feedback row: support runs outside the app, so nothing here points at a
+  public issue tracker or the source repository (D425)
 - Updates row with the current delivery state and one applicable action:
   Check for updates, View release, or Restart to update
 - **Developer** card:
@@ -655,8 +653,8 @@ system while preserving their different data ownership:
 25. Toggling one capability leaves every other row interactive, does not
     replace the list with skeletons, and restores the previous switch position
     if the host rejects the change
-26. Info exposes a Report a problem action that opens the GitHub bug form
-    with version and OS filled in; Settings search indexes the row
+26. Info carries no feedback intake: it shows the application, logs, and
+    Updates rows only, and Settings search returns no feedback hit (D425)
 27. The Skills page Market view browses public-HTTPS catalogs, previews
     the assembled document, and installs only through `skills.create`; oversized
     expanded documents are refused and source badges follow `sourceId`

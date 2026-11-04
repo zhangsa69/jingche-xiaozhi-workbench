@@ -104,7 +104,7 @@ export const en = {
   },
   updates: {
     title: "Updates",
-    desc: "Updates are downloaded from GitHub Releases.",
+    desc: "Updates are checked and downloaded inside the app.",
     check: "Check for updates",
     checking: "Checking for updates…",
     upToDate: "You're on the latest version.",
@@ -1376,9 +1376,6 @@ sklm: {
     logs: "Logs",
     logsDesc: "Open local logs.",
     openLogs: "Open logs",
-    feedback: "Report a problem",
-    feedbackDesc: "Opens GitHub with your version filled in.",
-    openFeedback: "Open GitHub",
     developer: "Developer",
     developerMode: "Developer mode",
     developerModeDesc: "Enable developer tools and F12.",

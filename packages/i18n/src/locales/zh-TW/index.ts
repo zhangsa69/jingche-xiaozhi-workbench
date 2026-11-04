@@ -99,7 +99,7 @@ export const zhTW = {
   },
   updates: {
     title: "軟體更新",
-    desc: "更新通過 GitHub Releases 分發。",
+    desc: "更新由工作台檢查並下載。",
     check: "檢查更新",
     checking: "正在檢查更新…",
     upToDate: "已是最新版本。",
@@ -1352,9 +1352,6 @@ sklm: {
     logs: "日誌",
     logsDesc: "開啟本地日誌。",
     openLogs: "開啟日誌",
-    feedback: "問題反饋",
-    feedbackDesc: "在 GitHub 提交問題，並自動帶上當前版本。",
-    openFeedback: "開啟 GitHub",
     developer: "開發者",
     developerMode: "開發者模式",
     developerModeDesc: "啟用開發者工具和 F12。",

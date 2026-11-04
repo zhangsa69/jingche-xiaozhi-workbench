@@ -177,7 +177,6 @@ const enEntries: ChangelogEntry[] = [
       "Add Turkish and a searchable language picker in Settings → General.",
       "Make theme a searchable picker like language, including plugin themes.",
       "Flatten the add-provider Service list, add Xiaomi, Zhipu, and Z.AI, and make Service searchable.",
-      "Report a problem from Settings → Info with version and OS already filled.",
       "Keep streaming conversation turns in chronological order when the live transcript merges.",
     ],
   },
@@ -602,7 +601,7 @@ const enEntries: ChangelogEntry[] = [
     version: "0.4.1",
     date: "2026-08-02",
     highlights: [
-      "Update GitHub Releases and auto-update links to the canonical 京车小智工作台 repository.",
+      "Point update checks and auto-update links at the release channel.",
       "Refresh project, plugin, and release documentation to use the 京车小智工作台 repository name.",
     ],
   },
@@ -709,7 +708,7 @@ const enEntries: ChangelogEntry[] = [
       "Shell copy rewritten in plain user language across locales.",
       "Selection, CJK labels, and hover motion polish.",
       "Work panel and Settings light surfaces refined.",
-      "Prerelease installs now discover newer stable GitHub releases.",
+      "Prerelease installs now discover newer stable releases.",
     ],
   },
   {
@@ -752,7 +751,7 @@ const enEntries: ChangelogEntry[] = [
       "Workspace tools with permission gating, terminal, browser, and git review.",
       "Rust host core for storage, secrets, sessions, and notifications.",
       "Plugin foundation plus dual English / 简体中文 UI.",
-      "Update checks against GitHub Releases (in-app where supported).",
+      "Update checks against the release channel (in-app where supported).",
     ],
   },
 ];
@@ -906,7 +905,6 @@ const zhCNEntries: ChangelogEntry[] = [
       "设置 → 常规新增土耳其语，语言改为可搜索选择器。",
       "主题改为与语言相同的可搜索选择器，插件主题也在同一列表中。",
       "添加服务商时服务列表改为平铺可搜索，并加入小米、智谱和 Z.AI。",
-      "设置 → 信息可提交问题反馈，并自动带上当前版本和操作系统。",
       "流式转录合并时保持对话回合的时间顺序。",
     ],
   },
@@ -1331,7 +1329,7 @@ const zhCNEntries: ChangelogEntry[] = [
     version: "0.4.1",
     date: "2026-08-02",
     highlights: [
-      "将 GitHub Releases 与自动更新链接统一到正式的 京车小智工作台 仓库。",
+      "将更新检查与自动更新链接统一到正式发布通道。",
       "更新项目、插件和发布文档中的仓库名称，统一使用 京车小智工作台。",
     ],
   },
@@ -1438,7 +1436,7 @@ const zhCNEntries: ChangelogEntry[] = [
       "界面文案改为更直白的用户语言（含多语言）。",
       "选中态、中文标签与悬停动效打磨。",
       "工作面板与设置页浅色表面细化。",
-      "预发布安装现可发现更新的正式版 GitHub Release。",
+      "预发布安装现可发现更新的正式版发布。",
     ],
   },
   {
@@ -1481,7 +1479,7 @@ const zhCNEntries: ChangelogEntry[] = [
       "工作区工具含权限确认、终端、浏览器与 Git 审查。",
       "Rust 宿主负责存储、密钥、会话与通知。",
       "插件基础能力，界面支持 English / 简体中文。",
-      "可检查 GitHub Releases 更新（支持的平台可应用内更新）。",
+      "可检查更新（支持的平台可应用内更新）。",
     ],
   },
 ];
@@ -1636,7 +1634,6 @@ const zhTWEntries: ChangelogEntry[] = [
       "設定 → 常規新增土耳其語，語言改為可搜尋選擇器。",
       "主題改為與語言相同的可搜尋選擇器，外掛主題也在同一列表中。",
       "新增服務商時服務列表改為平鋪可搜尋，並加入小米、智譜和 Z.AI。",
-      "設定 → 資訊可提交問題反饋，並自動帶上當前版本和作業系統。",
       "流式轉錄合併時保持對話回合的時間順序。",
     ],
   },
@@ -2061,7 +2058,7 @@ const zhTWEntries: ChangelogEntry[] = [
     version: "0.4.1",
     date: "2026-08-02",
     highlights: [
-      "將 GitHub Releases 與自動更新連結統一到正式的 京车小智工作台 倉庫。",
+      "將更新檢查與自動更新連結統一到正式發布通道。",
       "更新專案、外掛和釋出文件中的倉庫名稱，統一使用 京车小智工作台。",
     ],
   },
@@ -2168,7 +2165,7 @@ const zhTWEntries: ChangelogEntry[] = [
       "介面文案改為更直白的使用者語言（含多語言）。",
       "選中態、中文標籤與懸停動效打磨。",
       "工作面板與設定頁淺色表面細化。",
-      "預釋出安裝現可發現更新的正式版 GitHub Release。",
+      "預釋出安裝現可發現更新的正式版發布。",
     ],
   },
   {
@@ -2211,7 +2208,7 @@ const zhTWEntries: ChangelogEntry[] = [
       "工作區工具含許可權確認、終端、瀏覽器與 Git 審查。",
       "Rust 宿主負責儲存、金鑰、會話與通知。",
       "外掛基礎能力，介面支援 English / 簡體中文。",
-      "可檢查 GitHub Releases 更新（支援的平臺可應用內更新）。",
+      "可檢查更新（支援的平臺可應用內更新）。",
     ],
   },
 ];

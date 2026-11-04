@@ -1,9 +1,9 @@
 # ADR 0157: Main-owned GitHub issue feedback
 
-- Status: Accepted
+- Status: Superseded by D425 (the Info page no longer exposes a feedback intake)
 - Date: 2026-09-05
 - Deciders: PI-Desktop core
-- Related: D120, D313, ADR 0022
+- Related: D120, D313, D425, ADR 0022
 
 ## Context
 

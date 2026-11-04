@@ -63,7 +63,6 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
     setNotificationViewingSessionId,
     getPluginLauncherWindow,
     togglePluginLauncher,
-    safeOpenExternal,
     updater,
     dataDir,
     activeTurns,
@@ -181,7 +180,6 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
     getHost,
     getPluginLauncherWindow,
     togglePluginLauncher,
-    safeOpenExternal,
     updater,
   });
   registerNotificationIpc({

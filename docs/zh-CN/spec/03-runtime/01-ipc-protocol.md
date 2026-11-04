@@ -1634,17 +1634,11 @@ prompt/enhance({
 提供商/模型和凭据，因此渲染器永远拿不到密钥。空草稿、斜杠命令草稿、缺失模型
 以及提供商失败都返回通用的 `Result` 错误包络。
 
-### app/openFeedback（D313）
+### app/openFeedback（已由 D425 删除）
 
-```ts
-app/openFeedback() -> { ok: true }
-```
-
-Electron Main 构造固定的 GitHub bug 表单 URL
-（`https://github.com/vastsa/PI-Desktop/issues/new?template=bug_report.yml`），
-并用 `shell.openExternal` 打开。查询字段 `app-version`、`os` 和 `environment`
-由主进程版本信息填充。渲染器不能提供 URL。离开该 origin 或模板的构造会被拒绝。
-此通道不进入 host-core，也不改变 host RPC 协议版本。
+该通道、它预构造的 issue 表单 URL 与渲染器 `openFeedback` 调用均已移除：信息页
+不再提供反馈入口，应用内没有任何路径把用户引向源码仓库。D313 / ADR 0157 描述的是
+被删除的旧行为。其他 app 通道未变。
 
 ## 13d. 本地 MCP 控制 API（D370）
 

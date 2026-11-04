@@ -50,7 +50,6 @@ export * from "./context-pins.js";
 export * from "./expert-presets.js";
 export * from "./expert-panel.js";
 export * from "./model-catalog.js";
-export * from "./github-feedback.js";
 export * from "./network-proxy.js";
 export * from "./attachment-limits.js";
 export * from "./font-size.js";

@@ -97,7 +97,7 @@ export const de = {
   },
   "updates": {
     "title": "Updates",
-    "desc": "Updates werden von GitHub Releases heruntergeladen.",
+    "desc": "Updates werden in der App geprüft und heruntergeladen.",
     "check": "Nach Updates suchen",
     "checking": "Nach Updates suchen…",
     "upToDate": "Sie sind auf der neuesten Version.",
@@ -1347,9 +1347,6 @@ sklm: {
     "logs": "Protokolle",
     "logsDesc": "Lokale Protokolle öffnen.",
     "openLogs": "Protokolle öffnen",
-    "feedback": "Ein Problem melden",
-    "feedbackDesc": "Öffnet GitHub mit Ihrer ausgefüllten Version.",
-    "openFeedback": "Öffnen Sie GitHub",
     "developer": "Entwickler",
     "developerMode": "Entwicklermodus",
     "developerModeDesc": "Aktivieren Sie Entwicklertools und F12.",

@@ -99,7 +99,7 @@ export const zhCN = {
   },
   updates: {
     title: "软件更新",
-    desc: "更新通过 GitHub Releases 分发。",
+    desc: "更新由工作台检查并下载。",
     check: "检查更新",
     checking: "正在检查更新…",
     upToDate: "已是最新版本。",
@@ -1352,9 +1352,6 @@ sklm: {
     logs: "日志",
     logsDesc: "打开本地日志。",
     openLogs: "打开日志",
-    feedback: "问题反馈",
-    feedbackDesc: "在 GitHub 提交问题，并自动带上当前版本。",
-    openFeedback: "打开 GitHub",
     developer: "开发者",
     developerMode: "开发者模式",
     developerModeDesc: "启用开发者工具和 F12。",

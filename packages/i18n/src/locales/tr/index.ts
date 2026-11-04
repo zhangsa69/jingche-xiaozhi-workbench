@@ -106,7 +106,7 @@ export const tr = {
   },
   updates: {
     title: "Güncellemeler",
-    desc: "Güncellemeler GitHub Releases’ten indirilir.",
+    desc: "Güncellemeler uygulama içinde denetlenir ve indirilir.",
     check: "Güncellemeleri denetle",
     checking: "Güncellemeler denetleniyor…",
     upToDate: "En son sürümü kullanıyorsunuz.",
@@ -1369,9 +1369,6 @@ sklm: {
     logs: "Günlükler",
     logsDesc: "Yerel günlükleri aç.",
     openLogs: "Günlükleri aç",
-    feedback: "Sorun bildir",
-    feedbackDesc: "Sürümünüz doldurulmuş olarak GitHub’ı açar.",
-    openFeedback: "GitHub’ı aç",
     developer: "Geliştirici",
     developerMode: "Geliştirici kipi",
     developerModeDesc: "Geliştirici araçlarını ve F12’yi aç.",

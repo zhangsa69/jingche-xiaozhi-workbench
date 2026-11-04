@@ -106,7 +106,7 @@ export const ko = {
   },
   updates: {
     title: "업데이트",
-    desc: "업데이트는 GitHub Releases에서 다운로드됩니다.",
+    desc: "업데이트는 앱 안에서 확인하고 다운로드합니다.",
     check: "업데이트 확인",
     checking: "업데이트 확인 중…",
     upToDate: "최신 버전을 사용 중입니다.",
@@ -1370,9 +1370,6 @@ sklm: {
     logs: "로그",
     logsDesc: "로컬 로그를 엽니다.",
     openLogs: "로그 열기",
-    feedback: "문제 신고",
-    feedbackDesc: "버전 정보가 입력된 GitHub 페이지를 엽니다.",
-    openFeedback: "GitHub 열기",
     developer: "개발자",
     developerMode: "개발자 모드",
     developerModeDesc: "개발자 도구와 F12를 활성화합니다.",

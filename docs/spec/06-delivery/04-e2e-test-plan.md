@@ -10138,27 +10138,12 @@ are withdrawn with ADR 0165.
 - **Milestone**: M5
 - **Status**: Unit-covered (host-core `tools` tests)
 
-#### E2E-176: Settings Info opens a prefilled GitHub bug form
+#### E2E-176: Settings Info carries no feedback intake (retired)
 
-- **Preconditions**: Settings can be opened; the machine can launch a system
-  browser.
-- **Steps**: 1) Open Settings → Info. 2) Confirm the Application row shows the
-  current app version. 3) Search settings for the Report a problem label.
-  4) Activate Open GitHub.
-- **Expected**: The row is indexed by Settings search and stays on Info. The
-  action calls `pi-desktop/app/openFeedback` with no URL from the renderer.
-  Main opens `https://github.com/vastsa/PI-Desktop/issues/new` with
-  `template=bug_report.yml` and prefills `app-version`, `os`, and
-  `environment`. The GitHub bug form still requires description, reproduction
-  steps, expected, actual, version, and OS; blank issues remain disabled.
-- **Specs linked**: `04-ux/06-settings-ia.md`, `03-runtime/01-ipc-protocol.md`,
-  `06-delivery/03-ai-development-workflow.md`, `08-meta/decisions-log.md`
-  (D313), ADR 0157
-- **Acceptance**: H (diagnostics), Quality
-- **Milestone**: M6+
-- **Status**: Unit/source-contract covered (`github-feedback.test.ts`,
-  `feedback.test.mjs`); rendered desktop journey remains pending
-  (run only in a capable environment when this surface changes)
+- **Status**: Retired by D425. The Info page no longer has a feedback row, so
+  there is nothing to search for or activate and no channel to assert. Settings
+  search must return no feedback hit, and the Info page must show the
+  Application, logs, and Updates rows only.
 
 #### E2E-177: Switching a long running session keeps the newest prompt in view
 
