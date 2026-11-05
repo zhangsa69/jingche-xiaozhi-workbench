@@ -105,6 +105,8 @@ test("a collapsed sidebar uses a narrower centered chat content band", () => {
   const mainPaneBlock = globalStyles.match(/\.main-pane\s*\{[\s\S]*?\}/)?.[0] ?? "";
   assert.match(mainPaneBlock, /--chat-content-max-width:\s*760px/);
   assert.match(mainPaneBlock, /--chat-composer-max-width:\s*768px/);
+  // The composer plate runs wider than the reading band so its controls fit.
+  assert.match(mainPaneBlock, /--chat-composer-toolbar-max-width:\s*860px/);
 
   const collapsedBlock =
     globalStyles.match(/\.app-shell\.sidebar-collapsed \.main-pane\s*\{[\s\S]*?\}/)?.[0] ?? "";
@@ -129,7 +131,7 @@ test("a collapsed sidebar uses a narrower centered chat content band", () => {
     globalStyles.match(/^\.composer-stack\s*\{[\s\S]*?\}/m)?.[0] ?? "";
   assert.match(
     composerBlock,
-    /width:\s*min\(100%,\s*var\(--chat-composer-max-width,\s*768px\)\)/,
+    /width:\s*min\(100%,\s*var\(--chat-composer-toolbar-max-width,\s*860px\)\)/,
   );
   assert.match(composerBlock, /transition:\s*width var\(--chat-width-transition/);
 });

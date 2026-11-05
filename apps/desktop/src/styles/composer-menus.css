@@ -6,8 +6,8 @@
 
 /* DARK_COMPOSER_BOX — Codex elevated-primary + elevation-prominent */
 :root[data-theme="dark"] .composer-shell {
-  /* Codex elevated-primary: #212121f5 / gray-800 96% (not flat solid) */
-  background: var(--ds-bg-elevated-primary);
+  /* Solid plate: the composer must fully cover whatever sits behind it. */
+  background: var(--ds-bg-composer);
   box-shadow: var(--ds-shadow-composer);
   border: 0;
   outline: 0;

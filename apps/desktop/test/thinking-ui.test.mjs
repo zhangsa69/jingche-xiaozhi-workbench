@@ -83,9 +83,7 @@ test("Composer owns the mode and model controls", () => {
     composerSource.indexOf('<div className="composer-left">'),
     composerSource.indexOf('<div className="composer-right">'),
   );
-  const modeControl = leftToolbar.indexOf(
-    'className="icon-btn mode-chip composer-mode-chip"',
-  );
+  const modeControl = leftToolbar.indexOf("<ComposerModeSwitch");
   const permissionControl = leftToolbar.indexOf('className="composer-permission"');
   const rightToolbar = composerToolbarSource.slice(
     composerToolbarSource.indexOf('<div className="composer-right">'),

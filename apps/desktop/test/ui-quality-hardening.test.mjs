@@ -99,8 +99,8 @@ test("process containers stay washes by contract", () => {
 });
 
 test("the composer row groups can give width back", () => {
-  // The toolbar is nowrap and the model chip is its widest child, so a rigid
-  // group keeps its content width and pushes the chip past the shell edge.
+  // The model chip is the widest child, so a rigid group keeps its content
+  // width and pushes the chip past the shell edge once the pane narrows.
   assert.match(
     composer,
     /\.composer-left,\s*\.composer-right \{[\s\S]*?flex:\s*0 1 auto;[\s\S]*?min-width:\s*0;/,

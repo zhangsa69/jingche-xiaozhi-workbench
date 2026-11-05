@@ -84,7 +84,8 @@
   --ds-bg-hover: color-mix(in oklab, var(--gray-0) 6%, transparent);
   --ds-bg-active: color-mix(in oklab, var(--gray-0) 10%, transparent);
   /* Codex elevated-primary #212121f5 / color-mix(gray-800 96%, transparent) */
-  --ds-bg-composer: color-mix(in oklab, var(--gray-800) 96%, transparent);
+  /* Fully opaque: the plate is a solid surface, not a tint over the wallpaper. */
+  --ds-bg-composer: var(--gray-800);
   /*
     macOS sidebar and boot-splash glass (chrome.css). The native sidebar
     vibrancy material carries the blur, so the renderer only adds a thin tint
@@ -170,6 +171,16 @@
   --ds-error: #ff6764;
   --ds-info: var(--gray-300);
   --ds-purple: #c27aff;
+  /* Mode switch tints: ask reads green, agent reads sky blue. Dark keeps them
+     bright so the active key glows against the plate. */
+  --ds-mode-ask: #7ee7a8;
+  --ds-mode-agent: #7cc8ff;
+  /* Top bar's three-lens task lamp. Kept apart from --ds-success/--ds-warning/
+     --ds-error: those are ink colours, while a lit lens needs a bright core that
+     still blooms against the dark metal bezel. */
+  --ds-lamp-green: #3ce07b;
+  --ds-lamp-amber: #ffc23d;
+  --ds-lamp-red: #ff5a5f;
   --ds-shadow-dialog: 0 16px 48px rgba(0, 0, 0, 0.55);
   /* Codex --elevation-prominent (same stroke+lift in dark and light) */
   --ds-elevation-stroke: 0 0 0 0.5px color-mix(in oklab, var(--gray-0) 12%, transparent);
@@ -273,6 +284,14 @@
   --ds-error: #e02e2a;
   --ds-info: #5d5d5d;
   --ds-purple: #7c3aed;
+  /* Light keeps the same hues dark enough to hold contrast on a pale plate. */
+  --ds-mode-ask: #16a34a;
+  --ds-mode-agent: #0b7fd4;
+  /* The bezel stays dark hardware in both palettes, so the lit lens only needs
+     to hold its hue against the bezel, not against the surrounding page. */
+  --ds-lamp-green: #17a95a;
+  --ds-lamp-amber: #e09100;
+  --ds-lamp-red: #db3b3b;
   --ds-shadow-dialog: 0 16px 48px rgba(0, 0, 0, 0.12);
   --ds-elevation-stroke: 0 0 0 0.5px color-mix(in oklab, #1a1c1f 12%, transparent);
   /* Codex elevation-prominent exact (same dark/light formula). */

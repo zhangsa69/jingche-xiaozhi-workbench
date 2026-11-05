@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { FsIndexEntry } from "@pi-desktop/shared";
 import { api } from "../../lib/api";
@@ -12,6 +12,7 @@ import { useAppStore } from "../../stores/app-store";
 import { exportFile } from "../../lib/export-file";
 import { IconArchive, IconDownload, IconFileText } from "../icons";
 import { TooltipButton } from "../ui";
+import { FileContextMenu } from "./FileContextMenu";
 import { WorkTabEmpty } from "./WorkTabEmpty";
 
 /**
@@ -38,10 +39,13 @@ export function ArtifactsTab() {
   const messages = useAppStore((state) => state.messages);
   const workspace = useAppStore((state) => state.workspace);
   const openWorkPanelTab = useAppStore((state) => state.openWorkPanelTab);
+  const showToast = useAppStore((state) => state.showToast);
 
   const artifacts = useMemo(() => collectTaskArtifacts(messages), [messages]);
   const changes = useMemo(() => groupTaskChanges(messages), [messages]);
   const [index, setIndex] = useState<IndexState>({ status: "idle" });
+  // A row click previews in the panel; the menu is what reaches outside it.
+  const [menu, setMenu] = useState<{ path: string; x: number; y: number } | null>(null);
 
   const workspacePath = workspace?.path ?? null;
 
@@ -91,6 +95,31 @@ export function ArtifactsTab() {
     openWorkPanelTab(toolWorkPanelTab("review"));
   };
 
+  // Double-click and the context menu both leave the app: the first hands the
+  // file to the OS default app, the second also offers revealing it in place.
+  const openExternal = (path: string) => {
+    void api.fsOpen(path).catch((error) => {
+      showToast(
+        error instanceof Error && error.message
+          ? `${t("panel.files.actionFailed")}: ${error.message}`
+          : t("panel.files.actionFailed"),
+        { variant: "error" },
+      );
+    });
+  };
+
+  const revealFile = (path: string) => {
+    void api.fsReveal(path).catch(() => {
+      showToast(t("panel.files.actionFailed"), { variant: "error" });
+    });
+  };
+
+  const openFileMenu = (path: string, event: ReactMouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setMenu({ path, x: event.clientX, y: event.clientY });
+  };
+
   return (
     <div className="artifacts-tab">
       <div className="artifacts-scroll">
@@ -115,6 +144,8 @@ export function ArtifactsTab() {
                     className="artifacts-row"
                     title={artifact.path}
                     onClick={() => openFile(artifact.path)}
+                    onDoubleClick={() => openExternal(artifact.path)}
+                    onContextMenu={(event) => openFileMenu(artifact.path, event)}
                   >
                     <IconFileText size={14} />
                     <span className="artifacts-path">
@@ -209,6 +240,8 @@ export function ArtifactsTab() {
                       className="artifacts-row"
                       title={path}
                       onClick={() => openFile(path)}
+                      onDoubleClick={() => openExternal(path)}
+                      onContextMenu={(event) => openFileMenu(path, event)}
                     >
                       <IconFileText size={14} />
                       <span className="artifacts-path">
@@ -230,6 +263,16 @@ export function ArtifactsTab() {
           )}
         </section>
       </div>
+      {menu ? (
+        <FileContextMenu
+          path={menu.path}
+          x={menu.x}
+          y={menu.y}
+          onOpenExternal={() => openExternal(menu.path)}
+          onReveal={() => revealFile(menu.path)}
+          onClose={() => setMenu(null)}
+        />
+      ) : null}
     </div>
   );
 }

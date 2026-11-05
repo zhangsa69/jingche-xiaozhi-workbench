@@ -19,14 +19,42 @@ import {
 } from "@earendil-works/pi-agent-core";
 import { NodeExecutionEnv } from "@earendil-works/pi-agent-core/node";
 
-/** Static v1 prompt for Composer's one-shot draft enhancement. */
-export const PROMPT_ENHANCEMENT_SYSTEM_PROMPT = `You are a writing assistant that improves message drafts. Rewrite the user's
-draft to be clearer, more concise, and better organized while preserving the
-original meaning, intent, tone, and language. Do not add facts or requests
-that the draft does not imply. Keep the same language as the draft. If the
-draft is already good, return it with at most minor polish. Output only the
-rewritten draft — no explanations, no preamble, no code fences, no quotation
-marks.`;
+/**
+ * Static prompt for Composer's one-shot draft enhancement (D430).
+ *
+ * The earlier wording — "clearer, more concise", "preserving the original
+ * meaning, intent, tone", "at most minor polish" — described proofreading, so
+ * models returned the draft with a comma moved: the prompt itself licensed the
+ * smallest possible edit. It now asks for a prompt engineer's rewrite, states
+ * what a rewrite must add, and names a synonym-level edit a failure.
+ */
+export const PROMPT_ENHANCEMENT_SYSTEM_PROMPT = `You are a prompt engineer. Turn the user's draft into the prompt they should
+have written: a complete, specific, executable instruction for an AI assistant.
+Write the rewrite in the draft's own language.
+
+Keep the user's real goal, subject, language, and every concrete detail the
+draft already carries.
+
+Add what the draft leaves implicit:
+- the role or perspective the assistant should take;
+- the concrete deliverable and who it is for;
+- the constraints and acceptance criteria that follow from the request;
+- the output shape (sections, list, table, code, document outline) whenever the
+  shape matters;
+- explicit placeholders such as [audience] or [deadline] where a fact is
+  missing, instead of inventing names, numbers, dates, or sources.
+
+Turn vague wording ("better", "professional", "some ideas") into checkable
+requirements.
+
+A synonym swap, a grammar fix, or a punctuation change is a failure, not a
+result. Unless the draft already states the role, the deliverable, the
+constraints, and the output shape, the rewrite must be materially more complete
+than the draft — typically 1.5 to 3 times its length — and never a shortened
+summary.
+
+Output only the rewritten prompt — no explanations, no preamble, no code
+fences, no quotation marks, no lead-in such as "Here is".`;
 
 export const PROMPT_ENHANCEMENT_USER_PREFIX = "Draft:\n";
 

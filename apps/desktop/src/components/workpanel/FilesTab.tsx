@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type MouseEvent as ReactMouseEvent,
 } from "react";
 import { useTranslation } from "react-i18next";
 import type { DocumentPreviewResult, FsEntry, FsReadResult } from "@pi-desktop/shared";
@@ -34,6 +35,7 @@ import {
 } from "../icons";
 import { exportFile } from "../../lib/export-file";
 import { DocumentPreview, DocumentPreviewSkeleton } from "./DocumentPreview";
+import { FileContextMenu } from "./FileContextMenu";
 import { WorkTabEmpty } from "./WorkTabEmpty";
 
 const VIEWER_LINE_CAP = 5000;
@@ -151,6 +153,7 @@ let handledFileRequestSeq = 0;
 
 export function FilesTab() {
   const { t } = useTranslation();
+  const showToast = useAppStore((s) => s.showToast);
   const workspace = useAppStore((s) => s.workspace);
   const fileRequest = useAppStore((s) => s.workPanelFileRequest);
   const root = workspace?.path ?? null;
@@ -167,6 +170,8 @@ export function FilesTab() {
   // Opening another document while the first is still parsing must not let the
   // slower answer overwrite the newer one.
   const docSeq = useRef(0);
+  // A row click previews in the panel; the menu is what reaches outside it.
+  const [menu, setMenu] = useState<{ path: string; x: number; y: number } | null>(null);
 
   // Workspace switches reset all browsing state. Guarded so it only fires on
   // an actual root change: an unconditional [root] effect also runs on the
@@ -246,6 +251,37 @@ export function FilesTab() {
       setFileError(true);
     }
   }, []);
+
+  // Double-click and the context menu both leave the app: the first hands the
+  // file to the OS default app, the second also offers revealing it in place.
+  const openExternal = useCallback(
+    (rel: string) => {
+      void api.fsOpen(rel).catch((error) => {
+        showToast(
+          error instanceof Error && error.message
+            ? `${t("panel.files.actionFailed")}: ${error.message}`
+            : t("panel.files.actionFailed"),
+          { variant: "error" },
+        );
+      });
+    },
+    [showToast, t],
+  );
+
+  const revealFile = useCallback(
+    (rel: string) => {
+      void api.fsReveal(rel).catch(() => {
+        showToast(t("panel.files.actionFailed"), { variant: "error" });
+      });
+    },
+    [showToast, t],
+  );
+
+  const openFileMenu = (rel: string, event: ReactMouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setMenu({ path: rel, x: event.clientX, y: event.clientY });
+  };
 
   // Chat-initiated previews: open the file and expand its ancestor folders
   // so "back" lands on a tree that reveals it. Attachment blobs and absolute
@@ -327,6 +363,8 @@ export function FilesTab() {
           className={cx("file-tree-row", selected === childRel && "active")}
           style={{ paddingLeft: 12 + depth * 14 + 16 }}
           onClick={() => void openFile(childRel)}
+          onDoubleClick={() => openExternal(childRel)}
+          onContextMenu={(event) => openFileMenu(childRel, event)}
           title={childRel}
         >
           <IconFileText size={14} />
@@ -441,5 +479,19 @@ export function FilesTab() {
     );
   }
 
-  return <div className="file-tree">{renderDir("", 0)}</div>;
+  return (
+    <div className="file-tree">
+      {renderDir("", 0)}
+      {menu ? (
+        <FileContextMenu
+          path={menu.path}
+          x={menu.x}
+          y={menu.y}
+          onOpenExternal={() => openExternal(menu.path)}
+          onReveal={() => revealFile(menu.path)}
+          onClose={() => setMenu(null)}
+        />
+      ) : null}
+    </div>
+  );
 }

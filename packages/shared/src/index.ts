@@ -60,3 +60,4 @@ export * from "./message-stream.js";
 export * from "./session-collaboration.js";
 export * from "./plan-steps.js";
 export * from "./repeat-guard.js";
+export * from "./workspace-tools.js";

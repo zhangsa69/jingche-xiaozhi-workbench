@@ -54,6 +54,7 @@ import {
   Moon,
   MoreHorizontal,
   Music,
+  NotebookPen,
   Palette,
   PanelLeft,
   PanelRight,
@@ -85,6 +86,7 @@ import {
   Target,
   Terminal,
   TextQuote,
+  Toolbox,
   Trash2,
   TriangleAlert,
   UserRound,
@@ -167,6 +169,10 @@ export const IconTerminal = icon(Terminal);
 export const IconTerminalSquare = icon(SquareTerminal);
 export const IconPencil = icon(PencilLine);
 export const IconWrench = icon(Wrench);
+/** Footer toolset entry: the companion apps sit behind one toolbox (D428). */
+export const IconToolbox = icon(Toolbox);
+/** Meeting minutes: a companion tool that writes notes rather than drawings. */
+export const IconNotebook = icon(NotebookPen);
 export const IconPullRequest = icon(GitPullRequestArrow);
 export const IconClock = icon(Clock);
 export const IconAt = icon(AtSign);

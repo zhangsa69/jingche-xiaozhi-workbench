@@ -37,6 +37,8 @@ export type RegisterIpcDependencies = {
   getNotificationViewingSessionId: () => string | null;
   setNotificationViewingSessionId: (sessionId: string | null) => void;
   activeUserSubagentDocuments: (...args: any[]) => Promise<any>;
+  /** Guarded opener for app-level links the renderer may not address itself. */
+  openExternal: (url: unknown) => Promise<void>;
   [name: string]: any;
 };
 
@@ -63,6 +65,7 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
     setNotificationViewingSessionId,
     getPluginLauncherWindow,
     togglePluginLauncher,
+    openExternal: safeOpenExternal,
     updater,
     dataDir,
     activeTurns,
@@ -180,6 +183,7 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
     getHost,
     getPluginLauncherWindow,
     togglePluginLauncher,
+    openExternal: safeOpenExternal,
     updater,
   });
   registerNotificationIpc({

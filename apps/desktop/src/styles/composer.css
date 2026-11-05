@@ -32,8 +32,8 @@
 }
 
 .composer-dock-home .composer-stack {
-  /* Keep home and docked modes on the same state-aware content cap. */
-  width: min(100%, var(--chat-composer-max-width, 768px));
+  /* Keep home and docked modes on the same state-aware plate cap. */
+  width: min(100%, var(--chat-composer-toolbar-max-width, 860px));
   max-width: 100%;
   gap: 0;
   overflow: visible;
@@ -41,7 +41,9 @@
 
 .composer-stack {
   pointer-events: auto;
-  width: min(100%, var(--chat-composer-max-width, 768px));
+  /* The plate is wider than the reading band: its toolbar has to seat four mode
+     keys plus the model, context, and send controls on one row. */
+  width: min(100%, var(--chat-composer-toolbar-max-width, 860px));
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -217,35 +219,119 @@
   }
 }
 
-.composer-mode-chip-face {
+/* Four modes, one track: the sliding glider marks the active option, and the
+   tint follows what the mode does. */
+.mode-switch {
+  --mode-switch-tint: var(--ds-text-primary);
+
+  position: relative;
   display: inline-flex;
-  min-width: 0;
-  max-width: 100%;
+  flex: 0 0 auto;
   align-items: center;
-  gap: 6px;
-  animation: composer-mode-face-in var(--motion-duration-fast)
-    var(--motion-ease-out) both;
+  height: 28px;
+  padding: 2px;
+  border-radius: var(--radius-full);
+  background: var(--ds-bg-hover);
+  box-shadow: inset 0 1px 2px color-mix(in oklab, var(--ds-text-primary) 7%, transparent);
 }
 
-.composer-mode-chip[data-planning="true"] {
-  color: var(--ds-text-primary) !important;
+.mode-switch[data-mode="read-only"] {
+  --mode-switch-tint: var(--ds-mode-ask);
 }
 
-.composer-mode-chip[data-planning="true"] svg {
-  color: var(--ds-purple) !important;
-  animation: composer-mode-planning-pulse 1.2s var(--motion-ease-standard)
-    infinite;
+.mode-switch[data-mode="plan"] {
+  --mode-switch-tint: var(--ds-purple);
 }
 
-@keyframes composer-mode-face-in {
-  from {
-    opacity: 0;
-    transform: translateX(4px);
+.mode-switch[data-mode="goal"] {
+  --mode-switch-tint: var(--ds-warning);
+}
+
+.mode-switch[data-mode="agent"] {
+  --mode-switch-tint: var(--ds-mode-agent);
+}
+
+.mode-switch-glider {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc((100% - 4px) / 4);
+  border-radius: var(--radius-full);
+  /* Flat tinted glass like the reference: the outline does the work, with no
+     halo spilling past the track. */
+  background: color-mix(in oklab, var(--mode-switch-tint) 22%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--ds-text-primary) 16%, transparent),
+    0 1px 3px color-mix(in oklab, var(--ds-text-primary) 8%, transparent);
+  transform: translateX(calc(var(--mode-switch-index, 0) * 100%));
+  transition:
+    transform var(--motion-duration-normal) var(--motion-ease-out),
+    background var(--motion-duration-fast) var(--motion-ease-out);
+  pointer-events: none;
+}
+
+.mode-switch-option {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 76px;
+  height: 24px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  color: var(--ds-text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--leading-compact);
+  white-space: nowrap;
+  transition: color var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.mode-switch-option:hover:not(:disabled),
+.mode-switch-option[aria-checked="true"] {
+  color: var(--ds-text-primary);
+}
+
+.mode-switch-option[aria-checked="true"] svg {
+  color: var(--mode-switch-tint);
+}
+
+.mode-switch-option:focus-visible {
+  outline: 2px solid var(--ds-accent);
+  outline-offset: -2px;
+}
+
+.mode-switch-option:disabled {
+  cursor: default;
+}
+
+.mode-switch[data-planning="true"] .mode-switch-option[aria-checked="true"] svg {
+  color: var(--ds-purple);
+  animation: composer-mode-planning-pulse 1.2s var(--motion-ease-standard) infinite;
+}
+
+/* Narrow panes keep all four targets but drop their labels first, before the
+   toolbar would need to wrap. */
+@container composer-stack (max-width: 660px) {
+  .mode-switch-option {
+    width: 26px;
+    padding: 0;
   }
 
-  to {
-    opacity: 1;
-    transform: none;
+  .mode-switch-label {
+    display: none;
+  }
+}
+
+/* Reclaim the widest readouts so the toolbar stays on one line at pane widths
+   just above the four-label budget. The ring and the model name stay. */
+@container composer-stack (max-width: 810px) {
+  .context-inspector-ring-value,
+  .composer-model-thinking-dot,
+  .composer-model-thinking-level {
+    display: none;
   }
 }
 
@@ -351,8 +437,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  flex-wrap: nowrap;
+  gap: 6px;
+  /* Wrapping is the last line of defence: when the pane is too narrow for both
+     groups, the actions move under the composer controls instead of hanging
+     past the shell's rounded edge. */
+  flex-wrap: wrap;
   min-width: 0;
   padding: 4px 8px 8px;
 }
@@ -363,13 +452,27 @@
   align-items: center;
   gap: 4px;
   /*
-    Both groups must be able to give width back. The toolbar is nowrap and the
-    model chip is its widest child, so a rigid group keeps its full content
-    width and pushes the chip past the shell's rounded edge once the pane is
+    Both groups must be able to give width back. When one row has to hold both,
+    the model chip is the widest child, so a rigid group keeps its full content
+    width and pushes the actions past the shell's rounded edge once the pane is
     narrow. `min-width: 0` is what lets a flex item shrink below its content.
   */
   flex: 0 1 auto;
   min-width: 0;
+}
+
+/* Keeps the actions flush right even after they wrap onto their own row. */
+.composer-right {
+  margin-left: auto;
+}
+
+/* One row is the normal state: above the label-collapse breakpoint the toolbar
+   never wraps, and the model chip ellipsizes instead. Wrapping stays available
+   only for the narrowest panes. */
+@container composer-stack (min-width: 661px) {
+  .composer-toolbar {
+    flex-wrap: nowrap;
+  }
 }
 
 .composer-right .context-inspector-trigger {

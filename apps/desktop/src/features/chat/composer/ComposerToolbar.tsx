@@ -8,8 +8,6 @@ import {
   type ThinkingLevel,
 } from "@pi-desktop/shared";
 import type { AppState } from "../../../stores/app-store";
-import type { PromptLibraryController } from "../../../hooks/use-prompt-library";
-import { PromptLibrarySheet } from "../../../components/PromptLibrarySheet";
 import {
   ContextPickerSheet,
   type ContextPickerController,
@@ -26,13 +24,9 @@ import {
   IconStop,
   IconUndo2,
 } from "../../../components/icons";
-import { ModeIcon } from "./ComposerModeIcon";
+import { ComposerModeSwitch } from "./ComposerModeSwitch";
 import { ComposerModelPicker } from "./ComposerModelPicker";
-import {
-  MODE_LABEL_KEYS,
-  PERMISSION_MODE_I18N_KEYS,
-  nextMode,
-} from "./model";
+import { PERMISSION_MODE_I18N_KEYS } from "./model";
 import type { useComposerModelMenu } from "./hooks/useComposerModelMenu";
 
 type ModelMenuController = ReturnType<typeof useComposerModelMenu>;
@@ -68,7 +62,6 @@ export type ComposerToolbarProps = {
   clearEnhancementError: () => void;
   runActive: boolean;
   hasDraftContent: boolean;
-  promptLibrary: PromptLibraryController;
   /** Ticked turns replayed verbatim with the next prompt (W-33). */
   contextPicker: ContextPickerController;
   /** Dictation: press to listen, press again to stop (W-31). */
@@ -107,7 +100,6 @@ export function ComposerToolbar({
   clearEnhancementError,
   runActive,
   hasDraftContent,
-  promptLibrary,
   contextPicker,
   abort,
   submit,
@@ -129,13 +121,24 @@ export function ComposerToolbar({
   const permissionLabel = permissionLockReason
     ? `${t("chat.permissionMode")} · ${permissionLockReason}`
     : t("chat.permissionMode");
-  // The chip is a cycle button, so the tooltip has to say what the current
-  // state means — "Mode" alone leaves read-only users guessing why writes fail.
-  const modeChipLabel = planningLive
-    ? t(`${mode}.planning`)
-    : mode === "read-only"
-      ? `${t("settings.mode")} · ${t("chat.modeReadOnlyHint")}`
-      : t("settings.mode");
+  // Selecting a mode is one call whichever option was picked; the segmented
+  // control only decides which one.
+  const selectMode = async (next: Mode) => {
+    modelMenu.setOpen(false);
+    setPermissionOpen(false);
+    try {
+      await configureActiveSession({
+        mode: next,
+        providerId,
+        modelId,
+        thinkingLevel,
+      });
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : String(error), {
+        variant: "error",
+      });
+    }
+  };
   return (
     <div className="composer-toolbar">
       <div className="composer-left">
@@ -154,39 +157,13 @@ export function ComposerToolbar({
             <IconPlus size={15} aria-hidden="true" />
           </TooltipButton>
         </div>
-        <TooltipButton
-          type="button"
-          className="icon-btn mode-chip composer-mode-chip"
-          data-mode={mode}
-          data-planning={planningLive ? "true" : undefined}
-          tooltip={modeChipLabel}
-          ariaLabel={modeChipLabel}
+        <ComposerModeSwitch
+          t={t}
+          mode={mode}
+          planningLive={planningLive}
           disabled={controlsBlocked}
-          onClick={async () => {
-            modelMenu.setOpen(false);
-            setPermissionOpen(false);
-            const next: Mode = nextMode(mode);
-            try {
-              await configureActiveSession({
-                mode: next,
-                providerId,
-                modelId,
-                thinkingLevel,
-              });
-            } catch (error) {
-              showToast(error instanceof Error ? error.message : String(error), {
-                variant: "error",
-              });
-            }
-          }}
-        >
-          <span className="composer-mode-chip-face" key={mode}>
-            <ModeIcon mode={mode} />
-            <span className="composer-mode-chip-label text-sm">
-              {t(MODE_LABEL_KEYS[mode])}
-            </span>
-          </span>
-        </TooltipButton>
+          onSelect={(next) => void selectMode(next)}
+        />
         <AnchoredMenu
           className="composer-permission"
           open={permissionOpen && !permissionLocked}
@@ -251,7 +228,6 @@ export function ComposerToolbar({
           ))}
         </AnchoredMenu>
         <ContextPickerSheet t={t} controller={contextPicker} />
-        <PromptLibrarySheet t={t} controller={promptLibrary} />
       </div>
 
       <div className="composer-right">

@@ -132,45 +132,49 @@
   background: transparent;
 }
 
-/* Build chip: quiet by default, accented only when an update is actionable. */
-.footer-build {
+/* Tools button: the same 32px icon target as the footer actions beside it, so
+   the row reads as one bar and a narrow sidebar never clips a label. It stays
+   right-aligned because it opens a menu instead of navigating. */
+.footer-toolset {
   display: inline-flex;
-  min-width: 0;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
   margin-left: auto;
   align-items: center;
-  gap: 6px;
-  border-radius: var(--radius-sm);
-  padding: 5px 8px;
+  justify-content: center;
+  border-radius: var(--radius-md);
   color: var(--ds-text-muted);
-  font-size: var(--text-sm);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-normal);
-  line-height: var(--leading-none);
   transition: background var(--motion-duration-fast) var(--motion-ease-out),
     color var(--motion-duration-fast) var(--motion-ease-out);
 }
 
-.footer-build:hover {
+.footer-toolset:hover {
   background: var(--ds-bg-hover);
-  color: var(--ds-text-secondary);
-}
-
-.footer-build-version {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.footer-build.has-update {
   color: var(--ds-text-primary);
 }
 
-.footer-build-dot {
-  width: 5px;
-  height: 5px;
-  flex: 0 0 auto;
-  border-radius: var(--radius-full);
-  background: var(--ds-accent);
+/* Reads as pressed while its menu is open. */
+.footer-toolset[aria-expanded="true"] {
+  background: var(--ds-bg-active);
+  color: var(--ds-text-primary);
+}
+
+/* Same popover recipe as the sidebar menus: one row per tool, the trailing
+   glyph marks that the click leaves the app. sessions.css sets the shared
+   184px floor after this sheet, so the width is claimed at higher specificity. */
+.sidebar-popover.tools-menu {
+  min-width: 208px;
+  width: max-content;
+}
+
+.sidebar-popover.tools-menu .tools-menu-external {
+  margin-left: auto;
+  color: var(--ds-text-faint);
+}
+
+.sidebar-popover.tools-menu button[disabled] {
+  opacity: 0.6;
 }
 
 .footer-actions {
@@ -221,23 +225,6 @@
   white-space: nowrap;
 }
 
-/* Keep the Agent/Plan/Goal control stable while its localized label changes. */
-.composer-mode-chip {
-  width: 88px;
-  min-width: 88px;
-  max-width: 88px;
-  flex: 0 0 88px;
-  justify-content: flex-start;
-}
-
-.composer-mode-chip-label {
-  min-width: 0;
-  overflow: hidden;
-  text-align: start;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .mode-chip > span {
   min-width: 0;
   overflow: hidden;
@@ -246,7 +233,6 @@
 }
 
 .mode-chip > span,
-.composer-mode-chip-label,
 .composer-model-thinking-model,
 .composer-model-thinking-level {
   line-height: var(--leading-compact);

@@ -9,6 +9,12 @@ submit slot. When invoked, the request rewrites only the draft text with the
 model currently displayed in the Composer. Inline file-reference chips,
 including pasted image chips, remain unchanged and do not disable the action.
 
+The target is the prompt the user should have written, not a polished message:
+the rewrite supplies the role and perspective, the deliverable and audience,
+the constraints and acceptance criteria, and the output shape, and turns vague
+wording into checkable requirements. A synonym swap, a grammar fix, or a
+punctuation change is not an enhancement (D430).
+
 This is a v1 utility action, not an agent turn: it does not append a message,
 read session history, run tools, or persist a transcript row.
 
@@ -54,7 +60,11 @@ The completion context contains exactly:
 2. one user message, `Draft:\n<draft text>`.
 
 No prior conversation, tools, attachments, or configurable template are
-included. The renderer removes its inline file-reference chip tokens before
+included. That static prompt positions the model as a prompt engineer: it
+demands the role, deliverable, constraints, and output shape the draft leaves
+implicit, asks for explicit `[placeholder]` tokens instead of invented details,
+and treats a synonym, grammar, or punctuation-only edit as a failure. The
+renderer removes its inline file-reference chip tokens before
 the request and restores those chips in their original order and relative
 position after the text response; the model is not trusted to preserve opaque
 renderer sentinels. The selected thinking level is passed to pi-ai, and

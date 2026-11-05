@@ -744,7 +744,6 @@ export function Composer({
             clearEnhancementError={clearEnhancementError}
             runActive={runActive}
             hasDraftContent={hasDraftContent}
-            promptLibrary={promptLibrary}
             contextPicker={contextPicker}
             abort={abort}
             submit={submit}

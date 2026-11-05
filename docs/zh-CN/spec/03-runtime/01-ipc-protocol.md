@@ -1634,7 +1634,16 @@ prompt/enhance({
 提供商/模型和凭据，因此渲染器永远拿不到密钥。空草稿、斜杠命令草稿、缺失模型
 以及提供商失败都返回通用的 `Result` 错误包络。
 
-### app/openFeedback（已由 D425 删除）
+### app/openWorkspaceTool（D428）
+
+```ts
+app/openWorkspaceTool({ toolId: "pdf" | "cad" | "mindmap" | "minutes" }) -> { ok: true }
+```
+
+Electron Main 用自己持有的地址表（`main/workspace-tools.ts`）解析该 id，并把得到的
+内网地址交给受校验的外部打开器（非 `http(s)` 一律拒绝）。渲染层引用的共享包只携带
+工具 id，因此任何渲染产物都不含内网主机。渲染层从不提供地址：未知或缺失的 id 以
+`INVALID_ARGUMENT` 失败，且不打开任何东西。其他 app 通道未变。
 
 该通道、它预构造的 issue 表单 URL 与渲染器 `openFeedback` 调用均已移除：信息页
 不再提供反馈入口，应用内没有任何路径把用户引向源码仓库。D313 / ADR 0157 描述的是

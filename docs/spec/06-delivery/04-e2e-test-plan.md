@@ -7863,12 +7863,15 @@ This test plan spec is accepted when:
 ### US-UI-16 Sidebar footer utility layout
 - On the light/dark home shell, the sidebar footer is a transparent utility
   band with no separator. Settings, Plugins, and notification actions
-  are grouped on the left, while the build/version chip is right-aligned.
+  are grouped on the left, while the tools button is right-aligned.
 - The notification Bell remains visible in the left action group with its
   unread badge and opens the inbox above the footer; the main titlebar has no
   duplicate Bell.
-- Clicking the build/version chip checks for updates when current, or opens
-  Settings → Info when an actionable update is available.
+- Clicking the tools button opens its menu above it, right-aligned with it,
+  listing PDF editor, CAD editor, Mind map, and Meeting notes; each entry hands its intranet
+  address to the system browser and the row shows no in-app navigation (D428).
+  Escape, a click elsewhere, or a window resize closes the menu and returns
+  focus to the button.
 - Traffic lights sit at Codex `{x:16,y:16}` with a 46px toolbar; the expanded
   macOS sidebar places Collapse sidebar at the right in that same
   row, with no Logo/Home brand or back/forward buttons.

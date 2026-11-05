@@ -68,6 +68,13 @@ describe("prompt enhancement", () => {
   it("builds a single system-plus-user context without history or tools", () => {
     const context = promptEnhancementContext("  Make this clearer.  ");
     expect(context.systemPrompt).toContain("Output only the");
+    // D430: the ask is a prompt-engineering rewrite, not proofreading. The old
+    // wording ("more concise", "at most minor polish") licensed a comma-level
+    // edit and must not come back.
+    expect(context.systemPrompt).toContain("prompt engineer");
+    expect(context.systemPrompt).toContain("1.5 to 3 times");
+    expect(context.systemPrompt).toMatch(/punctuation change is a failure/);
+    expect(context.systemPrompt).not.toMatch(/minor polish|more concise/);
     expect(context.messages).toHaveLength(1);
     expect(context.messages[0]).toMatchObject({
       role: "user",

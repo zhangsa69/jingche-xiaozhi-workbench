@@ -67,9 +67,10 @@
   }
 
   .composer-placeholder,
-  .composer-mode-chip-face,
-  .composer-mode-chip[data-planning="true"] svg {
+  .mode-switch-glider,
+  .mode-switch[data-planning="true"] svg {
     animation: none;
+    transition: none;
   }
 
   .composer-shell,

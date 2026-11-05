@@ -308,9 +308,11 @@ needs a human decision. The prompt is visible in the composer before it is sent.
 
 ### 3.9 Prompt library
 
-A panel docked above the composer, opened from the toolbar. It lists the prompts
-this user actually sent, newest first, with the pin floating a row up while the
-list keeps recency underneath.
+A panel docked above the composer. The toolbar entry was removed on request, so
+today the library contributes storage and recall only; the panel stays in the
+codebase should an entry point return. It lists the prompts this user actually
+sent, newest first, with the pin floating a row up while the list keeps recency
+underneath.
 
 Sending a prompt records it; slash commands do not, because replaying `/model`
 as free text would produce something that does nothing. The same text typed with

@@ -104,6 +104,7 @@ import type {
   TrustedExtensionStatusEvent,
   TrustedExtensionUiPrompt,
   TrustedExtensionUiPromptResponse,
+  WorkspaceToolId,
 } from "@pi-desktop/shared";
 import {
   defaultCommandShellForPlatform,
@@ -319,6 +320,8 @@ export const api = {
   updatesDownload: () => invoke<UpdateState>(IPC.invoke.updatesDownload),
   updatesInstall: () => invoke(IPC.invoke.updatesInstall),
   updatesOpenReleases: () => invoke(IPC.invoke.updatesOpenReleases),
+  openWorkspaceTool: (toolId: WorkspaceToolId) =>
+    invoke(IPC.invoke.appOpenWorkspaceTool, { toolId }),
   listNotifications: (input?: { unreadOnly?: boolean; limit?: number }) =>
     invoke<NotificationListResult>(IPC.invoke.notificationList, input ?? {}),
   markNotificationRead: (id: string) =>

@@ -580,6 +580,128 @@
   background: var(--ds-tile);
 }
 
+/*
+  Task status lamps: a skeuomorphic bead sitting left of the overview button —
+  a dark metal bezel holding three glass lenses. The lens matching the session
+  state lights up and spills a halo onto the bezel; the other two stay in their
+  own shadow, so the cluster reads as a device indicator and not as three
+  coloured dots. The bezel is hardware, so it keeps its dark tone in the light
+  theme; only the lens tints change (see --ds-lamp-* in tokens.css).
+*/
+.ct-status-lamps {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4.5px;
+  margin-right: 6px;
+  padding: 4.5px 9px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--gray-550) 92%, transparent),
+    color-mix(in oklab, var(--gray-900) 96%, transparent)
+  );
+  box-shadow:
+    inset 0 1.5px 0 color-mix(in oklab, var(--gray-0) 24%, transparent),
+    inset 0 -1.5px 3px color-mix(in oklab, var(--gray-1000) 80%, transparent),
+    0 1.5px 3px color-mix(in oklab, var(--gray-1000) 55%, transparent);
+}
+
+.ct-status-lamp {
+  position: relative;
+  width: 10.5px;
+  height: 10.5px;
+  border-radius: var(--radius-full);
+  /* An unlit lens: the glass keeps a trace of its tint but holds no light. */
+  background: radial-gradient(
+    circle at 32% 26%,
+    color-mix(in oklab, var(--lamp-tint) 24%, var(--gray-800)),
+    color-mix(in oklab, var(--lamp-tint) 8%, var(--gray-1000)) 74%
+  );
+  box-shadow:
+    inset 0 1.5px 1.5px color-mix(in oklab, var(--gray-0) 16%, transparent),
+    inset 0 -1.5px 3px color-mix(in oklab, var(--gray-1000) 90%, transparent),
+    0 0 0 1.5px color-mix(in oklab, var(--gray-1000) 60%, transparent);
+  transition:
+    background var(--motion-duration-fast) var(--motion-ease-out),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-out),
+    opacity var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+/* Blown-glass specular streak across the top third of the lens. */
+.ct-status-lamp::after {
+  position: absolute;
+  inset: 1.5px 3px auto;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--gray-0) 88%, transparent),
+    color-mix(in oklab, var(--gray-0) 0%, transparent)
+  );
+  content: "";
+  opacity: 0.2;
+  transition: opacity var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.ct-status-lamp.red {
+  --lamp-tint: var(--ds-lamp-red);
+}
+
+.ct-status-lamp.amber {
+  --lamp-tint: var(--ds-lamp-amber);
+}
+
+.ct-status-lamp.green {
+  --lamp-tint: var(--ds-lamp-green);
+}
+
+/* Lit lens: bright core, saturated rim, and a halo that reaches the bezel. */
+.ct-status-lamps[data-lamp="idle"] .ct-status-lamp.green,
+.ct-status-lamps[data-lamp="running"] .ct-status-lamp.amber,
+.ct-status-lamps[data-lamp="permission"] .ct-status-lamp.amber,
+.ct-status-lamps[data-lamp="failed"] .ct-status-lamp.red {
+  background: radial-gradient(
+    circle at 32% 26%,
+    color-mix(in oklab, var(--lamp-tint) 42%, var(--gray-0)),
+    var(--lamp-tint) 56%,
+    color-mix(in oklab, var(--lamp-tint) 68%, var(--gray-1000))
+  );
+  box-shadow:
+    0 0 6px color-mix(in oklab, var(--lamp-tint) 78%, transparent),
+    0 0 13.5px color-mix(in oklab, var(--lamp-tint) 40%, transparent),
+    inset 0 1.5px 1.5px color-mix(in oklab, var(--gray-0) 85%, transparent),
+    0 0 0 1.5px color-mix(in oklab, var(--lamp-tint) 45%, transparent);
+}
+
+.ct-status-lamps[data-lamp="idle"] .ct-status-lamp.green::after,
+.ct-status-lamps[data-lamp="running"] .ct-status-lamp.amber::after,
+.ct-status-lamps[data-lamp="permission"] .ct-status-lamp.amber::after,
+.ct-status-lamps[data-lamp="failed"] .ct-status-lamp.red::after {
+  opacity: 0.8;
+}
+
+/* A parked permission prompt blinks so it is not mistaken for a running turn. */
+.ct-status-lamps[data-lamp="permission"] .ct-status-lamp.amber {
+  animation: ct-status-lamp-alert 1.4s var(--motion-ease-standard) infinite;
+}
+
+@keyframes ct-status-lamp-alert {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-status-lamps[data-lamp="permission"] .ct-status-lamp.amber {
+    animation: none;
+  }
+}
+
 /* W-03: the task overview hangs off the top bar's checklist button. The badge
  * carries the artifact count so the answer reads without opening the panel. */
 .task-overview {

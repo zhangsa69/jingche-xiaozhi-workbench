@@ -48,18 +48,19 @@ test("sidebar hover does not paint a full-height resize rail", () => {
   );
 });
 
-test("the chat reserves one row for unsqueezed composer controls", () => {
+test("the chat keeps composer controls inside the shell", () => {
   assert.match(
     globalStyles,
     /\.main-pane\s*\{[\s\S]*?min-width:\s*var\(--ds-main-pane-min-width, 450px\);/,
   );
+  // Wrapping is the last resort; before that, both groups give width back.
   assert.match(
     globalStyles,
-    /\.composer-toolbar\s*\{[\s\S]*?flex-wrap:\s*nowrap;/,
+    /\.composer-toolbar\s*\{[\s\S]*?flex-wrap:\s*wrap;/,
   );
   assert.match(
     globalStyles,
-    /\.composer-left,\s*\.composer-right\s*\{[\s\S]*?flex:\s*0 0 auto;/,
+    /\.composer-left,\s*\.composer-right\s*\{[\s\S]*?flex:\s*0 1 auto;[\s\S]*?min-width:\s*0;/,
   );
   assert.match(
     globalStyles,

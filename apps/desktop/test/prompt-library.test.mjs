@@ -111,14 +111,17 @@ test("the panel uses real controls and inserts through the store prefill channel
   assert.match(sheet, /aria-label=\{t\("promptLibrary\.searchPlaceholder"\)\}/);
   assert.doesNotMatch(sheet, /<div[^>]*role="button"/);
   assert.match(hook, /useAppStore\.getState\(\)\.appendComposerDraftText\(text\)/);
-  assert.match(toolbar, /<PromptLibrarySheet t=\{t\} controller=\{promptLibrary\} \/>/);
+  // The toolbar entry is gone, so the panel is no longer mounted with it.
+  assert.doesNotMatch(toolbar, /<PromptLibrarySheet/);
+  assert.doesNotMatch(toolbar, /promptLibrary: PromptLibraryController/);
 });
 
-test("the panel is reachable from the composer toolbar", () => {
+test("recall stays available without a toolbar entry", () => {
   assert.match(sheet, /trigger=\{\(ref\) => \(/);
   assert.match(sheet, /aria-haspopup="dialog"/);
   assert.match(sheet, /onClick=\{controller\.toggleOpen\}/);
-  assert.match(toolbar, /promptLibrary: PromptLibraryController/);
+  // The hook still drives recall in the composer; only the button was removed.
+  assert.match(composer, /promptLibrary\.recall\(value\)/);
   assert.match(globals, /@import "\.\/prompt-library\.css";/);
 });
 

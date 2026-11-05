@@ -47,6 +47,9 @@
   background: var(--ds-bg-primary);
   --chat-content-max-width: 760px;
   --chat-composer-max-width: 768px;
+  /* The composer plate carries the four-way mode switch plus the model and
+     context readouts, so it runs wider than the reading band. */
+  --chat-composer-toolbar-max-width: 860px;
   --chat-width-transition: var(--motion-duration-normal) var(--motion-ease-out);
 }
 

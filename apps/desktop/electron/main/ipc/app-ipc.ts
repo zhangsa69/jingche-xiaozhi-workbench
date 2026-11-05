@@ -2,14 +2,9 @@ import { BrowserWindow } from "electron";
 import { dirname, join, resolve } from "node:path";
 import { existsSync, statSync } from "node:fs";
 import { listInstalledFonts } from "../system-fonts";
-import {
-  APP_NAME,
-  APP_VERSION,
-  ErrorCodes,
-  IPC,
-  PROTOCOL_VERSION,
-} from "@pi-desktop/shared";
+import { APP_NAME, APP_VERSION, ErrorCodes, IPC, PROTOCOL_VERSION } from "@pi-desktop/shared";
 import { globalInstructionPath } from "@pi-desktop/agent-runtime";
+import { workspaceToolUrl } from "../workspace-tools";
 import type { HostProcess } from "../host-process";
 import type { AppUpdaterController } from "../updater";
 import type { IpcRegistrar } from "./types";
@@ -19,6 +14,8 @@ export type AppIpcDependencies = {
   getHost: () => HostProcess | null;
   getPluginLauncherWindow: () => BrowserWindow | null;
   togglePluginLauncher: () => Promise<void>;
+  /** Guarded opener: validates the scheme before the OS sees the URL (D330). */
+  openExternal: (url: unknown) => Promise<void>;
   updater: AppUpdaterController;
 };
 
@@ -28,6 +25,7 @@ export function registerAppIpc({
   getHost,
   getPluginLauncherWindow,
   togglePluginLauncher,
+  openExternal,
   updater,
 }: AppIpcDependencies): void {
   const { handle, handleWithEvent } = registrar;
@@ -44,6 +42,19 @@ export function registerAppIpc({
       window.hide();
     }
     return { visible: false };
+  });
+
+  handle(IPC.invoke.appOpenWorkspaceTool, async ({ toolId }: { toolId?: unknown }) => {
+    // The renderer names a tool, never an address: an unknown id has no URL to
+    // open, so a compromised renderer cannot turn this into a link launcher.
+    const url = workspaceToolUrl(toolId);
+    if (!url) {
+      throw Object.assign(new Error("UNKNOWN_WORKSPACE_TOOL"), {
+        code: ErrorCodes.INVALID_ARGUMENT,
+      });
+    }
+    await openExternal(url);
+    return { ok: true };
   });
 
   handle(IPC.invoke.appGetVersion, async () => {

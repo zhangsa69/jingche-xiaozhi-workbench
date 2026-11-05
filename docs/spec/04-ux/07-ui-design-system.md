@@ -479,10 +479,10 @@ Light theme: minimal shadows only where layering is insufficient.
 | `elevation-3` | bg-tertiary + border-accent | bg-white + `shadow-lg` | Dialogs, overlays |
 
 Sidebar footer: a transparent utility band with no separator. The Settings,
-Plugins and notification icon buttons stay grouped on the left. The
-build/version chip is right-aligned and remains the update check/release entry
-point. Hover and active states use semantic sidebar surfaces; neither side adds
-a persistent card fill.
+Plugins and notification icon buttons stay grouped on the left. A tools chip is
+right-aligned and opens the intranet companion tools upward; update checks live
+in Settings → Info, not in this band (D428). Hover and active states use
+semantic sidebar surfaces; neither side adds a persistent card fill.
 
 Every scroll container in the renderer uses one quiet scrollbar: 6px,
 trackless, with a thumb that is transparent at rest. The thumb appears only
@@ -1264,7 +1264,7 @@ Full component contract and usage rules: [08-component-spec.md §17](08-componen
 
 - Main surface: `#181818` (`gray-900`)
 - Sidebar / surface-under: `#000000`
-- Floating composer plate: Codex elevated-primary (`#212121f5` / `color-mix(gray-800 96%, transparent)`) with standard elevation-prominent (`0 0 0 .5px` stroke + `0 3px 7.5px #0000000a` + `0 0 20px #0000000d`); no heavier night-only lift
+- Floating composer plate: solid `#212121` (gray-800), fully opaque — the plate must cover whatever sits behind it — with standard elevation-prominent (`0 0 0 .5px` stroke + `0 3px 7.5px #0000000a` + `0 0 20px #0000000d`); no heavier night-only lift
 - Light workspace chips capsule: elevated gray `#f4f4f4` (not pure white-on-white)
 - Combined workspace chips: elevated translucent plate over main, not flat main gray
 - Stage Manager: host re-asserts min bounds while collapsed (permanent watchdog)

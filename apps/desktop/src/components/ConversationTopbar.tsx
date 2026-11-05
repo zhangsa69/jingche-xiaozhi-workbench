@@ -6,6 +6,7 @@ import {
   IconSearch,
 } from "./icons";
 import { TaskOverviewPopover } from "./TaskOverviewPopover";
+import { TaskStatusLamps } from "./TaskStatusLamps";
 import { TooltipButton } from "./ui";
 
 function projectName(path?: string | null, name?: string | null) {
@@ -92,6 +93,7 @@ export function ConversationTopbar({
 
       <div className="ct-right">
         <div className="ct-actions">
+          <TaskStatusLamps />
           {activeSession ? <TaskOverviewPopover /> : null}
           <TooltipButton
             type="button"

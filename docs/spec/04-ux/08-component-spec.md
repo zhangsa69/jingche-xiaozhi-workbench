@@ -208,7 +208,7 @@ palette / application menu, not the top bar.)
 ### 2.2 Anatomy
 
 ```text
-[☰ Sidebar] [Task title]                          [＋ New] [🔍 Search]
+[☰ Sidebar] [Task title]                  [● ● ●] [＋ New] [🔍 Search]
 ```
 
 (Icons described functionally; actual render uses Lucide SVGs. The `[☰ Sidebar]`
@@ -216,7 +216,9 @@ toggle renders **only when the sidebar is collapsed**; when the sidebar is
 expanded it owns that control, so the top bar does not duplicate it. The
 `[🔍 Search]` control is the chrome search entry; the expanded sidebar header
 does not duplicate it. Keyboard shortcuts and the application menu remain
-available.)
+available. `[● ● ●]` is the task status lamp: three red/amber/green lenses in a
+metal bezel at the leading edge of the action cluster, left of the task overview
+button, and only the lens matching the active session's state is lit (D429).)
 
 The conversation top bar renders for the chat route only; Pull requests, Scheduled,
 Plugins, and Settings keep the frameless drag band. It owns the task title and
@@ -281,16 +283,24 @@ combined model × reasoning selection (§11).
 | Element | Default | Running | Error | No workspace |
 |---|---|---|---|---|
 | Task title | session title (or untitled), capped at 10 characters with an ellipsis when needed | same | same | same |
+| Task status lamp | green lens lit (ready) | amber lens steady (working); amber blinks while a permission prompt is parked | red lens lit (last turn failed) | green lens lit |
 | New task / Search | icon buttons | same | same | same |
 | Composer stop control | hidden | visible only when the running composer draft is empty | hidden | hidden |
 | Project name | title tooltip only | same | same | omitted |
+
+The lamp is a status device, not a control: precedence is
+permission > running > failed > idle, and the two unlit lenses keep their glass
+tint without emitting light. The lamp plus the Composer stop control are the
+topbar's run-state readouts; the transcript keeps its per-step working feedback
+while output streams.
 
 ### 2.5 Accessibility
 
 - Every control is keyboard-reachable with Tab
 - Composer stop control has `aria-label="Stop generating"`
-- The topbar does not render a separate running-state indicator; the Composer
-  submit control and transcript working feedback remain the running-state cues.
+- The status lamp is not focusable; its container carries `role="img"` and a
+  localized `aria-label` (Ready / Working / Permission required / Run failed), so
+  the state never depends on colour alone
 
 ### 2.6 MVP constraints
 
@@ -337,7 +347,7 @@ Expanded (~275px, D034/D070):
 |   • Project session      |
 | project-B      [>] [+] … |
 |                           |
-| [⚙][plug][bell]          [version]|
+| [⚙][plug][bell]        [toolbox]|
 +---------------------------+
 
 Collapsed (48px):
@@ -363,7 +373,7 @@ tier; weight, indentation, and disclosure icons preserve their hierarchy:
 | Project / group titles, empty copy | `--text-md` (13px) | Hierarchy comes from weight and indentation |
 | Section labels (`PINNED`, `SESSIONS`, `PROJECTS`) | `--text-sm` (12px) | Uppercase secondary labels; global pin project context uses the same size |
 | Footer profile name + profile menu items | `--text-base` (14px) | Identity cluster matches nav body |
-| Footer status / version | `--text-sm` (12px) | Right-aligned build/version chip |
+| Footer tools button | 14px icon | Same 32×32 icon target as the footer actions, right-aligned; opens the tools menu |
 
 Do not render primary sidebar list content below `--text-md`. Keep row heights
 (≈28–32px) so density stays WorkBuddy/Codex-like while primary actions remain
@@ -440,9 +450,10 @@ visually distinct from list content.
   unmounts normally, releasing listeners, and an operation already in flight
   still completes and reports through the normal toast channel; this is not a
   hidden live workbench or durable preference across application restart.
-- The footer action group stays on the left and the build/version chip stays
-  right-aligned; clicking the chip checks for updates or opens the available
-  release in Settings
+- The footer action group stays on the left and the tools button stays
+  right-aligned, sharing the actions' 32×32 icon target; clicking it opens its
+  menu upward with the four intranet tools, each in the system browser (D428).
+  Update checks live in Settings → Info
 - Click Collapse sidebar at the right of the header row to collapse the sidebar.
   Global search opens from the conversation topbar, shortcuts, and application
   menu; the expanded sidebar header does not host a search control
@@ -1316,7 +1327,7 @@ storage but compose into one assistant turn until the next user message.
 | Turn start | Send / retry / regenerate re-pins follow mode and jumps to bottom |
 | Thinking-only streaming | Transcript opens; the latest thinking disclosure opens unless the user has taken it over; no empty answer bubble or duplicate Working row |
 | Pre-stream working | Compact animated-dot Working row until thinking, tools, or an answer exist |
-| Pre-stream planning | Compact animated-dot Planning / Goal row in that same slot; the Composer mode chip pulses. Once tools or an answer exist, the transcript row yields so it does not sit orphaned above the composer |
+| Pre-stream planning | Compact animated-dot Planning / Goal row in that same slot; the Composer mode switch pulses. Once tools or an answer exist, the transcript row yields so it does not sit orphaned above the composer |
 | Idle | Scrollable; no auto-scroll |
 | Permission pending | PermissionCard inserted inline; transcript continues after resolution |
 | Context checkpoint | Existing transcript remains visible; compaction adds one divider row after the message it covers and one warning toast |
@@ -2444,15 +2455,22 @@ reasoning-level control.
 - Padding: px-4 py-3 inner textarea
 - Font: text-sm for Agent, Plan, and Goal; mode changes semantics and tool
   controls, not the typography
-- The Agent/Plan/Goal mode chip reserves one fixed 88px width, sized from the
-  longest built-in label in English and zh-CN ("Agent" / "智能体"). Its label
-  stays single-line and ellipsizes if a future locale exceeds that budget, so
-  switching modes never reflows the adjacent Composer controls. Cycling the
-  chip cross-fades the icon and label in place. While the live turn is
-  `planning`, the chip pulses on its icon (purple) instead of leaving a
-  second status row parked above the composer; a staged mode choice still
-  updates the chip immediately and does not start that pulse until the
-  in-flight turn actually projects `planning`.
+- The four modes — Ask, Plan, Agent, Goal — sit in one segmented control
+  (`.mode-switch`, `role="radiogroup"`) instead of a cycling chip, so every
+  choice is visible at once. A glider marks the active option: it spans a
+  quarter of the track, moves by `--mode-switch-index`, and is tinted purple
+  for Plan and orange for Goal. While the live turn is `planning`, only the
+  active option's icon pulses (purple) instead of leaving a second status row
+  parked above the composer; a staged choice moves the glider immediately and
+  does not pulse until the in-flight turn actually projects `planning`.
+- Each of the four keys is a fixed 76px wide so the longest built-in label
+  ("问一问" / "智能体") has room, and the glider divides the widened track into
+  four equal quarters. The switch never widens the toolbar past the shell:
+  labels fold to icons at a `composer-stack` width of 660px, the model reasoning
+  suffix and the context percentage drop at 810px, the toolbar is pinned to one
+  row above 660px, and it wraps as a last resort below that with the action
+  group kept right-aligned. Send therefore stays inside the composer even at the
+  450px main-pane floor.
 - The permission chip remains visible in Agent, Plan, and Goal for a stable
   toolbar rhythm. Agent and Plan expose the effective selectable permission;
   Goal displays the localized Auto label as a disabled, non-opening chip while
@@ -2489,9 +2507,11 @@ reasoning-level control.
   headings remove uppercase transformation and wide tracking so localized labels
   remain readable.
 - Width: Home and thread-docked composers share one `24px` horizontal gutter
-  and a `768px` maximum content envelope. The left-edge conversation minimap
-  is absolutely positioned outside that envelope, so its appearance or
-  disappearance never changes the composer shell width.
+  and an `860px` maximum plate envelope
+  (`--chat-composer-toolbar-max-width`); the reading band and home hero stay at
+  `760px`/`768px`, so the wider plate never widens the transcript. The left-edge
+  conversation minimap is absolutely positioned outside the envelope, so its
+  appearance or disappearance never changes the composer shell width.
 - Visual parity: Home and thread-docked composers use the same
   `.composer-shell`, `.composer-input-wrap`, `.composer-input`, and
   `.composer-toolbar` spacing, minimum heights, theme surfaces, and controls.
@@ -2528,7 +2548,7 @@ reasoning-level control.
 | Running | textarea and mode/model × reasoning/permission controls remain editable for the next turn; the single submit slot shows Stop only with an empty draft and no saved annotations | Send queues text, attachments, or saved annotations alone; Stop when all are empty |
 | Context checkpoint | Same as Running until durable checkpoint completion; intermediate `turn_end` does not reactivate controls. A retained-tail fallback remains Running and shows a warning toast | Same single-slot Stop/Send behavior as Running |
 | Permission pending | textarea disabled (per [03-permission-ux.md](03-permission-ux.md) §7) | Send disabled; Stop remains active whenever the running empty-draft condition is met |
-| Plan / Goal / planning | textarea active while idle; contract badge and permission chip visible; mode chip pulses while the live turn projects `planning` | inspect, send, or submit a contract |
+| Plan / Goal / planning | textarea active while idle; contract badge and permission chip visible; mode switch pulses while the live turn projects `planning` | inspect, send, or submit a contract |
 | Plan / Goal / awaiting approval | approval surface shows only the title and artifact opener for the exact `.pi/<kind>/*.md` approval; draft is preserved read-only and composer controls remain blocked for that session | approve or reject |
 | Plan / queued or running | Agent badge remains selected; queue/running state is visible; draft and next-turn controls remain editable | Stop; Send queues the next prompt; no replay control |
 | Plan / Goal / planning after rejected, expired, or interrupted proposal | contract chip remains visible and editable | send a later prompt; submit a new contract; no execution action |

@@ -2020,7 +2020,18 @@ attachments. Electron main resolves the provider/model and credentials, so the
 renderer never receives a secret. Empty drafts, slash-command drafts, missing
 models, and provider failures return the common `Result` error envelope.
 
-### app/openFeedback (removed by D425)
+### app/openWorkspaceTool (D428)
+
+```ts
+app/openWorkspaceTool({ toolId: "pdf" | "cad" | "mindmap" | "minutes" }) -> { ok: true }
+```
+
+Electron Main resolves the id against the address table it owns
+(`main/workspace-tools.ts`) and passes the resulting intranet address to the
+guarded external opener, which rejects anything that is not an `http(s)` URL.
+The shared package the renderer imports carries ids only, so no renderer bundle
+holds a host. The renderer never supplies an address: an unknown or missing id
+fails with `INVALID_ARGUMENT` and opens nothing. No other app channel changed.
 
 The channel, its prebuilt issue-form URL, and the renderer `openFeedback` call
 are gone: the Info page carries no feedback intake, so nothing in the app can
