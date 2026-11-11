@@ -268,6 +268,14 @@ export const IPC = {
     closeBehaviorSet: "pi-desktop/window/closeBehavior/set",
     menuRendererReady: "pi-desktop/menu/rendererReady",
     nativeMenuAction: "pi-desktop/menu/nativeAction",
+    /** Company control plane: login gate, session refresh, and quota sync. */
+    controlPlaneStatus: "pi-desktop/controlPlane/status",
+    controlPlaneLogin: "pi-desktop/controlPlane/login",
+    controlPlaneRegister: "pi-desktop/controlPlane/register",
+    controlPlaneRequestCode: "pi-desktop/controlPlane/requestCode",
+    controlPlaneResetPassword: "pi-desktop/controlPlane/resetPassword",
+    controlPlaneLogout: "pi-desktop/controlPlane/logout",
+    controlPlaneRefreshProfile: "pi-desktop/controlPlane/refreshProfile",
   },
   event: {
     pluginChanged: "pi-desktop/event/pluginChanged",
@@ -292,6 +300,8 @@ export const IPC = {
     plansChanged: "pi-desktop/plans/event/changed",
     providersOauth: "pi-desktop/providers/oauth/event",
     updatesState: "pi-desktop/updates/event/state",
+    /** Control-plane identity or quota changed (sign-in, sign-out, refresh). */
+    controlPlaneChanged: "pi-desktop/controlPlane/event/changed",
   },
 } as const;
 

@@ -1,5 +1,6 @@
 export * from "./activation.js";
 export * from "./protocol.js";
+export * from "./control-plane.js";
 export * from "./errors.js";
 export * from "./types.js";
 export * from "./transcript-truncation.js";
