@@ -543,6 +543,7 @@ export const zhCN = {
     userMessage: "用户消息",
     assistantMessage: "助手消息",
     model: "模型",
+    modelManaged: "公司模型",
     provider: "AI 服务",
     noModel: "请先在设置中添加模型，再开始对话。",
     searchModels: "搜索模型",

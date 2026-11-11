@@ -13,6 +13,7 @@ import { SessionTabBar } from "./SessionTabBar";
 import { useAppStore } from "../stores/app-store";
 import { headPermission } from "../lib/pending-permissions";
 import { headAsk } from "../lib/pending-asks";
+import { useManagedModels } from "../features/auth/ControlPlaneGate";
 
 const StableComposer = memo(Composer);
 
@@ -44,6 +45,7 @@ function projectName(path?: string | null, name?: string | null) {
  */
 export const ChatSurface = memo(function ChatSurface() {
   const { t } = useTranslation();
+  const managedModels = useManagedModels();
   const activeSessionId = useAppStore((state) => state.activeSessionId);
   const selectingSessionId = useAppStore((state) => state.selectingSessionId);
   const retainedSessionIds = useAppStore((state) => state.retainedSessionIds);
@@ -196,9 +198,13 @@ export const ChatSurface = memo(function ChatSurface() {
                 ? t(`errors.${errorCode}`)
                 : error}
             </span>
-            {(errorCode === "MODEL_NOT_CONFIGURED" ||
-              errorCode === "PROVIDER_SECRET_MISSING" ||
-              errorCode === "PROVIDER_UNAUTHORIZED") && (
+            {/* A managed deployment has no model settings to send the employee
+                to: the gateway provider is created and repaired by the main
+                process, so the hint would dead-end on the basics pane. */}
+            {!managedModels &&
+              (errorCode === "MODEL_NOT_CONFIGURED" ||
+                errorCode === "PROVIDER_SECRET_MISSING" ||
+                errorCode === "PROVIDER_UNAUTHORIZED") && (
               <button
                 type="button"
                 className="chat-error-action"

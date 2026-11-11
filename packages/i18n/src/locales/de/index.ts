@@ -539,6 +539,7 @@ export const de = {
     "userMessage": "Benutzernachricht",
     "assistantMessage": "Assistentennachricht",
     "model": "Modell",
+    "modelManaged": "Firmenmodell",
     "provider": "KI-Anbieter",
     "noModel": "Fügen Sie vor dem Chatten ein Modell in den Einstellungen hinzu.",
     "searchModels": "Modelle suchen",

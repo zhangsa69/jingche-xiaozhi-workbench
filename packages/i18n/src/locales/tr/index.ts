@@ -549,6 +549,7 @@ export const tr = {
     userMessage: "Kullanıcı iletisi",
     assistantMessage: "Asistan iletisi",
     model: "Model",
+    modelManaged: "Şirket modeli",
     provider: "AI servisi",
     noModel: "Sohbete başlamadan önce Ayarlar’dan bir model ekleyin.",
     searchModels: "Model ara",

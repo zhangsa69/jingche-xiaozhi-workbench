@@ -21,6 +21,7 @@ import { SessionRunningElapsed } from "./SessionRunningElapsed";
 import { SessionPlanProgress } from "./SessionPlanProgress";
 import { SessionHoverCard } from "../features/sessions/SessionHoverCard";
 import { useSessionHoverCard } from "../features/sessions/useSessionHoverCard";
+import { ControlPlaneAccountChip } from "../features/auth/ControlPlaneAccountChip";
 import { isDefaultSessionTitle, useAppStore } from "../stores/app-store";
 import {
   getGlobalPinnedSessions,
@@ -2184,6 +2185,8 @@ export function Sidebar({
             </section>
           )}
         </div>
+
+        <ControlPlaneAccountChip />
 
         <div className="sidebar-footer no-drag">
           <div className="footer-actions">

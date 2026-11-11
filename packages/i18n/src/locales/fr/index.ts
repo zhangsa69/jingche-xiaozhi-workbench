@@ -539,6 +539,7 @@ export const fr = {
     "userMessage": "Message utilisateur",
     "assistantMessage": "Message de l'assistant",
     "model": "Modèle",
+    "modelManaged": "Modèle de l'entreprise",
     "provider": "Fournisseur d'IA",
     "noModel": "Ajoutez un modèle dans Paramètres avant de discuter.",
     "searchModels": "Rechercher des modèles",

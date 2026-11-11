@@ -1,4 +1,4 @@
-import { ErrorCodes, IPC, type AgentEventEnvelope, type AppNotification, type PlanExecution, type PlanExecutionFinishStatus, type UiMessage } from "@pi-desktop/shared";
+import { ErrorCodes, IPC, type AgentEventEnvelope, type AppNotification, type MessageUsage, type PlanExecution, type PlanExecutionFinishStatus, type UiMessage } from "@pi-desktop/shared";
 import { executionFromResponse, executionListFromResponse, planExecutionFromUnknown } from "../plan-execution";
 import type { RuntimeState } from "./context";
 import type {
@@ -66,6 +66,15 @@ export type PlanRuntimeDependencies = {
   resolveAgentRuntimeLaunch: (...args: any[]) => Promise<any>;
   isQuitting: () => boolean;
   onTurnSettled?: (sessionId: string, turnId: string) => Promise<void>;
+  /**
+   * Hands the turn's token usage to the company ledger. Fire-and-forget: it
+   * never blocks settlement and never throws into this path.
+   */
+  reportTurnUsage?: (input: {
+    sessionId: string;
+    turnId: string;
+    usage?: MessageUsage | null;
+  }) => void;
 };
 
 export function createPlanRuntime({
@@ -91,6 +100,7 @@ export function createPlanRuntime({
   resolveAgentRuntimeLaunch,
   isQuitting,
   onTurnSettled,
+  reportTurnUsage,
 }: PlanRuntimeDependencies): {
   finishTurn: FinishTurn;
   finishApprovedExecution: (executionId: string, status: PlanExecutionFinishStatus, errorCode?: string) => Promise<void>;
@@ -186,6 +196,16 @@ function finishTurn(
   const reason = peekAbortReason(id, turnId) ?? status;
   const turnUsage = activeTurnUsages.get(id);
   activeTurnUsages.delete(id);
+  if (turnUsage && reportTurnUsage) {
+    try {
+      reportTurnUsage({ sessionId: id, turnId, usage: turnUsage });
+    } catch (error) {
+      logger.app("runtime", "warn", "usage report dispatch failed", {
+        sessionId: id,
+        data: String(error),
+      });
+    }
+  }
   const runId = scheduledRunsBySession.get(id);
   if (runId) scheduledRunsBySession.delete(id);
   const wasPlanSubmission = planSubmissionTurnIds.has(finalizationKey);

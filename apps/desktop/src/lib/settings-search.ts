@@ -260,15 +260,23 @@ export type SettingsSearchHit = {
   rowKey: string | null;
 };
 
+/** Tabs the current deployment does not render, so search must not offer them. */
+export type SettingsSearchOptions = {
+  excludeTabs?: readonly SettingsTabId[];
+};
+
 export function searchSettings(
   query: string,
   t: (key: string) => string,
   limit = 8,
+  options: SettingsSearchOptions = {},
 ): SettingsSearchHit[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
+  const excluded = new Set(options.excludeTabs ?? []);
   const hits: SettingsSearchHit[] = [];
   for (const entry of SETTINGS_NAV) {
+    if (excluded.has(entry.id)) continue;
     if (t(entry.labelKey).toLowerCase().includes(q)) {
       hits.push({ tab: entry.id, tabLabelKey: entry.labelKey, rowKey: null });
     }

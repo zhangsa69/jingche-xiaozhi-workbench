@@ -161,6 +161,21 @@
   color: var(--ds-text-primary) !important;
 }
 
+/* Company-managed models: the name is a read-only readout, so it carries none
+   of the chip's hover affordances that would advertise a menu that is not there. */
+.composer-model-managed {
+  display: inline-flex;
+  align-items: center;
+  max-width: min(300px, 100%);
+  min-width: 0;
+  padding: 0 9px;
+  color: var(--ds-text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-compact);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .composer-model-thinking-icon {
   display: inline-flex;
   flex: 0 0 auto;

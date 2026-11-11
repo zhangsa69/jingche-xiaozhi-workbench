@@ -548,6 +548,7 @@ export const en = {
     userMessage: "User message",
     assistantMessage: "Assistant message",
     model: "Model",
+    modelManaged: "Company model",
     provider: "AI provider",
     noModel: "Add a model in Settings before chatting.",
     searchModels: "Search models",

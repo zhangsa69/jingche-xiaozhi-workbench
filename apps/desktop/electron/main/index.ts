@@ -126,6 +126,9 @@ import { createHostRuntime } from "./runtime/host";
 import { createSidecarRuntime } from "./runtime/sidecar";
 import { createEventPersistence } from "./runtime/event-persistence";
 import { createPlanRuntime, type PlanRuntimeState } from "./runtime/plans";
+import { ControlPlaneClient } from "./control-plane-client";
+import { createControlPlaneBilling } from "./runtime/control-plane-billing";
+import { createControlPlaneProviderBridge } from "./runtime/control-plane-provider";
 import { createRuntimeLifecycle } from "./runtime/lifecycle";
 import {
   createProviderCatalogRuntime,
@@ -1061,6 +1064,26 @@ const {
   isStaleTerminalEvent,
 } = sessionCoordination;
 
+// Company deployment pieces. The client owns the session and the gateway
+// credential; the provider bridge keeps one host-core row pointed at the proxy;
+// the billing reporter turns finished turns into ledger entries.
+const controlPlaneClient = new ControlPlaneClient({
+  dataDir,
+  notify: () => sendToRenderer(IPC.event.controlPlaneChanged, {}),
+});
+const controlPlaneProviders = createControlPlaneProviderBridge({
+  client: controlPlaneClient,
+  getHost: () => host,
+  dataDir,
+  logger: { warn: (...args: unknown[]) => logger.app("runtime", "warn", "control plane provider", { data: args }) },
+});
+const controlPlaneBilling = createControlPlaneBilling({
+  client: controlPlaneClient,
+  getHost: () => host,
+  providerId: () => controlPlaneProviders.providerId(),
+  logger,
+});
+
 async function withGitBranch<T extends { path?: string; name?: string } | null | undefined>(
   workspace: T,
 ): Promise<T> {
@@ -1138,6 +1161,9 @@ const planRuntime = createPlanRuntime({
   resolveAgentRuntimeLaunch,
   isQuitting: () => quitting,
   onTurnSettled: sessionCollaboration.settle,
+  reportTurnUsage: (input) => {
+    void controlPlaneBilling.reportTurn(input);
+  },
 });
 const {
   finishTurn,
@@ -1259,6 +1285,7 @@ function registerIpc() {
     openExternal: safeOpenExternal,
     updater,
     dataDir,
+    controlPlane: { client: controlPlaneClient, providers: controlPlaneProviders },
     activeTurns,
     isTurnDispatchable,
     sessionProjects,

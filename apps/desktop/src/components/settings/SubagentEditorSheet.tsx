@@ -31,6 +31,7 @@ import {
 import { SubagentModelPicker } from "./SubagentModelPicker";
 import { SubagentFallbackModels } from "./SubagentFallbackModels";
 import { SettingsMenuSelect } from "./SettingsMenuSelect";
+import { useManagedModels } from "../../features/auth/ControlPlaneGate";
 
 /** Hard cap host-core enforces on a definition document. */
 export const MAX_SUBAGENT_BYTES = 32 * 1024;
@@ -407,7 +408,11 @@ function ModelField({
   orphanModel: string | null;
 }) {
   const { t } = useTranslation();
+  // A managed deployment fixes the provider row: the subagent runs on the
+  // company model, so there is nothing to pick and no settings tab to link to.
+  const managedModels = useManagedModels();
   const modelValue = subagentModelSelectValue(draft.model, modelChoices);
+  if (managedModels) return null;
 
   return (
     <>

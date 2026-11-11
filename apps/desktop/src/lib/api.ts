@@ -1,5 +1,6 @@
 import type {
   ActivationScope,
+  ControlPlaneStatus,
   AgentCapabilityQuery,
   AgentEventEnvelope,
   AgentCompactRequest,
@@ -1177,5 +1178,33 @@ export const api = {
   onPluginLauncherShown: (listener: () => void) => {
     if (!window.piDesktop?.on) return () => undefined;
     return window.piDesktop.on(IPC.event.pluginLauncherShown, () => listener());
+  },
+  controlPlaneStatus: () => invoke<ControlPlaneStatus>(IPC.invoke.controlPlaneStatus),
+  controlPlaneLogin: (email: string, password: string) =>
+    invoke<ControlPlaneStatus>(IPC.invoke.controlPlaneLogin, { email, password }),
+  controlPlaneRegister: (input: {
+    email: string;
+    code: string;
+    password: string;
+    displayName?: string;
+  }) => invoke<ControlPlaneStatus>(IPC.invoke.controlPlaneRegister, input),
+  controlPlaneRequestCode: (email: string, purpose: "register" | "reset") =>
+    invoke<{ message: string }>(IPC.invoke.controlPlaneRequestCode, {
+      email,
+      purpose,
+    }),
+  controlPlaneResetPassword: (input: {
+    email: string;
+    code: string;
+    password: string;
+  }) =>
+    invoke<{ message: string }>(IPC.invoke.controlPlaneResetPassword, input),
+  controlPlaneLogout: () =>
+    invoke<{ signedOut: boolean }>(IPC.invoke.controlPlaneLogout),
+  controlPlaneRefreshProfile: () =>
+    invoke<ControlPlaneStatus>(IPC.invoke.controlPlaneRefreshProfile),
+  onControlPlaneChanged: (listener: () => void) => {
+    if (!window.piDesktop?.on) return () => undefined;
+    return window.piDesktop.on(IPC.event.controlPlaneChanged, () => listener());
   },
 };

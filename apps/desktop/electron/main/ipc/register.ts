@@ -26,6 +26,9 @@ import { fetchSkillMarketDocument, searchSkillMarket } from "../skill-market-cat
 import { registerWindowIpc } from "./window-ipc";
 import { createComposerTemplateLoader, registerWorkspaceIpc } from "./workspace-ipc";
 import { registerComposerIpc } from "./composer-ipc";
+import { registerControlPlaneIpc } from "./control-plane-ipc";
+import type { ControlPlaneClient } from "../control-plane-client";
+import type { ControlPlaneProviderBridge } from "../runtime/control-plane-provider";
 import type { IpcRegistrar } from "./types";
 
 export type RegisterIpcDependencies = {
@@ -39,6 +42,14 @@ export type RegisterIpcDependencies = {
   activeUserSubagentDocuments: (...args: any[]) => Promise<any>;
   /** Guarded opener for app-level links the renderer may not address itself. */
   openExternal: (url: unknown) => Promise<void>;
+  /**
+   * Control-plane client and its provider bridge, constructed by the main entry
+   * so the turn finalizer can report usage through the same instance.
+   */
+  controlPlane: {
+    client: ControlPlaneClient;
+    providers: ControlPlaneProviderBridge;
+  };
   [name: string]: any;
 };
 
@@ -68,6 +79,7 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
     openExternal: safeOpenExternal,
     updater,
     dataDir,
+    controlPlane,
     activeTurns,
     isTurnDispatchable,
     sessionProjects,
@@ -403,6 +415,12 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
   });
 
   registerLogIpc({ registrar, dataDir });
+
+  registerControlPlaneIpc({
+    registrar,
+    client: controlPlane.client,
+    providers: controlPlane.providers,
+  });
 
   registerPreviewIpc({ registrar, getHost, dataDir });
 

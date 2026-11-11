@@ -48,6 +48,8 @@ export type ComposerToolbarProps = {
   configureActiveSession: AppState["configureActiveSession"];
   showToast: AppState["showToast"];
   modelMenu: ModelMenuController;
+  /** Company-managed models: show a static label instead of the picker. */
+  managedModels: boolean;
   modelLabel: string;
   thinkingLabel: string;
   contextUsage: ContextUsage | null;
@@ -86,6 +88,7 @@ export function ComposerToolbar({
   configureActiveSession,
   showToast,
   modelMenu,
+  managedModels,
   modelLabel,
   thinkingLabel,
   contextUsage,
@@ -232,17 +235,25 @@ export function ComposerToolbar({
 
       <div className="composer-right">
         {contextUsage ? <ContextUsageInspector {...contextUsage} /> : null}
-        <ComposerModelPicker
-          t={t}
-          controller={modelMenu}
-          modelLabel={modelLabel}
-          thinkingLabel={thinkingLabel}
-          thinkingLevel={thinkingLevel}
-          selectedProviderId={providerId}
-          selectedModelId={modelId}
-          controlsBlocked={controlsBlocked}
-          onCloseOtherMenus={() => setPermissionOpen(false)}
-        />
+        {/* A managed deployment routes every turn through the company gateway:
+            the model picker would only offer choices the server overrides. */}
+        {managedModels ? (
+          <span className="composer-model-managed" title={modelLabel}>
+            {t("chat.modelManaged")}
+          </span>
+        ) : (
+          <ComposerModelPicker
+            t={t}
+            controller={modelMenu}
+            modelLabel={modelLabel}
+            thinkingLabel={thinkingLabel}
+            thinkingLevel={thinkingLevel}
+            selectedProviderId={providerId}
+            selectedModelId={modelId}
+            controlsBlocked={controlsBlocked}
+            onCloseOtherMenus={() => setPermissionOpen(false)}
+          />
+        )}
         <TooltipButton
           type="button"
           className={`icon-btn composer-enhance-btn${enhancingPrompt ? " is-loading" : ""}`}

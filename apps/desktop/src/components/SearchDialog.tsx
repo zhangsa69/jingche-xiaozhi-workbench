@@ -5,6 +5,7 @@ import { runPaletteCommand } from "../lib/commands";
 import { isDefaultSessionTitle, useAppStore } from "../stores/app-store";
 import { normalizeProjectPath } from "../lib/sidebar-session-groups";
 import { searchSettings, type SettingsSearchHit } from "../lib/settings-search";
+import { useManagedModels } from "../features/auth/ControlPlaneGate";
 import { useSessionSearch, useSessionSearchState } from "../hooks/use-session-search";
 import { SearchHighlight } from "./SearchHighlight";
 import { SearchSessionResults, type SearchRow } from "./SearchSessionResults";
@@ -89,6 +90,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
   const setSettingsAnchor = useAppStore((s) => s.setSettingsAnchor);
   const setPage = useAppStore((s) => s.setPage);
   const showToast = useAppStore((s) => s.showToast);
+  const managedModels = useManagedModels();
 
   const query = useSessionSearchState((state) => state.query);
   const setQuery = useSessionSearchState((state) => state.setQuery);
@@ -209,8 +211,14 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
   }, [query, t]);
 
   const settingsHits = useMemo<SettingsSearchHit[]>(
-    () => searchSettings(query, t),
-    [query, t],
+    () =>
+      searchSettings(
+        query,
+        t,
+        8,
+        managedModels ? { excludeTabs: ["agent"] } : {},
+      ),
+    [query, t, managedModels],
   );
 
   const sessionOptionCount = rows.reduce(

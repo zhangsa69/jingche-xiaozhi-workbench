@@ -543,6 +543,7 @@ export const zhTW = {
     userMessage: "使用者訊息",
     assistantMessage: "助手訊息",
     model: "模型",
+    modelManaged: "公司模型",
     provider: "AI 服務",
     noModel: "請先在設定中新增模型，再開始對話。",
     searchModels: "搜尋模型",

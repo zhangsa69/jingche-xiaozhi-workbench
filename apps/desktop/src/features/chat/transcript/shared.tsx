@@ -36,6 +36,7 @@ import {
   isAutoRetryableCode,
 } from "../../../lib/auto-retry";
 import { useAppStore } from "../../../stores/app-store";
+import { useManagedModels } from "../../auth/ControlPlaneGate";
 import { Markdown, useCopy } from "../../../components/Markdown";
 import {
   IconArchive,
@@ -214,6 +215,9 @@ function AutoRetryNotice({ code }: { code: string }) {
 
 export function AssistantErrorMessage({ message }: { message: UiMessage }) {
   const { t } = useTranslation();
+  // Managed deployments own the provider row, so "open model settings" would
+  // lead nowhere.
+  const managedModels = useManagedModels();
   const [open, setOpen] = useState(true);
   const detailsToggleRef = useRef<HTMLButtonElement | null>(null);
   const notifyDisclosureAnchor = useDisclosureAnchorNotifier();
@@ -292,7 +296,7 @@ export function AssistantErrorMessage({ message }: { message: UiMessage }) {
           >
             {t("errors.action.continue")}
           </button>
-          {configurationError ? (
+          {configurationError && !managedModels ? (
             <button
               type="button"
               className="copy-btn"

@@ -549,6 +549,7 @@ export const ko = {
     userMessage: "사용자 메시지",
     assistantMessage: "어시스턴트 메시지",
     model: "모델",
+    modelManaged: "회사 모델",
     provider: "AI 프로바이더",
     noModel: "채팅하기 전에 설정에서 모델을 추가하세요.",
     searchModels: "모델 검색",

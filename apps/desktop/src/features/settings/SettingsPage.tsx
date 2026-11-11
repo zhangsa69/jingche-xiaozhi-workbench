@@ -57,6 +57,7 @@ import {
 } from "./agent-sections";
 import { CloseBehaviorSection, DeveloperSection } from "./developer-sections";
 import { PluginSettingsDestination } from "../../components/settings/PluginSettingsDestination";
+import { useManagedModels } from "../auth/ControlPlaneGate";
 
 type SettingsTab = ReturnType<typeof useAppStore.getState>["settingsTab"];
 
@@ -81,6 +82,9 @@ export function SettingsPage() {
   const version = useAppStore((s) => s.version);
   const refreshProviders = useAppStore((s) => s.refreshProviders);
   const platform = (window.piDesktop?.platform ?? "darwin") as ShortcutPlatform;
+  // A company-managed deployment owns the provider row; the employee gets no
+  // model settings to change.
+  const managedModels = useManagedModels();
 
   const [query, setQuery] = useState("");
   const [recoveringSettings, setRecoveringSettings] = useState(!settings);
@@ -118,6 +122,12 @@ export function SettingsPage() {
     if (settings) return;
     void recoverSettings();
   }, [settings, recoverSettings]);
+
+  // A managed deployment has no model tab: an upgrade or a deep link that still
+  // points at it lands on basics instead of an empty pane.
+  useEffect(() => {
+    if (managedModels && tab === "agent") setSettingsTab("general");
+  }, [managedModels, setSettingsTab, tab]);
 
   // Arriving from the global search dialog: scroll to and flash the row
   // whose title matches the pending anchor key. Rows are located by their
@@ -187,7 +197,7 @@ export function SettingsPage() {
       privacy: <IconShield size={14} />,
       about: <IconInfo size={14} />,
     };
-    return SETTINGS_NAV.map((entry) => ({
+    return SETTINGS_NAV.filter((entry) => !(managedModels && entry.id === "agent")).map((entry) => ({
       id: entry.id,
       labelKey: entry.labelKey,
       titleKey: entry.titleKey,
@@ -195,7 +205,7 @@ export function SettingsPage() {
       group: entry.group,
       keywordKeys: entry.keywordKeys,
     }));
-  }, []);
+  }, [managedModels]);
 
   // Search matches the tab label and the titles of the rows inside it, so
   // typing e.g. "theme" or "主题" surfaces Basics even though the tab is
@@ -438,7 +448,7 @@ export function SettingsPage() {
             </div>
           )}
 
-          {tab === "agent" && <ModelConfigPage />}
+          {tab === "agent" && !managedModels && <ModelConfigPage />}
 
           {tab === "skills" && <AgentSkillsPage />}
 

@@ -539,6 +539,7 @@ export const es = {
     "userMessage": "Mensaje de usuario",
     "assistantMessage": "Mensaje del asistente",
     "model": "Modelo",
+    "modelManaged": "Modelo de la empresa",
     "provider": "Proveedor de IA",
     "noModel": "Agregue un modelo en Configuración antes de chatear.",
     "searchModels": "Buscar modelos",

@@ -71,6 +71,7 @@ import { ComposerInput } from "../features/chat/composer/ComposerInput";
 import { useComposerModelMenu } from "../features/chat/composer/hooks/useComposerModelMenu";
 import { ComposerToolbar } from "../features/chat/composer/ComposerToolbar";
 import { ComposerStatus } from "../features/chat/composer/ComposerStatus";
+import { useManagedModels } from "../features/auth/ControlPlaneGate";
 
 const EMPTY_QUEUED_PROMPTS: QueuedPrompt[] = [];
 
@@ -390,6 +391,8 @@ export function Composer({
   const modelLabel = provider && modelId
     ? composerModelDisplayName(provider, modelId, selectedModel?.displayName)
     : selectedModel?.displayName || modelId || t("chat.model");
+  // Company deployments own the model row; the picker is replaced by a label.
+  const managedModels = useManagedModels();
   const modelMenu = useComposerModelMenu({
     mode,
     activeSessionId,
@@ -730,6 +733,7 @@ export function Composer({
             configureActiveSession={configureActiveSession}
             showToast={showToast}
             modelMenu={modelMenu}
+            managedModels={managedModels}
             modelLabel={modelLabel}
             thinkingLabel={thinkingLabel}
             contextUsage={composerContextUsage ?? null}

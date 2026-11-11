@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
 import { useAppStore } from "../stores/app-store";
 import { IconCheck } from "./icons";
+import { useManagedModels } from "../features/auth/ControlPlaneGate";
 
 /** Host step ids (app.getOnboarding) mapped to locale keys under `onboarding.`. */
 const STEP_LOCALE_KEY: Record<string, string> = {
@@ -21,9 +22,15 @@ export function OnboardingChecklist() {
   const setPage = useAppStore((s) => s.setPage);
   const setSettingsTab = useAppStore((s) => s.setSettingsTab);
   const openProject = useAppStore((s) => s.openProject);
+  // A managed deployment already ships a working provider row, so "add a
+  // provider" / "save a key" would send the employee to a settings tab that no
+  // longer exists.
+  const managedModels = useManagedModels();
 
   if (!onboarding?.showChecklist) return null;
-  const steps = onboarding.steps ?? [];
+  const steps = managedModels
+    ? (onboarding.steps ?? []).filter((s) => s.id !== "provider" && s.id !== "secret")
+    : (onboarding.steps ?? []);
   if (steps.length === 0 || steps.every((s) => s.done)) return null;
 
   const stepLabel = (id: string, fallback: string) => {
