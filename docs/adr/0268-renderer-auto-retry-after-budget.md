@@ -1,4 +1,4 @@
-# ADR 0210: Continue a rate-limited turn in the renderer after the budget ends
+# ADR 0268: Continue a rate-limited turn in the renderer after the budget ends
 
 - Status: Accepted
 - Date: 2026-10-28

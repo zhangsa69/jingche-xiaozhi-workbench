@@ -12702,3 +12702,148 @@ recovery; `side-chat-draft.test.mjs` covers action-level guards and child drift.
   picked directory, and a session root stands in when the window shows no
   project. The two-live-sessions desktop journey and the panel step are Draft
   (run only in a capable environment when this surface changes)
+
+## Control plane scenarios (ADR 0267)
+
+Targets of `02-architecture/06-control-plane.md`. The email-delivery step runs
+against a local SMTP sink or a recorded mail transport, never a production
+mailbox.
+
+#### E2E-CONTROL-PLANE-email-code-issues-verified-account
+
+- **Preconditions**: A control plane instance with an empty database, SMTP
+  pointed at a local sink, `CONTROL_PLANE_REGISTRATION_OPEN=true`, and
+  `CONTROL_PLANE_ADMIN_EMAILS` containing the admin address.
+- **Steps**: 1) Request a registration code for an employee address.
+  2) Register with a wrong code. 3) Register with the delivered code.
+  4) Request a second code inside the cooldown. 5) Request a code for an
+  address that is already registered. 6) Sign in with the new password.
+- **Expected**: The code mail arrives with a bounded lifetime; the wrong code is
+  rejected without consuming the real one; registration returns a session and
+  the configured default grant; the cooldown answers `429 RATE_LIMITED`; the
+  duplicate address answers `EMAIL_ALREADY_REGISTERED`; the login succeeds and
+  an `auth.registered` plus `auth.login` audit row exists per event.
+- **Specs linked**: `02-architecture/06-control-plane.md` §4, §7; ADR 0267
+- **Acceptance**: Security, Quality
+- **Milestone**: Post-MVP (company deployment)
+- **Status**: Automated (`pnpm test:e2e:control-plane`,
+  `pnpm test:e2e:control-plane-mail`). The mail suite runs a local SMTP sink
+  instead of a real relay, so provider-specific TLS and deliverability stay
+  manual.
+
+#### E2E-CONTROL-PLANE-desktop-gate-blocks-without-session
+
+- **Preconditions**: A desktop build configured with
+  `PI_DESKTOP_CONTROL_PLANE_URL` pointing at a reachable instance, and no stored
+  session file.
+- **Steps**: 1) Launch the desktop. 2) Sign in with valid credentials.
+  3) Sign out from the sidebar account chip and confirm.
+- **Expected**: The workspace stays closed until authentication succeeds and the
+  gate shows the sign-in form; after sign-in the workspace opens and the account
+  chip shows the employee and the remaining balance; sign-out revokes the
+  session, clears the local file, and returns to the gate. No token appears in
+  renderer state, and the renderer receives only the identity/quota projection.
+- **Specs linked**: `02-architecture/06-control-plane.md` §8; ADR 0267
+- **Acceptance**: Security, Quality
+- **Milestone**: Post-MVP (company deployment)
+- **Status**: Documented; requires a configured instance plus desktop automation
+
+#### E2E-CONTROL-PLANE-quota-ledger-rejects-overspend
+
+- **Preconditions**: An employee account with a known balance, a gateway routed
+  to a stub provider, and a quota policy with `period=daily`.
+- **Steps**: 1) Report usage that costs less than the balance. 2) Replay the same
+  `requestId`. 3) Report usage that exceeds the remaining balance. 4) Grant beans
+  from the admin console and report again. 5) Exceed the daily period cap while
+  the balance still has funds.
+- **Expected**: The first charge debits exactly the computed beans and appends
+  one `usage_events` row; the replay returns the original charge without a second
+  debit; the oversized charge answers `402 INSUFFICIENT_QUOTA` and leaves the
+  balance untouched; the grant appends a ledger row with the actor and the new
+  balance; the period cap answers `402` even though the balance covers it.
+- **Specs linked**: `02-architecture/06-control-plane.md` §5; ADR 0267
+- **Acceptance**: Quality, Security
+- **Milestone**: Post-MVP (company deployment)
+- **Status**: Automated (`pnpm test:e2e:control-plane`)
+
+#### E2E-CONTROL-PLANE-admin-console-permission-boundary
+
+- **Preconditions**: One admin account and one member account.
+- **Steps**: 1) Load the admin console as admin and page through users.
+  2) Call `admin/users` with the member token. 3) Disable the member account.
+  4) Sign in as that member.
+- **Expected**: Admin pages render overview, paginated users, gateway groups,
+  quota policy, ledger, audit, and system status; the member token receives
+  `403 FORBIDDEN`; a disabled account cannot sign in and an existing session is
+  rejected on the next refresh; the credential field is always masked and no
+  endpoint returns a plaintext gateway key or SMTP password.
+- **Specs linked**: `02-architecture/06-control-plane.md` §6, §7; ADR 0267
+- **Acceptance**: Security, Quality
+- **Milestone**: Post-MVP (company deployment)
+- **Status**: Partially automated (`pnpm test:e2e:control-plane`) for the API
+  boundary; the console journey is Draft
+
+#### E2E-CONTROL-PLANE-service-outage-keeps-workspace-closed
+
+- **Preconditions**: A desktop build with a stored session and a reachable
+  instance.
+- **Steps**: 1) Stop the control plane. 2) Launch the desktop. 3) Restart the
+  service and choose retry. 4) Remove `PI_DESKTOP_CONTROL_PLANE_URL` and launch
+  again.
+- **Expected**: The gate reports the outage with a retry action and never opens
+  the workspace on unverified entitlements; retry restores the session without
+  re-entering the password; with no configured origin the desktop reports
+  `required: false` and runs exactly as a local install.
+- **Specs linked**: `02-architecture/06-control-plane.md` §8, §10; ADR 0267
+- **Acceptance**: Quality
+- **Milestone**: Post-MVP (company deployment)
+- **Status**: Documented
+
+#### E2E-CONTROL-PLANE-gateway-relays-sse-with-usage
+
+- **Preconditions**: A default gateway pointing at a stub upstream that answers
+  with two SSE deltas and a trailing usage frame; an employee with beans.
+- **Steps**: 1) Post a streaming chat completion through the proxy.
+  2) Inspect what the stub received. 3) Compare the employee balance before and
+  after.
+- **Expected**: The client receives the deltas and `[DONE]` as they were produced
+  (not one buffered blob); the upstream saw `stream_options.include_usage = true`
+  and the injected vendor credential; the balance is unchanged because the proxy
+  does not charge.
+- **Specs linked**: `02-architecture/06-control-plane.md` §5, §6; ADR 0267
+- **Acceptance**: Quality, Security
+- **Milestone**: Post-MVP (company deployment)
+- **Status**: Automated (`pnpm test:e2e:control-plane`)
+
+#### E2E-CONTROL-PLANE-gateway-token-scope-and-revocation
+
+- **Preconditions**: A signed-in employee.
+- **Steps**: 1) Exchange the session for a gateway token. 2) Call `/me`,
+  `/admin/overview`, and `/usage/charge` with it. 3) Call the proxy with it.
+  4) Sign out that session and call the proxy again.
+- **Expected**: Session and admin routes answer `403 FORBIDDEN_SCOPE`, the ledger
+  refuses the token, the proxy accepts it, and after logout the same token gets
+  `401 SESSION_REVOKED` without waiting for expiry.
+- **Specs linked**: `02-architecture/06-control-plane.md` §7, §8; ADR 0267
+- **Acceptance**: Security
+- **Milestone**: Post-MVP (company deployment)
+- **Status**: Automated (`pnpm test:e2e:control-plane`)
+
+#### E2E-CONTROL-PLANE-turn-usage-report-deducts-beans
+
+- **Preconditions**: A desktop signed in against a control plane with the company
+  gateway as default provider, and a gateway routed to a stub upstream.
+- **Steps**: 1) Send one message and let the turn finish. 2) Read the admin
+  ledger and the sidebar balance. 3) Replay the same report.
+- **Expected**: Exactly one ledger entry appears with the turn's token counts and
+  the server-computed beans; the sidebar balance drops; the replay returns
+  `duplicate: true` without a second debit; a turn that used a local provider
+  creates no entry.
+- **Specs linked**: `02-architecture/06-control-plane.md` §5, §8; ADR 0267
+- **Acceptance**: Quality
+- **Milestone**: Post-MVP (company deployment)
+- **Status**: Partially automated: the idempotent `usage/charge` contract runs in
+  `pnpm test:e2e:control-plane`, and the wiring (only the company provider is
+  billed, `sessionId:turnId` key) is locked by
+  `apps/desktop/test/control-plane-billing.test.mjs`; the live desktop turn is
+  Draft until the desktop automation harness exists

@@ -21,6 +21,7 @@ Each ADR includes:
 | ID | Title | Status |
 |---|---|---|
 | subagent-model-fallback | [Ordered subagent model fallback](subagent-model-fallback.md) | Accepted for implementation |
+| 0267 | Standalone control plane for employee accounts, gateway configuration, and Xiaozhi-bean quotas | Accepted |
 | subagent-model-opt-in | [Separate Subagent Model Opt-In from Definition Pins](subagent-model-opt-in.md) | Accepted for implementation |
 | 0001 | Use Electron as the desktop shell | Accepted |
 | 0002 | Use the pi Agent Harness as the kernel | Accepted |
@@ -289,6 +290,7 @@ Each ADR includes:
 | 0255 | [Theme assets are absolute paths](0255-theme-assets-by-absolute-path.md) | Accepted |
 | 0256 | [Preserve DeepSeek reasoning across context compaction](0256-deepseek-reasoning-across-compaction.md) | Accepted |
 | 0260 | [Plugin runtime theme APIs and sidebar image token](0260-plugin-runtime-theme-apis.md) | Accepted for implementation |
+| 0268 | [Continue a rate-limited turn in the renderer after the budget ends](0268-renderer-auto-retry-after-budget.md) | Accepted (ADR 0206, ADR 0091, ADR 0128) |
 | 0265 | [Priority block and row actions for the Host-owned turn queue](0265-turn-queue-priority-block-and-row-actions.md) | Accepted for implementation (D429; amends ADR 0213 / 0118) |
 | session-content-search | [Discover sessions by indexed message text](session-content-search.md) | Accepted |
 | transcript-reading-ownership | [Share renderer history and search views](transcript-reading-ownership.md) | Accepted |
