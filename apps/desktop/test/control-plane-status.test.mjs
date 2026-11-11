@@ -36,6 +36,16 @@ test("an unconfigured deployment is not treated as required", () => {
   assert.match(client, /if \(!configured\) \{ return this\.emptyStatus\(false, null\); \}/);
 });
 
+test("a stored origin that cannot be used still blocks the workspace", () => {
+  // Signing in once must not be undone by a restart. When the saved LAN origin
+  // needs the insecure opt-in, the gate has to say so instead of quietly
+  // handing the employee back the local provider and model pickers.
+  assert.match(
+    client,
+    /const configured = process\.env\.PI_DESKTOP_CONTROL_PLANE_URL\?\.trim\(\) \|\| this\.session\?\.baseUrl\?\.trim\(\) \|\| "";/,
+  );
+});
+
 test("concurrent refreshes share a single request", () => {
   // The refresh hash rotates on every call: two requests with the same token
   // look like reuse, and the server revokes the session.

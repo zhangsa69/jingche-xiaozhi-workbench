@@ -118,8 +118,15 @@ export class ControlPlaneClient {
     const baseUrl = this.configuredBaseUrl();
     if (!baseUrl) {
       // A configured-but-unusable origin must block the workspace: silently
-      // falling back to "no control plane" would bypass the login gate.
-      const configured = process.env.PI_DESKTOP_CONTROL_PLANE_URL?.trim() ?? "";
+      // falling back to "no control plane" would bypass the login gate. A
+      // stored session counts as configured too — an employee who signed in
+      // once must not be dropped back to local mode, with the provider and
+      // model pickers restored, just because the saved LAN origin needs the
+      // insecure opt-in after a restart.
+      const configured =
+        process.env.PI_DESKTOP_CONTROL_PLANE_URL?.trim() ||
+        this.session?.baseUrl?.trim() ||
+        "";
       if (!configured) {
         return this.emptyStatus(false, null);
       }
