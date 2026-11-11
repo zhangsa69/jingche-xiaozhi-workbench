@@ -153,7 +153,21 @@ export function createControlPlaneBilling(options: {
         contentLimit: FALLBACK_CONTENT_LIMIT,
       });
       const session = current?.session ?? null;
-      if (session?.providerId !== gatewayProviderId) {
+      if (!session) {
+        skip(sessionId, turnId, "session_not_on_gateway");
+        return;
+      }
+      // A session created without an explicit provider inherits the global
+      // default, and a managed deployment pins that default to the gateway
+      // row. Reading it only when the session has no provider keeps the common
+      // path at a single RPC, and stops a fresh session — the most common case
+      // for a new conversation — from being treated as a local one.
+      let sessionProvider = session.providerId ?? null;
+      if (!sessionProvider) {
+        const settings = await host.call<{ defaultProviderId?: string }>("settings.get");
+        sessionProvider = settings?.defaultProviderId ?? null;
+      }
+      if (sessionProvider !== gatewayProviderId) {
         skip(sessionId, turnId, "session_not_on_gateway");
         return;
       }

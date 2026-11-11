@@ -43,9 +43,22 @@ test("only turns that ran on the company gateway are billed", () => {
   assert.match(body, /const session = current\?\.session \?\? null/);
   assert.match(
     body,
-    /if \(session\?\.providerId !== gatewayProviderId\) \{ skip\(sessionId, turnId, "session_not_on_gateway"\); return; \}/,
+    /if \(sessionProvider !== gatewayProviderId\) \{ skip\(sessionId, turnId, "session_not_on_gateway"\); return; \}/,
   );
   assert.match(body, /"session\.get"/);
+});
+
+test("a session without its own provider inherits the default one", () => {
+  // A fresh session stores no provider id and runs on the global default. A
+  // managed deployment pins that default to the gateway row, so such a turn is
+  // billable and must not be skipped as if it used a local provider.
+  const body = squash(billing);
+  assert.match(body, /let sessionProvider = session\.providerId \?\? null;/);
+  assert.match(
+    body,
+    /const settings = await host\.call<\{ defaultProviderId\?: string \}>\("settings\.get"\);/,
+  );
+  assert.match(body, /sessionProvider = settings\?\.defaultProviderId \?\? null;/);
 });
 
 test("the logger keeps its receiver", () => {
