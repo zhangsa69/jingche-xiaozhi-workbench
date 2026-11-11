@@ -64,7 +64,13 @@ export function createControlPlaneBilling(options: {
   providerId: () => string | null;
   logger?: { app: (...args: any[]) => void };
 }): ControlPlaneBilling {
-  const log = options.logger?.app ?? ((...args: any[]) => console.log(...args));
+  // `logger.app` reads its own receiver, so a bare method reference loses
+  // `this` and throws on the first use. That turned every billing log line —
+  // success, failure and skip alike — into a rejected promise, which is why a
+  // turn that charged (or refused to charge) left no trace at all.
+  const log = options.logger
+    ? options.logger.app.bind(options.logger)
+    : (...args: any[]) => console.log(...args);
   const inflight = new Set<string>();
   /**
    * A deployment without a control plane is the normal case for a local user,

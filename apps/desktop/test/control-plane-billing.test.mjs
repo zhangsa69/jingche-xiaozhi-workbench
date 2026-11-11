@@ -48,6 +48,14 @@ test("only turns that ran on the company gateway are billed", () => {
   assert.match(body, /"session\.get"/);
 });
 
+test("the logger keeps its receiver", () => {
+  // `logger.app` reads its own receiver, so a bare method reference throws on
+  // the first use. That turned every billing log line into a rejected promise
+  // and made both a charged turn and a skipped turn leave no trace.
+  const body = squash(billing);
+  assert.match(body, /options\.logger\.app\.bind\(options\.logger\)/);
+});
+
 test("every skipped turn states why it was skipped", () => {
   // A silent skip is what made "no beans were deducted" impossible to
   // diagnose: the log had no record either way.
