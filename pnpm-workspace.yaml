@@ -1,5 +1,6 @@
 packages:
   - apps/*
+  - apps/control-plane/web
   - packages/*
   - docs
 # pnpm defaults to `lowest-direct`, which makes a plain `pnpm update` resolve

@@ -1,0 +1,45 @@
+[package]
+name = "control-plane"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Jingche Xiaozhi control plane: employee accounts, gateway configuration, and Xiaozhi-bean quotas"
+
+[[bin]]
+name = "control-plane"
+path = "src/main.rs"
+
+[dependencies]
+aes-gcm = "0.10"
+anyhow = "1"
+argon2 = "0.5"
+async-trait = "0.1"
+axum = "0.8"
+base64 = "0.22"
+chrono = { version = "0.4", features = ["serde"] }
+hex = "0.4"
+hmac = "0.12"
+lettre = { version = "0.11", default-features = false, features = [
+  "smtp-transport",
+  "builder",
+  "rustls-tls",
+  "pool",
+] }
+rand = "0.8"
+# `stream` is not enabled: it pulls a wasm-only transitive. Streaming responses
+# use `Response::chunk` wrapped in a `futures_util::stream::unfold` instead.
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
+rusqlite = { version = "0.40", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+thiserror = "2"
+tokio = { version = "1", features = ["full"] }
+tower-http = { version = "0.6", features = ["fs", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+
+[dev-dependencies]
+tempfile = "3"

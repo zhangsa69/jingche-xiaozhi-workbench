@@ -1,0 +1,42 @@
+[Unit]
+Description=Jingche Xiaozhi control plane (accounts, gateways, Xiaozhi-bean quotas)
+Documentation=https://github.com/zhangsa69/jingche-xiaozhi-workbench
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=controlplane
+Group=controlplane
+WorkingDirectory=/opt/control-plane
+EnvironmentFile=/etc/control-plane/control-plane.env
+ExecStart=/opt/control-plane/bin/control-plane
+Restart=always
+RestartSec=3
+TimeoutStopSec=20
+KillSignal=SIGTERM
+
+# Hardening: the service only needs its data directory and loopback bind.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictRealtime=true
+LockPersonality=true
+MemoryDenyWriteExecute=false
+ReadWritePaths=/var/lib/control-plane
+
+# Logs go to stdout and are captured by journald; configure logrotate if you
+# also tee them to a file.
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=control-plane
+
+[Install]
+WantedBy=multi-user.target

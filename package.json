@@ -44,13 +44,19 @@
     "docs:check": "pnpm --filter @pi-desktop/docs check:locales && pnpm --filter @pi-desktop/docs check:docs",
     "lint": "pnpm lint:biome && pnpm -r --if-present lint",
     "host:dev": "cargo run -p host-core",
+    "control-plane:dev": "cargo run -p control-plane",
+    "control-plane:web": "pnpm --filter @pi-desktop/control-plane-web dev",
+    "control-plane:build": "pnpm --filter @pi-desktop/control-plane-web build && cargo build --release -p control-plane",
+    "control-plane:test": "cargo test -p control-plane",
     "clean": "pnpm -r --if-present clean && cargo clean",
     "lint:biome": "biome lint",
     "test:e2e:mcp-market": "node scripts/e2e-mcp-market.mjs",
     "test:e2e:skill-market": "node scripts/e2e-skill-market.mjs",
     "test:e2e:plugin-import-deps": "node scripts/e2e-plugin-import-deps.mjs",
     "test:e2e:trusted-extensions": "node scripts/e2e-trusted-extensions.mjs",
-    "test:e2e:collaboration": "node scripts/e2e-session-collaboration.mjs"
+    "test:e2e:collaboration": "node scripts/e2e-session-collaboration.mjs",
+    "test:e2e:control-plane": "node scripts/e2e-control-plane.mjs",
+    "test:e2e:control-plane-mail": "node scripts/e2e-control-plane-mail.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.13",
