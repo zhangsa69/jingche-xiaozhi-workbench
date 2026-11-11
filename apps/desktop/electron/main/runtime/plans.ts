@@ -112,7 +112,8 @@ export function createPlanRuntime({
 // instance is owned by the coordination factory; this module only reads it.
 const {
   activeTurns,
-  activeTurnUsages,
+  takeActiveTurnUsage,
+  clearActiveTurnUsage,
   turnFinalizations,
   turnSettlements,
   waitForTurnSettlement,
@@ -194,9 +195,11 @@ function finishTurn(
   // start while this one unwinds, and everything keyed by the session alone is
   // then its data.
   const reason = peekAbortReason(id, turnId) ?? status;
-  const turnUsage = activeTurnUsages.get(id);
-  activeTurnUsages.delete(id);
-  if (turnUsage && reportTurnUsage) {
+  // Take, don't read: this turn owns its usage exactly once. A missing snapshot
+  // is still reported, because the reporter knows the gateway session and can
+  // fall back to the last assistant row instead of dropping the turn silently.
+  const turnUsage = takeActiveTurnUsage(id, turnId);
+  if (reportTurnUsage) {
     try {
       reportTurnUsage({ sessionId: id, turnId, usage: turnUsage });
     } catch (error) {
@@ -473,7 +476,7 @@ async function dispatchApprovedPlan(rawExecution: unknown): Promise<void> {
     turnId = String(turn.turnId || "").trim();
     if (!turnId) throw new Error("execution turn was not created");
     activeTurns.set(execution.sessionId, turnId);
-    activeTurnUsages.delete(execution.sessionId);
+    clearActiveTurnUsage(execution.sessionId);
     approvedExecutionIdsBySession.set(execution.sessionId, execution.id);
     approvedExecutionTurns.set(execution.id, {
       sessionId: execution.sessionId,

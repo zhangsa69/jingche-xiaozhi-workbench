@@ -40,8 +40,45 @@ test("cached and reasoning tokens are billed in their buckets", () => {
 
 test("only turns that ran on the company gateway are billed", () => {
   const body = squash(billing);
-  assert.match(body, /if \(current\?\.session\?\.providerId !== gatewayProviderId\) \{ return; \}/);
+  assert.match(body, /const session = current\?\.session \?\? null/);
+  assert.match(
+    body,
+    /if \(session\?\.providerId !== gatewayProviderId\) \{ skip\(sessionId, turnId, "session_not_on_gateway"\); return; \}/,
+  );
   assert.match(body, /"session\.get"/);
+});
+
+test("every skipped turn states why it was skipped", () => {
+  // A silent skip is what made "no beans were deducted" impossible to
+  // diagnose: the log had no record either way.
+  const body = squash(billing);
+  for (const reason of [
+    "no_gateway_provider",
+    "no_host",
+    "session_not_on_gateway",
+    "no_usage",
+    "lookup_failed",
+  ]) {
+    assert.match(body, new RegExp(`"${reason}"`));
+  }
+  assert.match(body, /"control plane usage report skipped"/);
+});
+
+test("a deployment without a gateway says so once, not every turn", () => {
+  const body = squash(billing);
+  assert.match(body, /let reportedMissingGateway = false/);
+  assert.match(body, /if \(!reportedMissingGateway\) \{ reportedMissingGateway = true;/);
+});
+
+test("a turn without accumulated usage falls back to its closing assistant row", () => {
+  const body = squash(billing);
+  assert.match(body, /messageLimit: FALLBACK_MESSAGE_WINDOW/);
+  assert.match(body, /contentLimit: FALLBACK_CONTENT_LIMIT/);
+  assert.match(
+    body,
+    /const counts = hasTokens\(reported\) \? reported : lastAssistantCounts\(session\.messages\)/,
+  );
+  assert.match(body, /if \(!message \|\| message\.role !== "assistant" \|\| !message\.usage\) continue;/);
 });
 
 test("a client error is not retried, a transport failure is retried once", () => {
@@ -91,6 +128,14 @@ test("turn settlement hands the usage to the ledger with the turn id", () => {
     body,
     /reportTurnUsage\(\{ sessionId: id, turnId, usage: turnUsage \}\)/,
   );
+});
+
+test("settlement takes its own turn's usage instead of the session's", () => {
+  // The usage is keyed by turn now: a late message_end belongs to the turn that
+  // produced it, and must not be inherited by whichever turn starts next.
+  const body = squash(plans);
+  assert.match(body, /const turnUsage = takeActiveTurnUsage\(id, turnId\)/);
+  assert.doesNotMatch(body, /activeTurnUsages/);
 });
 
 test("the composition root wires the bridge and the billing reporter", () => {

@@ -1051,9 +1051,9 @@ const sessionCoordination = createSessionCoordination({
 });
 const {
   turnSettlements,
-  activeTurnUsages,
   acquireSessionOperation,
   addActiveTurnUsage,
+  clearActiveTurnUsage,
   activeToolCallKey,
   planSubmissionTurnKey,
   waitForTurnSettlement,
@@ -1333,7 +1333,7 @@ function registerIpc() {
     currentWorkspacePath,
     setCurrentWorkspacePath,
     withGitBranch,
-    activeTurnUsages,
+    clearActiveTurnUsage,
     approvedExecutionIdsBySession,
     claimedExecutionSessions,
     resolveAgentRuntimeLaunch,

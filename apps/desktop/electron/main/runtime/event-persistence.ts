@@ -18,7 +18,11 @@ export type EventPersistenceDependencies = {
   planSubmissionTurnKey: (sessionId: string, turnId: string) => string;
   inflightCheckpointer: InflightCheckpointer;
   persistenceOutbox: PersistenceOutbox;
-  addActiveTurnUsage: (sessionId: string, usage: any) => void;
+  addActiveTurnUsage: (
+    sessionId: string,
+    turnId: string | undefined,
+    usage: any,
+  ) => void;
   logger: Logger;
   finishTurn: FinishTurn;
   /**
@@ -233,7 +237,7 @@ function persistAgentEvent(envelope: AgentEventEnvelope): UiMessage | undefined 
     return;
   }
   if (event.type === "turn_end" && !envelope.parentToolCallId) {
-    addActiveTurnUsage(envelope.sessionId, event.subagentUsage);
+    addActiveTurnUsage(envelope.sessionId, envelope.turnId, event.subagentUsage);
   }
   if (event.type === "message_end" && event.message.role === "user" && !envelope.parentToolCallId) {
     // Reserve the current reply before persisting input accepted during its stream.
@@ -254,7 +258,7 @@ function persistAgentEvent(envelope: AgentEventEnvelope): UiMessage | undefined 
   }
   if (event.type === "message_end" && event.message.role === "assistant") {
     if (!envelope.parentToolCallId && event.message.usage) {
-      addActiveTurnUsage(envelope.sessionId, event.message.usage);
+      addActiveTurnUsage(envelope.sessionId, envelope.turnId, event.message.usage);
     }
     // Checkpoint the finished snapshot before the outbox append (D327).
     // Settling first dropped the last interval of text, and endTurn used to

@@ -216,6 +216,17 @@ as `scope = "full"`.
   `sessionId:turnId` as the idempotency key. A transport failure is retried once;
   a client error is not. Balance refresh is throttled to one notification per
   minute so a long conversation cannot spam the renderer.
+- **Usage belongs to the turn, not the session.** Counts accumulate under
+  `sessionId:turnId`, and settlement takes exactly its own turn. A terminal event
+  can reach the main process before the closing `message_end`, so when a
+  settlement finds no accumulated counts it asks the bounded session read it
+  already performs for the last assistant row that carries usage, instead of
+  dropping the turn.
+- **A skipped report always states why.** `no_gateway_provider` is logged once
+  per process, because a local deployment without a control plane is the normal
+  case. `no_host`, `session_not_on_gateway`, `no_usage`, and `lookup_failed` are
+  logged per turn. Without these records a turn that was never billed cannot be
+  told apart from a turn that had nothing to bill.
 - `ControlPlaneGate` wraps the app shell. While the status is unknown it shows a
   connecting state; on failure it shows a retry screen and **does not** open the
   workspace, because stale entitlements are not acceptable.

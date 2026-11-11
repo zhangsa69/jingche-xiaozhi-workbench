@@ -42,6 +42,12 @@ export function createSessionCoordination({
 }: SessionCoordinationDependencies) {
   const sessionOperationTails = new Map<string, Promise<void>>();
   const turnSettlements = new Map<string, Set<() => void>>();
+  /**
+   * `sessionId:turnId` -> that turn's accumulated usage. Keyed by the turn, not
+   * by the session: a terminal event can arrive before the last `message_end`,
+   * and a session-keyed record would let that late usage land on whichever turn
+   * starts next instead of the one that produced it.
+   */
   const activeTurnUsages = new Map<string, MessageUsage>();
   /**
    * (sessionId, turnId) -> the in-flight finalization for that turn. Keyed by
@@ -79,13 +85,48 @@ export function createSessionCoordination({
     };
   }
 
+  const turnUsageKey = (sessionId: string, turnId: string) =>
+    sessionId + ":" + turnId;
+
+  /**
+   * Accumulate one report into the turn that produced it. `turnId` falls back to
+   * the session's live turn for callers that only carry the session, but the
+   * usage is always stored under a turn, so settlement can take exactly its own.
+   */
   function addActiveTurnUsage(
     sessionId: string,
+    turnId: string | undefined,
     usage: MessageUsage | undefined,
   ): void {
     if (!usage) return;
-    const next = addUsage(activeTurnUsages.get(sessionId), usage);
-    if (next) activeTurnUsages.set(sessionId, next);
+    const id = String(turnId ?? "").trim() || activeTurns.get(sessionId);
+    if (!id) return;
+    const key = turnUsageKey(sessionId, id);
+    const next = addUsage(activeTurnUsages.get(key), usage);
+    if (next) activeTurnUsages.set(key, next);
+  }
+
+  /** Take a turn's usage exactly once; settlement owns the reporting. */
+  function takeActiveTurnUsage(
+    sessionId: string,
+    turnId: string,
+  ): MessageUsage | undefined {
+    const key = turnUsageKey(sessionId, turnId);
+    const usage = activeTurnUsages.get(key);
+    activeTurnUsages.delete(key);
+    return usage;
+  }
+
+  /**
+   * Drop whatever a session still holds. A turn is about to start, so any
+   * leftover belongs to a turn that was abandoned without settling; keeping it
+   * would bill that usage to the new turn.
+   */
+  function clearActiveTurnUsage(sessionId: string): void {
+    const prefix = sessionId + ":";
+    for (const key of activeTurnUsages.keys()) {
+      if (key.startsWith(prefix)) activeTurnUsages.delete(key);
+    }
   }
 
   const activeToolCallKey = (sessionId: string, toolCallId: string) =>
@@ -249,11 +290,12 @@ export function createSessionCoordination({
     activeTurns,
     sessionOperationTails,
     turnSettlements,
-    activeTurnUsages,
     turnFinalizations,
     pendingAbortReasons,
     acquireSessionOperation,
     addActiveTurnUsage,
+    takeActiveTurnUsage,
+    clearActiveTurnUsage,
     activeToolCallKey,
     planSubmissionTurnKey,
     waitForTurnSettlement,

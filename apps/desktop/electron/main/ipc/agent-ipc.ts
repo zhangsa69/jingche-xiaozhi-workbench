@@ -1,4 +1,4 @@
-import { IPC, ErrorCodes, isGlobalPermissionMode, type AgentEventEnvelope, type AgentPromptRequest, type AgentSteerRequest, type UiMessage, type AgentQueuePushRequest, type AgentStopRequest, type AskToolResolution, type GlobalPermissionMode, type MessageUsage, type PlanExecutionFinishStatus, type PlanResolutionResult, type PlanResolveRequest, type PromptEnhancementRequest, type SessionSummarizeTitleRequest } from "@pi-desktop/shared";
+import { IPC, ErrorCodes, isGlobalPermissionMode, type AgentEventEnvelope, type AgentPromptRequest, type AgentSteerRequest, type UiMessage, type AgentQueuePushRequest, type AgentStopRequest, type AskToolResolution, type GlobalPermissionMode, type PlanExecutionFinishStatus, type PlanResolutionResult, type PlanResolveRequest, type PromptEnhancementRequest, type SessionSummarizeTitleRequest } from "@pi-desktop/shared";
 import type { FinishTurn } from "../runtime/plans";
 import { expandSlashInvocation, enhancePromptDraft, summarizeSessionTitle, visionFromModelConfig, type ComposerTemplate, type RuntimeProviderConfig } from "@pi-desktop/agent-runtime";
 import { OAUTH_AUTH_KIND, type VendorOAuth } from "../oauth";
@@ -28,7 +28,8 @@ export type AgentIpcDependencies = {
   activeTurns: Map<string, string>;
   /** Whether the named turn can still start or steer host work. */
   isTurnDispatchable: (sessionId: string, turnId: string | null | undefined) => boolean;
-  activeTurnUsages: Map<string, MessageUsage>;
+  /** Drop usage a turn left behind before the session starts a new one. */
+  clearActiveTurnUsage: (sessionId: string) => void;
   approvedExecutionIdsBySession: Map<string, string>;
   claimedExecutionSessions: Map<string, string>;
   resolveAgentRuntimeLaunch: (...args: any[]) => Promise<any>;
@@ -70,7 +71,7 @@ export function registerAgentIpc({
   dataDir,
   activeTurns,
   isTurnDispatchable,
-  activeTurnUsages,
+  clearActiveTurnUsage,
   approvedExecutionIdsBySession,
   claimedExecutionSessions,
   resolveAgentRuntimeLaunch,
@@ -404,7 +405,7 @@ export function registerAgentIpc({
       throw new Error("session.beginTurn returned no turn");
     }
     activeTurns.set(req.sessionId, durableTurnId);
-    activeTurnUsages.delete(req.sessionId);
+    clearActiveTurnUsage(req.sessionId);
 
     // Slash expansion (D123, ADR 0024): templates expand before persistence
     // so reseed replays exactly what the model saw; the typed form rides along

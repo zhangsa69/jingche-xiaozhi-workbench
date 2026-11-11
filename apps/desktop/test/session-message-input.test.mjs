@@ -75,7 +75,7 @@ test("prompt IPC persists original session text, skips slash expansion and binds
     getAgentHostBridge: () => null,
     logger: { app() {} }, vendorOAuth: {}, agentExtensions: {}, cancelSessionTools() {},
     persistenceOutbox: {}, dataDir: "/unused-for-no-attachments",
-    activeTurns: new Map(), activeTurnUsages: new Map(), approvedExecutionIdsBySession: new Map(), claimedExecutionSessions: new Map(),
+    activeTurns: new Map(), clearActiveTurnUsage() {}, approvedExecutionIdsBySession: new Map(), claimedExecutionSessions: new Map(),
     resolveAgentRuntimeLaunch: async () => ({
       providerId: "provider", modelId: "model",
       sidecarParams: { sessionId: "target", provider: { modelConfig: { input: ["text"] } } },
