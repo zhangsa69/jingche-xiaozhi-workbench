@@ -12847,3 +12847,26 @@ mailbox.
   billed, `sessionId:turnId` key) is locked by
   `apps/desktop/test/control-plane-billing.test.mjs`; the live desktop turn is
   Draft until the desktop automation harness exists
+
+#### E2E-CONTROL-PLANE-intranet-boot-skips-github-update-check
+
+- **Preconditions**: A packaged desktop build whose environment or stored session
+  points the control plane at a private origin (for example
+  `http://192.168.10.20:8080`), and a machine with no route to `github.com`.
+- **Steps**: 1) Launch the app and watch outbound traffic and the update state for
+  the first minute. 2) Choose Check for updates from Settings → Info while the
+  release feed stays unreachable. 3) Repeat the launch with a public control-plane
+  origin.
+- **Expected**: Step 1 makes no request to the GitHub release feed and the update
+  state never enters `checking`; the scheduled check is never armed, so no error,
+  toast, or banner appears. Step 2 still runs the user-initiated check and reports
+  its own error. Step 3 arms the 15-second automatic check exactly as
+  `04-ux/09-interaction-patterns.md` §1.9 describes.
+- **Specs linked**: `04-ux/09-interaction-patterns.md` §1.9; ADR 0022 §8,
+  ADR 0267; D433
+- **Acceptance**: Quality, Security
+- **Milestone**: Post-MVP (company deployment)
+- **Status**: Source-contract covered
+  (`apps/desktop/test/auto-update.test.mjs`, "intranet deployments never arm the
+  GitHub auto-check") for the gate and its call site; the traffic observation is
+  Draft until the desktop automation harness can capture egress

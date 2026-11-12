@@ -1,9 +1,9 @@
 # ADR 0022: Application Update Delivery
 
-- Status: Accepted (amended by D364 / ADR 0197)
+- Status: Accepted (amended by D364 / ADR 0197 and D433)
 - Date: 2026-07-26
 - Deciders: PI-Desktop core
-- Related: D120, D126, D364, D010, ADR 0021, ADR 0197
+- Related: D120, D126, D364, D433, D010, ADR 0021, ADR 0197, ADR 0267
 
 ## Context
 
@@ -47,6 +47,17 @@ download-and-install flow.
    discovered version using the product UI locale and attaches them as optional
    `UpdateState.releaseNotes` on the existing updates path. GitHub auto-generated
    release bodies remain web-only; the renderer never supplies a notes URL.
+8. A client whose configured control-plane host is not public never arms the
+   automatic check (D433). The gate lives at the startup call site, not inside
+   the updater: the updater keeps owning platform delivery mode, while
+   "may this deployment reach the GitHub feed" is a deployment fact resolved
+   from the control-plane URL (`controlPlaneClient.configuredBaseUrl()` plus
+   `isPublicHostname`, ADR 0247 semantics). Private, loopback, link-local, and
+   other non-public IP literals, and `localhost` / `.local` / `.internal` names,
+   skip the scheduled check. A DNS name stays syntactically public, and an
+   absent or unparseable URL keeps the check armed, so a public deployment
+   never loses updates through this gate. Manual checks stay user-invocable and
+   are not gated.
 
 ## Consequences
 
@@ -60,6 +71,10 @@ download-and-install flow.
   latest feed; a dedicated RC channel is not active.
 - In-app bilingual release highlights ship with the build and follow the
   product locale without a second network surface.
+- An intranet client makes no startup request to GitHub, so an air-gapped or
+  LAN-only deployment boots without a pending or failing update check. Such a
+  deployment keeps manual checks and the releases link, which reach the public
+  internet only when the machine actually has it.
 - Signing, rollback, staged rollout, and optional prerelease-channel policy
   remain operational follow-ups rather than renderer capabilities.
 

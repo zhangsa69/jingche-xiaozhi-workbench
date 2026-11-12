@@ -5449,3 +5449,30 @@ that was sitting at the bottom — including after the turn had finished.
 - See ADR 0266, `07-plugins/03-plugin-api.md` §3,
   `07-plugins/13-plugin-permissions-matrix.md` §6, and
   E2E-PLUGIN-fs-root-follows-the-calling-session.
+
+## 2026-11-12 — Intranet deployments never arm the GitHub auto-check (D433)
+
+- The updater polls the fixed GitHub release feed 15 seconds after packaged
+  startup and every 6 hours afterward. An intranet deployment points the
+  control plane at a private host and has no internet path, so every scheduled
+  poll either failed or waited out the 8s bound and left the update state of a
+  client that could never install from GitHub carrying that failure.
+- `registerApplicationStartup` now asks a new `shouldAutoUpdate` dependency
+  before calling `updater.startAutoCheck()`. Main answers it from
+  `controlPlaneClient.configuredBaseUrl()` through `isPublicHostname`
+  (ADR 0247 semantics, no DNS): private, loopback, link-local, and other
+  non-public IP literals plus `localhost`, `.local`, and `.internal` names skip
+  the scheduled check.
+- The gate stays at the call site instead of moving into the updater. Platform
+  delivery mode remains the updater's own responsibility, while "may this
+  deployment reach GitHub" is a deployment fact owned by the control-plane
+  configuration, so the updater keeps no second source of truth.
+- An absent or unparseable control-plane URL keeps the check armed, and a DNS
+  name stays syntactically public, so a public deployment never loses updates
+  through this gate. Manual checks from Settings → Info and the application
+  menu are unchanged and still run on an intranet client.
+- Renderer, protocol, storage, and host code are untouched; no new setting,
+  message, default, or translation. See ADR 0022 §8, ADR 0267,
+  `04-ux/09-interaction-patterns.md` §1.9, and the source-contract test
+  "intranet deployments never arm the GitHub auto-check" in
+  `apps/desktop/test/auto-update.test.mjs`.

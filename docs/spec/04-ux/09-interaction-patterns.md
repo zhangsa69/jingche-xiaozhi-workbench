@@ -504,6 +504,15 @@ may be retained while exactly one workspace supplies the visible shell context.
   (`allowPrerelease = false`), so installs that still carry a prerelease
   version such as `0.2.0-rc.6` are offered the newer stable tag instead of
   staying pinned to the same prerelease channel.
+- Intranet deployments never arm that automatic check. The startup call site
+  asks whether the configured control-plane host is a public host and skips the
+  scheduled check when it is not: a private, loopback, link-local, or otherwise
+  non-public IP literal, and a `localhost`, `.local`, or `.internal` name, keeps
+  the client off the internet. The check stays armed for a DNS name, because
+  host classification stays syntactic, and for an absent or unparseable
+  control-plane URL, so a public deployment never loses updates (D433). Manual
+  checks from Settings → Info and the application menu remain available; on an
+  isolated network they surface only their own ambient error.
 - Settings → Info and application-menu checks share one typed update state.
   Manual checks expose up-to-date or error feedback; automatic failures do not
   open a toast or ambient banner.

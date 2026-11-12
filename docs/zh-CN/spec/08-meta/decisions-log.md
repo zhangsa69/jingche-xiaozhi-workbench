@@ -4218,3 +4218,11 @@ the retained upstream work-panel lifecycle. See
 - 现在没有可见工作区时会话根也能解析，所以临时对话按会话各自继续工作，而不是所有会话一起失败；这种状态下的面板调用仍然失败关闭。于是 `workspace` 根的 `NOT_FOUND` 更窄：既没有解析出调用会话的项目，也没有可见工作区。
 - 权限、realpath 包含、拒绝名单、声明范围与运行时同意这四类闸门都没有改动，插件 API 表面也未变化：`pi.workspace.get` 仍然以可见工作区及其项目组作答。
 - 见 ADR 0266、`07-plugins/03-plugin-api.md` §3、`07-plugins/13-plugin-permissions-matrix.md` §6 与 E2E-PLUGIN-fs-root-follows-the-calling-session。
+
+## 2026-11-12 —— 内网部署永不启动 GitHub 自动检查（D433）
+
+- 更新器会在打包应用启动 15 秒后检查固定的 GitHub 发布源，之后每 6 小时一次。内网部署把管控中心指向私有主机，本身没有出网路径，于是每次定时检查要么直接失败，要么等到 8 秒上限，让一个根本无法从 GitHub 安装更新的客户端始终带着这条失败。
+- `registerApplicationStartup` 现在会在调用 `updater.startAutoCheck()` 之前询问新增的 `shouldAutoUpdate` 依赖。Main 用 `controlPlaneClient.configuredBaseUrl()` 经 `isPublicHostname`（ADR 0247 语义，不做 DNS）作答：私有、回环、链路本地等非公网 IP 字面量，以及 `localhost`、`.local`、`.internal` 名称，都跳过定时检查。
+- 该闸门留在调用点，而不是搬进更新器内部：平台交付方式仍是更新器自己的职责，而「这次部署能否访问 GitHub」是由管控中心配置决定的部署事实，因此更新器不必再维护第二个真相来源。
+- 管控中心地址缺失或无法解析时仍保留检查，DNS 域名也仍按语法视为公网，所以公网部署不会因为这道闸门丢掉更新能力。设置 → 信息与应用程序菜单的手动检查不受限制，内网客户端照常可点。
+- 渲染层、协议、存储与宿主代码均未改动；没有新增设置项、消息、默认值或翻译。见 ADR 0022 §8、ADR 0267、`04-ux/09-interaction-patterns.md` §1.9，以及 `apps/desktop/test/auto-update.test.mjs` 中的源码契约测试「intranet deployments never arm the GitHub auto-check」。
