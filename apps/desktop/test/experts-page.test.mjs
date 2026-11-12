@@ -56,9 +56,20 @@ test("every expert is described in the catalogs, not only in code", () => {
 test("picking an expert hands over prompt text the user can still see", () => {
   // The persona must not live in a hidden session setting: the brief goes into
   // the composer, so it can be read and edited before it is sent.
-  assert.match(page, /appendComposerDraftText\(preset\.brief\)/);
+  assert.match(page, /handOver\(preset\.brief\)/);
+  assert.match(page, /appendComposerDraftText\(text\)/);
   assert.match(page, /setPage\("chat"\)/);
   assert.doesNotMatch(page, /systemPrompt/);
+});
+
+test("handing over before any conversation exists opens one instead of dropping the prompt", () => {
+  // The draft cache is session-scoped, so a hand-over with no active session
+  // used to vanish: the page switched to chat and nothing else happened.
+  assert.match(page, /if \(!sessionId\) sessionId = await materializeDraftSession\(\)/);
+  assert.match(page, /showToast\(t\("experts\.handOverFailed"\)/);
+  // A successful hand-over has to say what to do next; it never sends itself.
+  assert.match(page, /showToast\(t\("experts\.handedOver"\)/);
+  assert.match(page, /setInstruction\(""\);\s*\n\s*void handOver\(prompt\)/);
 });
 
 test("the model on a card is a label, never a silent switch", () => {

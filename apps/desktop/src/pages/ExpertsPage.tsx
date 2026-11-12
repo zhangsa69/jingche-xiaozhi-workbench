@@ -11,7 +11,7 @@ import {
   type ExpertCategory,
   type ExpertPreset,
 } from "@pi-desktop/shared";
-import { useAppStore } from "../stores/app-store";
+import { materializeDraftSession, useAppStore } from "../stores/app-store";
 import { IconCheck, IconPlus, IconSearch, IconSparkles, IconUser, IconX } from "../components/icons";
 
 const ALL = "all" as const;
@@ -52,9 +52,30 @@ export function ExpertsPage() {
 
   const detail = findExpertPreset(detailId) ?? null;
 
-  const useExpert = (preset: ExpertPreset) => {
-    appendComposerDraftText(preset.brief);
+  /**
+   * Hand text to the composer without sending it.
+   *
+   * The draft cache is session-scoped, so a hand-over with no active session
+   * used to be dropped silently: the page switched to chat and nothing else
+   * happened. The expert center is reachable before any conversation exists,
+   * so materialize the draft session first (the same path the composer takes
+   * when a picker action needs a durable owner), then append and explain the
+   * next step — the prompt stays editable and is never sent from here.
+   */
+  const handOver = async (text: string) => {
+    let sessionId: string | null | undefined = useAppStore.getState().activeSessionId;
+    if (!sessionId) sessionId = await materializeDraftSession();
+    if (!sessionId) {
+      showToast(t("experts.handOverFailed"), { variant: "error" });
+      return;
+    }
+    appendComposerDraftText(text);
     setPage("chat");
+    showToast(t("experts.handedOver"), { variant: "success" });
+  };
+
+  const useExpert = (preset: ExpertPreset) => {
+    void handOver(preset.brief);
   };
 
   const toggleTeam = (preset: ExpertPreset) => {
@@ -76,9 +97,8 @@ export function ExpertsPage() {
       showToast(t("experts.needInstruction"), { variant: "info" });
       return;
     }
-    appendComposerDraftText(prompt);
     setInstruction("");
-    setPage("chat");
+    void handOver(prompt);
   };
 
   return (

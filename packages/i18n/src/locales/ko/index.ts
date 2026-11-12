@@ -1654,6 +1654,8 @@ sklm: {
     instructionPlaceholder: "예: 금요일 통화 전에 가격 변경안을 검토해 주세요",
     launch: "전문가 팀에 맡기기",
     needInstruction: "할 일을 먼저 적어 주세요",
+    handedOver: "입력창에 넣었습니다. Enter로 보내세요",
+    handOverFailed: "대화를 열 수 없습니다",
     teamFull: "전문가 팀은 {{max}}명까지입니다. 한 명을 빼 주세요",
     empty: "맞는 전문가가 없습니다",
     emptyHint: "다른 낱말을 쓰거나 분류를 바꿔 보세요.",

@@ -349,6 +349,31 @@ describe("classifyAgentError", () => {
     });
   });
 
+  it("keeps a 402 that reports an empty balance terminal", () => {
+    // The same status also means "this account has nothing left to spend".
+    // Re-sending cannot refill it, so the retry budget must not be spent on it.
+    // The code stays PROVIDER_RATE_LIMITED so the card keeps its single
+    // Continue action instead of offering a Regenerate loop.
+    expect(
+      classifyAgentError(
+        '402: {"error":{"code":"INSUFFICIENT_QUOTA","message":"You exceeded your current quota"}}',
+      ),
+    ).toMatchObject({ code: "PROVIDER_RATE_LIMITED", retriable: false });
+    expect(classifyAgentError("402: 小智豆余额不足")).toMatchObject({
+      code: "PROVIDER_RATE_LIMITED",
+      retriable: false,
+    });
+    expect(classifyAgentError("402: credit balance exhausted")).toMatchObject({
+      code: "PROVIDER_RATE_LIMITED",
+      retriable: false,
+    });
+
+    // Wording that only names a window stays retryable.
+    expect(
+      classifyAgentError("402: quota window exceeded, try again in 30s"),
+    ).toMatchObject({ code: "PROVIDER_RATE_LIMITED", retriable: true });
+  });
+
   it("does not mistake a context overflow for a rate limit", () => {
     // "limit exceeded" is also quota wording, so size has to win: retrying a
     // prompt that is too long would burn the whole budget and still fail.

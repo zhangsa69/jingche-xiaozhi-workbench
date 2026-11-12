@@ -1636,6 +1636,8 @@ sklm: {
     instructionPlaceholder: "例如：在周五电话会前审一遍调价方案",
     launch: "交给专家团",
     needInstruction: "先写清楚要办的事，再交给专家团",
+    handedOver: "已写入输入框，确认后按 Enter 发送",
+    handOverFailed: "没能创建对话，请稍后再试",
     teamFull: "专家团最多 {{max}} 位——先移出一位",
     empty: "没有匹配的专家",
     emptyHint: "换个词，或者切换分类。",

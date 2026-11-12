@@ -36,6 +36,16 @@ const CONTEXT_PATTERN =
 const QUOTA_PATTERN =
   /rate.?limit|too many requests|quota|overloaded|usage limit|limit (?:has been )?(?:exceeded|reached)|insufficient[ _]quota|resource[ _]exhausted|capacity (?:exceeded|limit)|try again (?:later|in)|请求过于频繁|限流|额度/i;
 
+/**
+ * A body that reports an account with nothing left to spend, as opposed to a
+ * window that will open again. Gateways answer 402 for both, but only the
+ * former can never be recovered by re-sending, so it must not burn the retry
+ * budget. Deliberately narrower than `QUOTA_PATTERN`, which also matches
+ * retry-worthy wording such as "try again later" and "quota window exceeded".
+ */
+const INSUFFICIENT_BALANCE_PATTERN =
+  /insufficient[ _](?:quota|balance|credit|credits|funds)|(?:credit|balance)[ _](?:is[ _])?(?:exhausted|depleted)|余额不足|额度(?:已)?(?:用尽|耗尽|不足)/i;
+
 const STREAM_TERMINATION_PATTERN =
   /\bterminated\b|stream ended without finish_reason|premature(?:ly)?\s+(?:closed|ended)|(?:stream|response).*(?:closed|interrupted)/i;
 
@@ -397,7 +407,18 @@ export function classifyAgentError(err: unknown): ClassifiedAgentError {
     // a rejected key: gateways in front of OpenAI-compatible APIs use both for
     // "come back later", and re-sending is exactly what recovers it. A 401 or a
     // 403 without that wording stays terminal so a bad key is not hammered.
-    if (status === 402) return result("PROVIDER_RATE_LIMITED", true);
+    //
+    // 402 also covers an account whose balance is gone. Re-sending never
+    // refills it, so the body decides: the same status stays retryable when it
+    // only names a window, and becomes terminal when it names an empty balance.
+    // It keeps the rate-limited code so the error card still offers its single
+    // Continue action instead of a Regenerate loop.
+    if (status === 402) {
+      if (INSUFFICIENT_BALANCE_PATTERN.test(rawMessage)) {
+        return result("PROVIDER_RATE_LIMITED", false);
+      }
+      return result("PROVIDER_RATE_LIMITED", true);
+    }
     if (status === 403 && QUOTA_PATTERN.test(rawMessage)) {
       return result("PROVIDER_RATE_LIMITED", true);
     }

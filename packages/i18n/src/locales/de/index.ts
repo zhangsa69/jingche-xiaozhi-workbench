@@ -1630,6 +1630,8 @@ sklm: {
     "instructionPlaceholder": "z. B. Prüfe die Preisänderung vor dem Freitagstermin",
     "launch": "Panel beauftragen",
     "needInstruction": "Beschreiben Sie zuerst die Aufgabe",
+    "handedOver": "In das Eingabefeld übernommen – Enter zum Senden",
+    "handOverFailed": "Konversation konnte nicht geöffnet werden",
     "teamFull": "Das Panel fasst {{max}} Experten — entfernen Sie zuerst einen",
     "empty": "Kein Experte passt",
     "emptyHint": "Anderes Wort versuchen oder Kategorie wechseln.",

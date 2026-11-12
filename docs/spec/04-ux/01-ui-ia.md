@@ -306,6 +306,11 @@ domain — and then for **one** deliverable: disagreements survive only when the
 change the recommendation, duplicates collapse, and the tail lists what still
 needs a human decision. The prompt is visible in the composer before it is sent.
 
+Handing over from either page materializes a draft session when none is active,
+writes the prompt into the composer, and confirms that Enter sends it. The
+hand-over never sends by itself, and it never drops the prompt for want of a
+session.
+
 ### 3.9 Prompt library
 
 A panel docked above the composer. The toolbar entry was removed on request, so

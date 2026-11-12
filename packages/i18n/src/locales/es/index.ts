@@ -1630,6 +1630,8 @@ sklm: {
     "instructionPlaceholder": "p. ej. Revisa el cambio de precios antes de la llamada del viernes",
     "launch": "Encargar al panel",
     "needInstruction": "Describe el trabajo antes de encargarlo",
+    "handedOver": "Añadido al cuadro de mensaje: pulsa Enter para enviar",
+    "handOverFailed": "No se pudo abrir una conversación",
     "teamFull": "El panel admite {{max}} expertos: quita uno primero",
     "empty": "Ningún experto coincide",
     "emptyHint": "Prueba otra palabra o cambia de categoría.",
