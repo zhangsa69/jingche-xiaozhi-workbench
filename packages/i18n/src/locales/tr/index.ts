@@ -1652,6 +1652,8 @@ sklm: {
     instructionPlaceholder: "örn. Cuma görüşmesinden önce fiyat değişikliğini gözden geçir",
     launch: "Panele ver",
     needInstruction: "Önce işi anlatın",
+    handedOver: "Mesaj kutusuna eklendi — göndermek için Enter'a basın",
+    handOverFailed: "Konuşma açılamadı",
     teamFull: "Panel {{max}} uzman alır — önce birini çıkarın",
     empty: "Eşleşen uzman yok",
     emptyHint: "Başka bir sözcük deneyin veya kategori değiştirin.",

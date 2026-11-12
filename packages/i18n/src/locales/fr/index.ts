@@ -1629,6 +1629,8 @@ sklm: {
     "instructionPlaceholder": "ex. Relire le changement de tarif avant l'appel de vendredi",
     "launch": "Confier au panel",
     "needInstruction": "Décrivez d'abord la tâche",
+    "handedOver": "Ajouté à la zone de saisie — appuyez sur Entrée pour envoyer",
+    "handOverFailed": "Impossible d'ouvrir une conversation",
     "teamFull": "Le panel accueille {{max}} experts — retirez-en un",
     "empty": "Aucun expert ne correspond",
     "emptyHint": "Essayez un autre mot ou changez de catégorie.",

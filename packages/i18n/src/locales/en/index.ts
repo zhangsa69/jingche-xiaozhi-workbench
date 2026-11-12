@@ -1659,6 +1659,8 @@ sklm: {
     instructionPlaceholder: "e.g. Review the pricing change before Friday's call",
     launch: "Brief the panel",
     needInstruction: "Describe the job before briefing the panel",
+    handedOver: "Added to the message box — press Enter to send",
+    handOverFailed: "Could not open a conversation, please try again",
     teamFull: "The panel holds {{max}} experts — remove one first",
     empty: "No expert matches",
     emptyHint: "Try another word, or switch category.",
