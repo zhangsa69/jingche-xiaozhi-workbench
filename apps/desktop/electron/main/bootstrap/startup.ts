@@ -82,6 +82,12 @@ export type StartupDependencies = {
   ensureWindow: () => Promise<boolean>;
   bootHostStatus: (bootError: unknown) => unknown;
   flushPendingApplicationMenuCommands: () => void;
+  /**
+   * Whether the GitHub release feed may be polled. An intranet deployment
+   * points the control plane at a private host and must not reach the
+   * internet, so this returns false there and the auto-check is never armed.
+   */
+  shouldAutoUpdate: () => boolean;
   getSidecar?: () => unknown;
   invokeSessionCollaboration?: (input: McpControlInvokeInput) => Promise<unknown>;
   onSessionQueueChange?: () => void;
@@ -252,8 +258,9 @@ export function registerApplicationStartup(deps: StartupDependencies): void {
     }
     // GitHub discovery is delayed and time-bounded. Never start it before the
     // first window exists: a hung feed used to sit in "checking" for ~60s and
-    // compete with boot for the net stack.
-    updater.startAutoCheck();
+    // compete with boot for the net stack. An intranet deployment (private
+    // control-plane host) skips it entirely so the client never reaches out.
+    if (deps.shouldAutoUpdate()) updater.startAutoCheck();
     // createWindow awaits the initial load (loadFile resolves on
     // did-finish-load), so the page is up; give React a beat to mount its
     // event subscriptions before pushing the boot outcome.

@@ -88,6 +88,16 @@ test("main process registers update handlers and the auto-check lifecycle", () =
   assert.match(mainSource, /updater\.dispose\(\)/);
 });
 
+test("intranet deployments never arm the GitHub auto-check", () => {
+  // An intranet client points the control plane at a private host and must not
+  // reach the internet, so the startup call site is gated instead of the
+  // updater itself. Anything unparseable stays public and keeps updates armed.
+  assert.match(mainSource, /shouldAutoUpdate: \(\) => \{/);
+  assert.match(mainSource, /controlPlaneClient\.configuredBaseUrl\(\)/);
+  assert.match(mainSource, /isPublicHostname\(new URL\(baseUrl\)\.hostname\)/);
+  assert.match(mainSource, /if \(deps\.shouldAutoUpdate\(\)\) updater\.startAutoCheck\(\)/);
+});
+
 test("updater gates delivery mode by platform and delivery policy", () => {
   // macOS stays manual-delivery even for notarized artifacts; dev builds are
   // disabled outright.

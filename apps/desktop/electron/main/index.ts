@@ -24,6 +24,7 @@ import {
   keybindingToElectronAccelerator,
   resolveKeybinding,
   isActiveInProject,
+  isPublicHostname,
   type ActivationScope,
   type AgentEventEnvelope,
   type AppMenuCommand,
@@ -1431,6 +1432,19 @@ registerApplicationStartup({
   ensureWindow,
   bootHostStatus,
   flushPendingApplicationMenuCommands,
+  // An intranet deployment points the control plane at a private host; such a
+  // client must never poll the GitHub release feed. Arm auto-update only when
+  // the configured control plane is a public host. Anything we cannot parse is
+  // treated as public so the safety of the updater is never silently lost.
+  shouldAutoUpdate: () => {
+    const baseUrl = controlPlaneClient.configuredBaseUrl();
+    if (!baseUrl) return true;
+    try {
+      return isPublicHostname(new URL(baseUrl).hostname);
+    } catch {
+      return true;
+    }
+  },
   invokeSessionCollaboration: sessionCollaboration.invoke,
   onSessionQueueChange: () => {
     void sessionCollaboration.drain().catch((error: unknown) => {
