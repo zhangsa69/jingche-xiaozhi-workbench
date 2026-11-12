@@ -147,13 +147,16 @@ test("the gate covers the window with an undistorted photo and a readable right 
   assert.doesNotMatch(shellClass, /justify-center|justify-start/);
   assert.match(gate, /bg-bg-secondary\/85/);
   // A local paper-and-ink palette keeps form text legible on the pale photo.
+  // The bundler inlines multi-hop custom properties and drops the definition,
+  // so these must be literal end values, never a var(--login-*) hop.
   const gateStyles = readFileSync(
     join(here, "..", "src", "styles", "control-plane.css"),
     "utf8",
   );
-  assert.match(gateStyles, /--login-ink:/);
-  assert.match(gateStyles, /--ds-text-primary: var\(--login-ink\)/);
-  assert.match(gateStyles, /--ds-accent: var\(--login-brand\)/);
+  assert.doesNotMatch(gateStyles, /var\(--login-/);
+  assert.match(gateStyles, /--ds-text-primary: #22374c/);
+  assert.match(gateStyles, /--color-text-primary: #22374c/);
+  assert.match(gateStyles, /--ds-accent: #c2542a/);
   const backdrop = readFileSync(join(here, "..", "src", "assets", "login-backdrop.jpg"));
   assert.ok(backdrop.length > 100_000, "backdrop asset missing or too small");
 });
@@ -164,10 +167,10 @@ test("the gate mirrors Tailwind colour tokens so its ink stays legible", () => {
     "utf8",
   );
   // --ds-* overrides alone do not reach text-*/bg-* utilities: @theme resolves
-  // --color-* on :root. Both families must carry the paper palette.
-  assert.match(styles, /--color-text-primary: var\(--login-ink\)/);
-  assert.match(styles, /--color-text-muted: var\(--login-ink-soft\)/);
-  assert.match(styles, /--color-bg-inset: var\(--login-paper-deep\)/);
+  // --color-* on :root. Both families must carry the paper palette, as literals.
+  assert.match(styles, /--color-text-primary: #22374c/);
+  assert.match(styles, /--color-text-muted: #5a6b7b/);
+  assert.match(styles, /--color-bg-inset: #ece6d8/);
   assert.match(styles, /--color-error: #e02e2a/);
 });
 

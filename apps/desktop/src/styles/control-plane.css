@@ -6,65 +6,61 @@
  *
  * The backdrop is a pale editorial illustration (warm paper, ink-blue
  * lettering, burnt-orange mark). The gate is painted before the workspace
- * theme applies, so it owns a small local "paper" palette that shadows only
- * the tokens used inside the gate; the workspace theme stays untouched.
+ * theme applies, so it owns a small local "paper" palette.
+ *
+ * IMPORTANT: every override below is a LITERAL end value. Do not add a
+ * `--login-*` indirection or any var() hop between these tokens and a colour.
+ * The bundler inlines multi-hop custom properties and then drops the
+ * intermediate definition, which once shipped a gate whose ink stayed white
+ * on white (every --color-* utility fell back to the dark palette). Keep them
+ * flat and literal. Likewise Tailwind resolves --color-* on :root, so the
+ * colour family is shadowed here too, not only the --ds-* family.
  */
 .control-plane-shell {
-  --login-paper: #f7f4ec;
-  --login-paper-deep: #ece6d8;
-  --login-ink: #22374c;
-  --login-ink-soft: #5a6b7b;
-  --login-brand: #c2542a;
-
   --ds-bg-primary: #ffffff;
-  --ds-bg-secondary: var(--login-paper);
-  --ds-bg-tertiary: var(--login-paper-deep);
-  --ds-bg-inset: var(--login-paper-deep);
-  --ds-bg-under: var(--login-paper);
-  --ds-bg-elevated: var(--login-paper);
-  --ds-bg-hover: color-mix(in oklab, var(--login-ink) 8%, transparent);
-  --ds-tile: var(--login-paper);
-  --ds-tile-hover: var(--login-paper-deep);
-  --ds-tile-deep: color-mix(in oklab, var(--login-ink) 10%, var(--login-paper));
+  --ds-bg-secondary: #f7f4ec;
+  --ds-bg-tertiary: #ece6d8;
+  --ds-bg-inset: #ece6d8;
+  --ds-bg-under: #f7f4ec;
+  --ds-bg-elevated: #f7f4ec;
+  --ds-bg-hover: rgba(34, 55, 76, 0.08);
+  --ds-tile: #f7f4ec;
+  --ds-tile-hover: #ece6d8;
+  --ds-tile-deep: #ddded2;
   --ds-raised: #ffffff;
-  --ds-text-primary: var(--login-ink);
-  --ds-text-secondary: var(--login-ink);
-  --ds-text-muted: var(--login-ink-soft);
-  --ds-text-faint: var(--login-ink-soft);
-  --ds-border-default: color-mix(in oklab, var(--login-ink) 20%, transparent);
-  --ds-border-subtle: color-mix(in oklab, var(--login-ink) 12%, transparent);
-  --ds-accent: var(--login-brand);
-  --ds-accent-hover: color-mix(in oklab, var(--login-brand) 88%, var(--login-ink));
+  --ds-text-primary: #22374c;
+  --ds-text-secondary: #22374c;
+  --ds-text-muted: #5a6b7b;
+  --ds-text-faint: #5a6b7b;
+  --ds-border-default: rgba(34, 55, 76, 0.2);
+  --ds-border-subtle: rgba(34, 55, 76, 0.12);
+  --ds-accent: #c2542a;
+  --ds-accent-hover: #a8441f;
   --ds-success: #00a240;
   --ds-warning: #e25507;
   --ds-error: #e02e2a;
-  --ds-info: var(--login-ink-soft);
+  --ds-info: #5a6b7b;
 
-  /*
-   * Tailwind's @theme resolves --color-* from --ds-* on :root, so overriding
-   * --ds-* on a subtree alone leaves text-*/bg-*/border-* utilities on the
-   * dark palette (white ink on the pale artwork). Mirror the palette here.
-   */
   --color-bg-primary: #ffffff;
-  --color-bg-secondary: var(--login-paper);
-  --color-bg-tertiary: var(--login-paper-deep);
-  --color-bg-inset: var(--login-paper-deep);
-  --color-bg-under: var(--login-paper);
-  --color-bg-elevated: var(--login-paper);
-  --color-bg-hover: color-mix(in oklab, var(--login-ink) 8%, transparent);
-  --color-text-primary: var(--login-ink);
-  --color-text-secondary: var(--login-ink);
-  --color-text-muted: var(--login-ink-soft);
-  --color-text-faint: var(--login-ink-soft);
-  --color-border-default: color-mix(in oklab, var(--login-ink) 20%, transparent);
-  --color-border-subtle: color-mix(in oklab, var(--login-ink) 12%, transparent);
-  --color-accent: var(--login-brand);
-  --color-accent-hover: color-mix(in oklab, var(--login-brand) 88%, var(--login-ink));
-  --color-accent-soft: color-mix(in oklab, var(--login-brand) 14%, transparent);
+  --color-bg-secondary: #f7f4ec;
+  --color-bg-tertiary: #ece6d8;
+  --color-bg-inset: #ece6d8;
+  --color-bg-under: #f7f4ec;
+  --color-bg-elevated: #f7f4ec;
+  --color-bg-hover: rgba(34, 55, 76, 0.08);
+  --color-text-primary: #22374c;
+  --color-text-secondary: #22374c;
+  --color-text-muted: #5a6b7b;
+  --color-text-faint: #5a6b7b;
+  --color-border-default: rgba(34, 55, 76, 0.2);
+  --color-border-subtle: rgba(34, 55, 76, 0.12);
+  --color-accent: #c2542a;
+  --color-accent-hover: #a8441f;
+  --color-accent-soft: rgba(194, 84, 42, 0.14);
   --color-success: #00a240;
   --color-warning: #e25507;
   --color-error: #e02e2a;
-  --color-info: var(--login-ink-soft);
+  --color-info: #5a6b7b;
 
   -webkit-app-region: drag;
   app-region: drag;
@@ -84,7 +80,7 @@
 
 /* A hairline and a soft lift keep the paper card readable on the paper photo. */
 .control-plane-card {
-  border-color: color-mix(in oklab, var(--login-ink) 24%, transparent);
+  border-color: rgba(34, 55, 76, 0.24);
   box-shadow:
     0 18px 48px rgb(34 55 76 / 14%),
     inset 0 1px 0 rgb(255 255 255 / 75%);
@@ -92,7 +88,7 @@
 
 /* The gate has no titlebar plate, so the shared controls sit on the artwork
    instead of painting an opaque band across the top-right corner. Their ink
-   colour comes from the local palette above. */
+   colour comes from the palette above. */
 :root .control-plane-shell .window-controls {
   background: transparent;
 }
@@ -108,7 +104,7 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: color-mix(in oklab, var(--login-paper) 62%, transparent);
+  background: rgba(247, 244, 236, 0.62);
   border-radius: var(--radius-md);
   box-shadow:
     inset 1px 1px 4px rgb(255 255 255 / 75%),
@@ -131,14 +127,14 @@
   justify-content: center;
   padding: 0.7rem 0.5rem;
   cursor: pointer;
-  color: var(--login-ink);
+  color: #22374c;
   position: relative;
   z-index: 2;
   transition: color 0.3s ease-in-out;
 }
 
 .glass-radio-group label:hover {
-  color: var(--login-brand);
+  color: #c2542a;
 }
 
 .glass-radio-group input:checked + label,
@@ -147,7 +143,7 @@
 }
 
 .glass-radio-group input:focus-visible + label {
-  outline: 2px solid var(--login-brand);
+  outline: 2px solid #c2542a;
   outline-offset: -3px;
 }
 
@@ -164,7 +160,7 @@
   width: calc(100% / 3);
   border-radius: var(--radius-md);
   z-index: 1;
-  background: var(--login-ink);
+  background: #22374c;
   box-shadow: 0 4px 14px rgb(34 55 76 / 24%), inset 0 1px 0 rgb(255 255 255 / 22%);
   transition:
     transform 0.5s cubic-bezier(0.37, 1.95, 0.66, 0.56),
