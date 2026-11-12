@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import type { ControlPlaneStatus } from "@pi-desktop/shared";
+import { BrandLogo } from "../../components/BrandLogo";
 import { api } from "../../lib/api";
 
 type Mode = "signin" | "register" | "reset";
@@ -175,9 +176,11 @@ export function ControlPlaneSignIn({ baseUrl, initialError, onSignedIn }: Contro
   );
 
   return (
-    <div className="panel-card w-full max-w-md border border-border-default bg-bg-secondary/90 p-6 shadow-2xl backdrop-blur-xl">
-      <header className="mb-5 flex items-start gap-3">
-        <div className="h-9 w-9 shrink-0 rounded-md bg-accent" />
+    <div className="control-plane-card panel-card w-full max-w-md border border-border-default bg-bg-secondary/70 p-6 shadow-2xl backdrop-blur-xl">
+      <header className="control-plane-drag-handle mb-5 flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-bg-tertiary/70 ring-1 ring-border-default/60">
+          <BrandLogo size={32} />
+        </div>
         <div className="min-w-0">
           <h1 className="m-0 text-lg font-semibold leading-heading text-text-primary">{copy.title}</h1>
           <p className="m-0 mt-1 text-sm leading-body text-text-muted">{copy.subtitle}</p>

@@ -230,6 +230,10 @@ as `scope = "full"`.
 - `ControlPlaneGate` wraps the app shell. While the status is unknown it shows a
   connecting state; on failure it shows a retry screen and **does not** open the
   workspace, because stale entitlements are not acceptable.
+- The gate covers the whole frameless window on Windows/Linux. Its shell and
+  card header are native drag regions, while every interactive field in the
+  card opts out, so the window stays movable without a native titlebar. The
+  card is translucent and shows the same brand mark as the packaged app icon.
 - A `401` on `me` clears the local session and returns the user to sign-in.
 - The sidebar account chip shows the employee, the remaining balance, a manual
   refresh, and sign-out (with a second confirmation).

@@ -1,0 +1,22 @@
+/*
+ * Control-plane gate — Windows/Linux run frameless, and the gate covers the
+ * whole window before sign-in, so there is no native titlebar to drag from.
+ * `app-region` is inherited: every interactive descendant of the card has to
+ * opt back out, and only the header opts back in as a visible drag handle.
+ */
+.control-plane-shell {
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
+.control-plane-card,
+.control-plane-card * {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+.control-plane-drag-handle,
+.control-plane-drag-handle * {
+  -webkit-app-region: drag;
+  app-region: drag;
+}

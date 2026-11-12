@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import type { ControlPlaneStatus } from "@pi-desktop/shared";
+import { BrandLogo } from "../../components/BrandLogo";
 import { api } from "../../lib/api";
 import { ControlPlaneSignIn } from "./ControlPlaneSignIn";
 import { useAppStore } from "../../stores/app-store";
@@ -47,7 +48,7 @@ export function useManagedModels(): boolean {
 }
 
 const SHELL_CLASS =
-  "fixed inset-0 flex items-center justify-center overflow-y-auto bg-bg-under p-6 text-text-primary";
+  "control-plane-shell fixed inset-0 flex items-center justify-center overflow-y-auto bg-bg-under p-6 text-text-primary";
 
 // Soft accent bloom behind the card; painted inline so the token cascade keeps
 // owning every real surface colour.
@@ -58,7 +59,7 @@ const SHELL_STYLE: CSSProperties = {
 };
 
 const CARD_CLASS =
-  "panel-card w-full max-w-md border border-border-default bg-bg-secondary/90 p-6 shadow-2xl backdrop-blur-xl";
+  "control-plane-card panel-card w-full max-w-md border border-border-default bg-bg-secondary/70 p-6 shadow-2xl backdrop-blur-xl";
 
 const UNREACHABLE_HINT =
   "为避免使用过期额度，客户端在无法确认配额时不会进入工作台。请检查网络或联系管理员。";
@@ -188,7 +189,9 @@ export function ControlPlaneGate({ children }: { children: ReactNode }) {
     return (
       <div className={SHELL_CLASS} style={SHELL_STYLE}>
         <div className={`${CARD_CLASS} text-center`}>
-          <div className="mx-auto mb-3.5 h-9 w-9 animate-pulse rounded-md bg-accent" />
+          <div className="mx-auto mb-3.5 flex h-10 w-10 animate-pulse items-center justify-center rounded-xl bg-bg-tertiary/70 ring-1 ring-border-default/60">
+            <BrandLogo size={32} />
+          </div>
           <p className="m-0 text-base text-text-primary">正在连接京车小智管控中心…</p>
           <p className="m-0 mt-1.5 text-sm text-text-muted">校验登录状态并同步小智豆配额</p>
         </div>
