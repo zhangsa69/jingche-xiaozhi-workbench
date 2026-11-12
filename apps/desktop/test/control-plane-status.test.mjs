@@ -158,6 +158,37 @@ test("the gate covers the window with an undistorted photo and a readable right 
   assert.ok(backdrop.length > 100_000, "backdrop asset missing or too small");
 });
 
+test("the gate mirrors Tailwind colour tokens so its ink stays legible", () => {
+  const styles = readFileSync(
+    join(here, "..", "src", "styles", "control-plane.css"),
+    "utf8",
+  );
+  // --ds-* overrides alone do not reach text-*/bg-* utilities: @theme resolves
+  // --color-* on :root. Both families must carry the paper palette.
+  assert.match(styles, /--color-text-primary: var\(--login-ink\)/);
+  assert.match(styles, /--color-text-muted: var\(--login-ink-soft\)/);
+  assert.match(styles, /--color-bg-inset: var\(--login-paper-deep\)/);
+  assert.match(styles, /--color-error: #e02e2a/);
+});
+
+test("the sign-in tabs use a legible glass segmented control", () => {
+  const signIn = readFileSync(
+    join(here, "..", "src", "features", "auth", "ControlPlaneSignIn.tsx"),
+    "utf8",
+  );
+  const styles = readFileSync(
+    join(here, "..", "src", "styles", "control-plane.css"),
+    "utf8",
+  );
+  assert.match(signIn, /className="glass-radio-group mb-5 backdrop-blur-md"/);
+  assert.match(signIn, /type="radio"/);
+  assert.match(signIn, /className="glass-glider"/);
+  assert.doesNotMatch(signIn, /rounded-md bg-bg-inset p-1/);
+  assert.match(styles, /\.glass-radio-group input:checked \+ label/);
+  assert.match(styles, /input:nth-of-type\(3\):checked ~ \.glass-glider/);
+  assert.doesNotMatch(styles, /backdrop-filter:\s*blur/);
+});
+
 test("a managed deployment forces the gateway row as the only default", () => {
   // `ensureDefault` used to yield to any provider the employee had picked, so a
   // deployment that requires the control plane still sent turns to a locally

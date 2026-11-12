@@ -237,7 +237,10 @@ as `scope = "full"`.
   with only a pale tint over its empty right half; the translucent card sits on
   the right and carries a local paper-and-ink palette (warm paper, deep ink,
   burnt orange) that matches the artwork while keeping form, button, and hint
-  text legible at any window size. The gate also mounts the shared window
+  text legible at any window size. Because Tailwind resolves `--color-*` on the
+  root, the gate mirrors both token families locally; the mode switch is a glass
+  segmented control whose active label sits on an opaque branded glider. The
+  gate also mounts the shared window
   controls (minimize, maximize, close) so the window remains manageable before
   authentication.
 - A `401` on `me` clears the local session and returns the user to sign-in.

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import type { ControlPlaneStatus } from "@pi-desktop/shared";
 import { BrandLogo } from "../../components/BrandLogo";
 import { api } from "../../lib/api";
@@ -187,22 +187,23 @@ export function ControlPlaneSignIn({ baseUrl, initialError, onSignedIn }: Contro
         </div>
       </header>
 
-      <div className="mb-5 flex gap-1 rounded-md bg-bg-inset p-1">
+      <div className="glass-radio-group mb-5 backdrop-blur-md">
         {(Object.keys(MODE_LABEL) as Mode[]).map((item) => (
-          <button
-            key={item}
-            type="button"
-            disabled={busy}
-            onClick={() => switchMode(item)}
-            className={`flex-1 rounded-sm px-2 py-1.5 text-sm transition-colors disabled:cursor-not-allowed ${
-              mode === item
-                ? "bg-bg-tertiary text-text-primary"
-                : "text-text-muted hover:bg-bg-hover hover:text-text-secondary"
-            }`}
-          >
-            {MODE_LABEL[item]}
-          </button>
+          <Fragment key={item}>
+            <input
+              type="radio"
+              name="cp-auth-mode"
+              id={`cp-mode-${item}`}
+              checked={mode === item}
+              disabled={busy}
+              onChange={() => switchMode(item)}
+            />
+            <label htmlFor={`cp-mode-${item}`} className="text-sm font-semibold tracking-wide">
+              {MODE_LABEL[item]}
+            </label>
+          </Fragment>
         ))}
+        <div className="glass-glider" aria-hidden="true" />
       </div>
 
       <form onSubmit={submit} className="flex flex-col gap-4">
