@@ -29,6 +29,10 @@ const devScriptSource = await readFile(
   devScriptUrl,
   "utf8",
 );
+const bootSmokeSource = await readFile(
+  new URL("../../../scripts/e2e-electron-boot.mjs", import.meta.url),
+  "utf8",
+);
 const packageJson = JSON.parse(
   await readFile(new URL("../package.json", import.meta.url), "utf8"),
 );
@@ -49,6 +53,14 @@ test("Windows runtime registers the canonical native application identity", () =
     mainIndexSource,
     /process\.platform === "win32"[\s\S]*app\.setAppUserModelId\(APP_ID\)/,
   );
+});
+
+test("the boot smoke takes the expected app name from the shared contract", () => {
+  // A literal product name here failed every boot run after the rename, so the
+  // probe keeps comparing against the same APP_NAME the main process applies.
+  assert.match(bootSmokeSource, /packages\/shared\/src\/protocol\.ts/);
+  assert.match(bootSmokeSource, /probe\.appName === expectedAppName/);
+  assert.doesNotMatch(bootSmokeSource, /probe\.appName === "/);
 });
 
 test("Windows packages pin 京车小智工作台 executable and shortcut names", () => {

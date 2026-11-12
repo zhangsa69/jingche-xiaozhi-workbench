@@ -19,6 +19,18 @@ import {
 
 const root = repositoryRoot();
 const { appDir, electronBinary: electronBin } = resolveElectronBinary(root);
+// Main calls `app.setName(APP_NAME)`, so the probe must report the shared
+// contract's APP_NAME. Read it from that source instead of repeating a literal:
+// a product rename must not fail the boot smoke.
+const sharedProtocolSource = readFileSync(
+  join(root, "packages/shared/src/protocol.ts"),
+  "utf8",
+);
+const expectedAppName = sharedProtocolSource.match(/APP_NAME\s*=\s*"([^"]+)"/)?.[1];
+if (!expectedAppName) {
+  console.error("cannot read APP_NAME from packages/shared/src/protocol.ts");
+  process.exit(1);
+}
 
 if (!existsSync(join(appDir, "out/main/index.js"))) {
   console.error("desktop app not built. Run: pnpm --filter @pi-desktop/desktop build");
@@ -122,7 +134,7 @@ child.on("close", (code) => {
   if (
     code === 0 &&
     probe?.ok &&
-    probe.appName === "PI-Desktop" &&
+    probe.appName === expectedAppName &&
     probe.platform === process.platform &&
     (process.platform === "darwin" || probe.maximized === true) &&
     menuContractOk &&
@@ -148,6 +160,12 @@ child.on("close", (code) => {
     cleanup(0);
   } else {
     console.error("FAIL boot-probe —", JSON.stringify(probe));
+    if (probe?.appName !== expectedAppName) {
+      console.error(
+        `appName mismatch: expected ${JSON.stringify(expectedAppName)}, ` +
+          `got ${JSON.stringify(probe?.appName)}`,
+      );
+    }
     console.error(out.slice(-2000));
     cleanup(1);
   }
