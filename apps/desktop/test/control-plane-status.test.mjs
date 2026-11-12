@@ -129,22 +129,31 @@ test("the pre-sign-in gate keeps native window controls reachable", () => {
   assert.equal((gate.match(/<\/GateShell>/g) ?? []).length, 3);
 });
 
-test("the gate covers the window with an undistorted photo and a readable left card", () => {
+test("the gate covers the window with an undistorted photo and a readable right card", () => {
   assert.match(gate, /import loginBackdropUrl from "\.\.\/\.\.\/assets\/login-backdrop\.jpg";/);
   assert.match(gate, /backgroundSize: "cover, cover"/);
   assert.match(gate, /backgroundPosition: "center, center"/);
   assert.match(gate, /backgroundRepeat: "no-repeat, no-repeat"/);
   assert.match(gate, /`url\(\$\{loginBackdropUrl\}\)`/);
-  // A left-weighted scrim darkens the half that carries the form, while the
-  // right keeps the photograph's detail.
+  // The pale artwork stays visible: only a whisper of paper tint sits behind
+  // the card, never the dark scrim used by the previous photo.
   assert.match(gate, /linear-gradient\(90deg/);
+  assert.doesNotMatch(gate, /rgba\(9, 13, 24/);
   const shellClass = gate.slice(
     gate.indexOf("const SHELL_CLASS ="),
     gate.indexOf("const SHELL_STYLE"),
   );
-  assert.match(shellClass, /justify-start/);
-  assert.doesNotMatch(shellClass, /justify-center/);
+  assert.match(shellClass, /justify-end/);
+  assert.doesNotMatch(shellClass, /justify-center|justify-start/);
   assert.match(gate, /bg-bg-secondary\/85/);
+  // A local paper-and-ink palette keeps form text legible on the pale photo.
+  const gateStyles = readFileSync(
+    join(here, "..", "src", "styles", "control-plane.css"),
+    "utf8",
+  );
+  assert.match(gateStyles, /--login-ink:/);
+  assert.match(gateStyles, /--ds-text-primary: var\(--login-ink\)/);
+  assert.match(gateStyles, /--ds-accent: var\(--login-brand\)/);
   const backdrop = readFileSync(join(here, "..", "src", "assets", "login-backdrop.jpg"));
   assert.ok(backdrop.length > 100_000, "backdrop asset missing or too small");
 });

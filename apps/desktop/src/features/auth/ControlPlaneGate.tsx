@@ -50,15 +50,16 @@ export function useManagedModels(): boolean {
 }
 
 const SHELL_CLASS =
-  "control-plane-shell fixed inset-0 flex items-center justify-start overflow-y-auto bg-bg-under p-6 text-text-primary sm:pl-12 lg:pl-24";
+  "control-plane-shell fixed inset-0 flex items-center justify-end overflow-y-auto bg-bg-under p-6 text-text-primary sm:pr-12 lg:pr-24";
 
-// Full-bleed photograph with a left-weighted scrim. `cover` preserves the
-// aspect ratio at every window size; the scrim darkens the half that carries
-// the form while the right keeps the sky and facade detail. Painted inline so
-// the token cascade keeps owning every real surface colour.
+// Full-bleed paper illustration: the title and mark stay on the left while the
+// translucent card sits on the empty right half. `cover` preserves the aspect
+// ratio at every window size; a whisper of paper tint evens the card area
+// without hiding the artwork. Painted inline so the token cascade keeps owning
+// every real surface colour.
 const SHELL_STYLE: CSSProperties = {
   backgroundImage:
-    "linear-gradient(90deg, rgba(9, 13, 24, 0.84) 0%, rgba(9, 13, 24, 0.68) 30%, rgba(9, 13, 24, 0.34) 62%, rgba(9, 13, 24, 0.22) 100%)," +
+    "linear-gradient(90deg, rgba(247, 244, 236, 0) 0%, rgba(247, 244, 236, 0) 44%, rgba(247, 244, 236, 0.45) 100%)," +
     `url(${loginBackdropUrl})`,
   backgroundSize: "cover, cover",
   backgroundPosition: "center, center",

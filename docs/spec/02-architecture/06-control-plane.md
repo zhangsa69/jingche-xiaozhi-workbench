@@ -233,11 +233,13 @@ as `scope = "full"`.
 - The gate covers the whole frameless window on Windows/Linux. Its shell and
   card header are native drag regions, while every interactive field in the
   card opts out, so the window stays movable without a native titlebar. A
-  full-bleed company photograph (`background-size: cover`) with a left-weighted
-  scrim fills the shell; the translucent card sits on the left, carries the
-  packaged app's brand mark, and keeps form, button, and hint text legible at
-  any window size. The gate also mounts the shared window controls (minimize,
-  maximize, close) so the window remains manageable before authentication.
+  full-bleed company illustration (`background-size: cover`) fills the shell,
+  with only a pale tint over its empty right half; the translucent card sits on
+  the right and carries a local paper-and-ink palette (warm paper, deep ink,
+  burnt orange) that matches the artwork while keeping form, button, and hint
+  text legible at any window size. The gate also mounts the shared window
+  controls (minimize, maximize, close) so the window remains manageable before
+  authentication.
 - A `401` on `me` clears the local session and returns the user to sign-in.
 - The sidebar account chip shows the employee, the remaining balance, a manual
   refresh, and sign-out (with a second confirmation).

@@ -3,8 +3,43 @@
  * whole window before sign-in, so there is no native titlebar to drag from.
  * `app-region` is inherited: every interactive descendant of the card has to
  * opt back out, and only the header opts back in as a visible drag handle.
+ *
+ * The backdrop is a pale editorial illustration (warm paper, ink-blue
+ * lettering, burnt-orange mark). The gate is painted before the workspace
+ * theme applies, so it owns a small local "paper" palette that shadows only
+ * the tokens used inside the gate; the workspace theme stays untouched.
  */
 .control-plane-shell {
+  --login-paper: #f7f4ec;
+  --login-paper-deep: #ece6d8;
+  --login-ink: #22374c;
+  --login-ink-soft: #5a6b7b;
+  --login-brand: #c2542a;
+
+  --ds-bg-primary: #ffffff;
+  --ds-bg-secondary: var(--login-paper);
+  --ds-bg-tertiary: var(--login-paper-deep);
+  --ds-bg-inset: var(--login-paper-deep);
+  --ds-bg-under: var(--login-paper);
+  --ds-bg-elevated: var(--login-paper);
+  --ds-bg-hover: color-mix(in oklab, var(--login-ink) 8%, transparent);
+  --ds-tile: var(--login-paper);
+  --ds-tile-hover: var(--login-paper-deep);
+  --ds-tile-deep: color-mix(in oklab, var(--login-ink) 10%, var(--login-paper));
+  --ds-raised: #ffffff;
+  --ds-text-primary: var(--login-ink);
+  --ds-text-secondary: var(--login-ink);
+  --ds-text-muted: var(--login-ink-soft);
+  --ds-text-faint: var(--login-ink-soft);
+  --ds-border-default: color-mix(in oklab, var(--login-ink) 20%, transparent);
+  --ds-border-subtle: color-mix(in oklab, var(--login-ink) 12%, transparent);
+  --ds-accent: var(--login-brand);
+  --ds-accent-hover: color-mix(in oklab, var(--login-brand) 88%, var(--login-ink));
+  --ds-success: #00a240;
+  --ds-warning: #e25507;
+  --ds-error: #e02e2a;
+  --ds-info: var(--login-ink-soft);
+
   -webkit-app-region: drag;
   app-region: drag;
 }
@@ -21,8 +56,17 @@
   app-region: drag;
 }
 
-/* The gate has no titlebar plate, so the shared controls sit on the shell's
-   bloom instead of painting an opaque band across the top-right corner. */
+/* A hairline and a soft lift keep the paper card readable on the paper photo. */
+.control-plane-card {
+  border-color: color-mix(in oklab, var(--login-ink) 24%, transparent);
+  box-shadow:
+    0 18px 48px rgb(34 55 76 / 14%),
+    inset 0 1px 0 rgb(255 255 255 / 75%);
+}
+
+/* The gate has no titlebar plate, so the shared controls sit on the artwork
+   instead of painting an opaque band across the top-right corner. Their ink
+   colour comes from the local palette above. */
 :root .control-plane-shell .window-controls {
   background: transparent;
 }
