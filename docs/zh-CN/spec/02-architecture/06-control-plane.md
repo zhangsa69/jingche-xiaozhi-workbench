@@ -5,8 +5,8 @@
 > 范围：公司部署 PI-Desktop 时的员工身份、网关配置与小智豆额度。
 > 状态：已接受（ADR 0267）
 > 交叉引用：[01-architecture](01-architecture.md) ·
-> [ADR 0267](../../adr/0267-standalone-control-plane-for-accounts-gateway-and-quota.md) ·
-> [deploy README](../../../apps/control-plane/deploy/README.md) ·
+> [ADR 0267](../../../adr/0267-standalone-control-plane-for-accounts-gateway-and-quota.md) ·
+> deploy guide：`apps/control-plane/deploy/README.md` ·
 > [E2E plan](../06-delivery/04-e2e-test-plan.md)
 
 ---
