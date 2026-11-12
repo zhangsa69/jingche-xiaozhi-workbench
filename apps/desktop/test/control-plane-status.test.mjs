@@ -36,6 +36,29 @@ test("an unconfigured deployment is not treated as required", () => {
   assert.match(client, /if \(!configured\) \{ return this\.emptyStatus\(false, null\); \}/);
 });
 
+test("a packaged build falls back to the company origin", () => {
+  // An install must work without environment setup: no URL variable, no
+  // ALLOW_INSECURE flag, and no saved session yet.
+  assert.match(client, /const DEFAULT_CONTROL_PLANE_URL = "http:\/\/10\.120\.65\.148:18787";/);
+  assert.match(
+    client,
+    /return normalizeControlPlaneBaseUrl\(DEFAULT_CONTROL_PLANE_URL, \{ allowInsecure: true \}\)/,
+  );
+});
+
+test("only the built-in origin gets the cleartext opt-in for free", () => {
+  // Any other http origin still needs the explicit flag, otherwise a token
+  // could cross an arbitrary network in the clear.
+  assert.doesNotMatch(
+    client,
+    /normalizeControlPlaneBaseUrl\(process\.env\.PI_DESKTOP_CONTROL_PLANE_URL, \{ allowInsecure: true \}\)/,
+  );
+  assert.doesNotMatch(
+    client,
+    /normalizeControlPlaneBaseUrl\(this\.session\?\.baseUrl, \{ allowInsecure: true \}\)/,
+  );
+});
+
 test("a stored origin that cannot be used still blocks the workspace", () => {
   // Signing in once must not be undone by a restart. When the saved LAN origin
   // needs the insecure opt-in, the gate has to say so instead of quietly

@@ -70,6 +70,12 @@ export type ChargeUsageResult = {
   duplicate: boolean;
 };
 
+/**
+ * The company origin a packaged client connects to out of the box, so an
+ * install needs no environment setup. An explicit environment value or a stored
+ * session still wins, so pointing the client elsewhere keeps working.
+ */
+const DEFAULT_CONTROL_PLANE_URL = "http://10.120.65.148:18787";
 const SESSION_FILE = "control-plane-session.json";
 const REQUEST_TIMEOUT_MS = 20_000;
 const INVALID_BASE_URL_MESSAGE =
@@ -110,7 +116,15 @@ export class ControlPlaneClient {
     if (fromEnv) {
       return fromEnv;
     }
-    return normalizeControlPlaneBaseUrl(this.session?.baseUrl, options);
+    const fromSession = normalizeControlPlaneBaseUrl(this.session?.baseUrl, options);
+    if (fromSession) {
+      return fromSession;
+    }
+    // The built-in default is an RFC1918 origin, so the cleartext opt-in is
+    // granted for this one origin only. Any other http address still needs
+    // PI_DESKTOP_ALLOW_INSECURE_CONTROL_PLANE=1, which keeps the guard that
+    // stops a token from crossing an arbitrary network in the clear.
+    return normalizeControlPlaneBaseUrl(DEFAULT_CONTROL_PLANE_URL, { allowInsecure: true });
   }
 
   async status(): Promise<ControlPlaneStatus> {
