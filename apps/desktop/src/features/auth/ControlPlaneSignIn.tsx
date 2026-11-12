@@ -176,7 +176,7 @@ export function ControlPlaneSignIn({ baseUrl, initialError, onSignedIn }: Contro
   );
 
   return (
-    <div className="control-plane-card panel-card w-full max-w-md border border-border-default bg-bg-secondary/70 p-6 shadow-2xl backdrop-blur-xl">
+    <div className="control-plane-card panel-card w-full max-w-md border border-border-default bg-bg-secondary/85 p-6 shadow-2xl backdrop-blur-xl">
       <header className="control-plane-drag-handle mb-5 flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-bg-tertiary/70 ring-1 ring-border-default/60">
           <BrandLogo size={32} />
@@ -340,7 +340,7 @@ export function ControlPlaneSignIn({ baseUrl, initialError, onSignedIn }: Contro
         </button>
       </div>
 
-      <div className="mt-5 flex items-center gap-2 border-t border-border-subtle pt-4 text-xs text-text-faint">
+      <div className="mt-5 flex items-center gap-2 border-t border-border-subtle pt-4 text-xs text-text-muted">
         <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${baseUrl ? "bg-success" : "bg-warning"}`} />
         {/* The resolved origin stays inside the main process: naming the host
             in the sign-in card leaks the deployment's address to anyone who

@@ -129,6 +129,26 @@ test("the pre-sign-in gate keeps native window controls reachable", () => {
   assert.equal((gate.match(/<\/GateShell>/g) ?? []).length, 3);
 });
 
+test("the gate covers the window with an undistorted photo and a readable left card", () => {
+  assert.match(gate, /import loginBackdropUrl from "\.\.\/\.\.\/assets\/login-backdrop\.jpg";/);
+  assert.match(gate, /backgroundSize: "cover, cover"/);
+  assert.match(gate, /backgroundPosition: "center, center"/);
+  assert.match(gate, /backgroundRepeat: "no-repeat, no-repeat"/);
+  assert.match(gate, /`url\(\$\{loginBackdropUrl\}\)`/);
+  // A left-weighted scrim darkens the half that carries the form, while the
+  // right keeps the photograph's detail.
+  assert.match(gate, /linear-gradient\(90deg/);
+  const shellClass = gate.slice(
+    gate.indexOf("const SHELL_CLASS ="),
+    gate.indexOf("const SHELL_STYLE"),
+  );
+  assert.match(shellClass, /justify-start/);
+  assert.doesNotMatch(shellClass, /justify-center/);
+  assert.match(gate, /bg-bg-secondary\/85/);
+  const backdrop = readFileSync(join(here, "..", "src", "assets", "login-backdrop.jpg"));
+  assert.ok(backdrop.length > 100_000, "backdrop asset missing or too small");
+});
+
 test("a managed deployment forces the gateway row as the only default", () => {
   // `ensureDefault` used to yield to any provider the employee had picked, so a
   // deployment that requires the control plane still sent turns to a locally

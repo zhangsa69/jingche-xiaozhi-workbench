@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import type { ControlPlaneStatus } from "@pi-desktop/shared";
+import loginBackdropUrl from "../../assets/login-backdrop.jpg";
 import { BrandLogo } from "../../components/BrandLogo";
 import { WindowControls } from "../../components/WindowControls";
 import { api } from "../../lib/api";
@@ -49,18 +50,23 @@ export function useManagedModels(): boolean {
 }
 
 const SHELL_CLASS =
-  "control-plane-shell fixed inset-0 flex items-center justify-center overflow-y-auto bg-bg-under p-6 text-text-primary";
+  "control-plane-shell fixed inset-0 flex items-center justify-start overflow-y-auto bg-bg-under p-6 text-text-primary sm:pl-12 lg:pl-24";
 
-// Soft accent bloom behind the card; painted inline so the token cascade keeps
-// owning every real surface colour.
+// Full-bleed photograph with a left-weighted scrim. `cover` preserves the
+// aspect ratio at every window size; the scrim darkens the half that carries
+// the form while the right keeps the sky and facade detail. Painted inline so
+// the token cascade keeps owning every real surface colour.
 const SHELL_STYLE: CSSProperties = {
   backgroundImage:
-    "radial-gradient(900px 480px at 18% -12%, color-mix(in oklab, var(--ds-accent) 14%, transparent), transparent 62%)," +
-    "radial-gradient(720px 420px at 88% 8%, color-mix(in oklab, var(--ds-info) 10%, transparent), transparent 58%)",
+    "linear-gradient(90deg, rgba(9, 13, 24, 0.84) 0%, rgba(9, 13, 24, 0.68) 30%, rgba(9, 13, 24, 0.34) 62%, rgba(9, 13, 24, 0.22) 100%)," +
+    `url(${loginBackdropUrl})`,
+  backgroundSize: "cover, cover",
+  backgroundPosition: "center, center",
+  backgroundRepeat: "no-repeat, no-repeat",
 };
 
 const CARD_CLASS =
-  "control-plane-card panel-card w-full max-w-md border border-border-default bg-bg-secondary/70 p-6 shadow-2xl backdrop-blur-xl";
+  "control-plane-card panel-card w-full max-w-md border border-border-default bg-bg-secondary/85 p-6 shadow-2xl backdrop-blur-xl";
 
 /**
  * Every blocking phase owns the same frameless shell, including the shared
