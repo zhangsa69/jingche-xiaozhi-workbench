@@ -20,3 +20,9 @@
   -webkit-app-region: drag;
   app-region: drag;
 }
+
+/* The gate has no titlebar plate, so the shared controls sit on the shell's
+   bloom instead of painting an opaque band across the top-right corner. */
+:root .control-plane-shell .window-controls {
+  background: transparent;
+}

@@ -111,6 +111,24 @@ test("a background status change does not repaint the connecting card", () => {
   assert.match(gate, /void load\(\{ silent: true \}\);/);
 });
 
+test("the pre-sign-in gate keeps native window controls reachable", () => {
+  // The gate covers the frameless window's titlebar. Without the shared
+  // controls an employee could not minimize, maximize, or close before
+  // authenticating. All three blocking phases must mount the same shell.
+  assert.match(gate, /import \{ WindowControls \} from "\.\.\/\.\.\/components\/WindowControls";/);
+  const shell = gate.slice(
+    gate.indexOf("function GateShell("),
+    gate.indexOf("const UNREACHABLE_HINT"),
+  );
+  assert.ok(shell.length > 0, "GateShell missing");
+  assert.match(shell, /className=\{SHELL_CLASS\}/);
+  assert.match(shell, /style=\{SHELL_STYLE\}/);
+  assert.match(shell, /<WindowControls \/>/);
+  assert.match(shell, /\{children\}/);
+  assert.equal((gate.match(/<GateShell>/g) ?? []).length, 3);
+  assert.equal((gate.match(/<\/GateShell>/g) ?? []).length, 3);
+});
+
 test("a managed deployment forces the gateway row as the only default", () => {
   // `ensureDefault` used to yield to any provider the employee had picked, so a
   // deployment that requires the control plane still sent turns to a locally

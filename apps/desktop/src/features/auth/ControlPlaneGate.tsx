@@ -11,6 +11,7 @@ import {
 } from "react";
 import type { ControlPlaneStatus } from "@pi-desktop/shared";
 import { BrandLogo } from "../../components/BrandLogo";
+import { WindowControls } from "../../components/WindowControls";
 import { api } from "../../lib/api";
 import { ControlPlaneSignIn } from "./ControlPlaneSignIn";
 import { useAppStore } from "../../stores/app-store";
@@ -60,6 +61,21 @@ const SHELL_STYLE: CSSProperties = {
 
 const CARD_CLASS =
   "control-plane-card panel-card w-full max-w-md border border-border-default bg-bg-secondary/70 p-6 shadow-2xl backdrop-blur-xl";
+
+/**
+ * Every blocking phase owns the same frameless shell, including the shared
+ * window controls. The gate covers the titlebar, so without them an employee
+ * would have no way to minimize, maximize, or close before signing in.
+ * macOS keeps its native traffic lights; WindowControls renders nothing there.
+ */
+function GateShell({ children }: { children: ReactNode }) {
+  return (
+    <div className={SHELL_CLASS} style={SHELL_STYLE}>
+      <WindowControls />
+      {children}
+    </div>
+  );
+}
 
 const UNREACHABLE_HINT =
   "为避免使用过期额度，客户端在无法确认配额时不会进入工作台。请检查网络或联系管理员。";
@@ -187,7 +203,7 @@ export function ControlPlaneGate({ children }: { children: ReactNode }) {
 
   if (phase === "loading") {
     return (
-      <div className={SHELL_CLASS} style={SHELL_STYLE}>
+      <GateShell>
         <div className={`${CARD_CLASS} text-center`}>
           <div className="mx-auto mb-3.5 flex h-10 w-10 animate-pulse items-center justify-center rounded-xl bg-bg-tertiary/70 ring-1 ring-border-default/60">
             <BrandLogo size={32} />
@@ -195,13 +211,13 @@ export function ControlPlaneGate({ children }: { children: ReactNode }) {
           <p className="m-0 text-base text-text-primary">正在连接京车小智管控中心…</p>
           <p className="m-0 mt-1.5 text-sm text-text-muted">校验登录状态并同步小智豆配额</p>
         </div>
-      </div>
+      </GateShell>
     );
   }
 
   if (phase === "blocked") {
     return (
-      <div className={SHELL_CLASS} style={SHELL_STYLE}>
+      <GateShell>
         <div className={CARD_CLASS}>
           <h1 className="m-0 text-lg font-semibold text-text-primary">{problem?.title ?? "无法连接管控中心"}</h1>
           <p className="m-0 mt-2 break-words text-md leading-body text-text-secondary">
@@ -212,17 +228,17 @@ export function ControlPlaneGate({ children }: { children: ReactNode }) {
             重新检查
           </button>
         </div>
-      </div>
+      </GateShell>
     );
   }
 
   return (
-    <div className={SHELL_CLASS} style={SHELL_STYLE}>
+    <GateShell>
       <ControlPlaneSignIn
         baseUrl={status?.baseUrl ?? null}
         initialError={status?.error ?? null}
         onSignedIn={handleSignedIn}
       />
-    </div>
+    </GateShell>
   );
 }
