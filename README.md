@@ -41,7 +41,7 @@ Local-first · Model-agnostic · Extensible · Windows / macOS / Linux
 ---
 
 > [!IMPORTANT]
-> **京车小智工作台 is in early preview.** Current version: `0.14.8-native.1`. It is usable for real work, but interfaces and desktop behaviours are still moving.
+> **京车小智工作台 1.0.0 is the frozen baseline.** Current version: `1.0.0` on the `1.0.x` line. Interfaces and desktop behaviours described in `docs/spec` are stable; later work branches from this commit.
 
 ## Not another chat window
 
@@ -294,7 +294,7 @@ Useful references:
 
 ## Project status
 
-Current line: **`0.14.8-native.1`**.
+Current line: **`1.0.x`** (this build: `1.0.0`).
 
 Delivered: the desktop shell, streaming agent runtime, Agent / Plan / Goal / Ask modes, permission-aware workspace tools, projects and sessions, session import, local MCP control, plugins / Skills / MCP / Subagents, multi-provider model configuration with local model presets, context checkpoints, notifications, release notes, cross-platform packaging, plus the delivery, history, expert, context, and prompt-reuse features listed above.
 

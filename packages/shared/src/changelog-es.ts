@@ -1,6 +1,22 @@
 import type { ChangelogEntry } from "./changelog.js";
 
 export const esEntries: ChangelogEntry[] = [
+  // 1.0.0 ships without a translation for this locale; the English text is the
+  // catalog source of truth (ADR 0009) and keeps the version list aligned.
+  {
+    "version": "1.0.0",
+    "date": "2026-11-12",
+    "highlights": [
+      "Ship 1.0.0 as the frozen release line: desktop shell, local Rust host-core, and the agent runtime in one package.",
+      "Company control plane: email-code sign-in, per-turn bean deduction, one managed gateway, and an admin console with audit.",
+      "Gate the workspace behind control-plane sign-in and lock employee model configuration to the managed default.",
+      "Skip the GitHub update check on intranet deployments, so LAN-only clients never reach the public internet.",
+      "Update delivery still follows the platform: in-app on Windows NSIS and Linux AppImage, notify-and-link elsewhere.",
+      "Keep four operating modes, permission-aware workspace tools, projects, sessions, subagents, Skills, plugins, MCP, and themes.",
+      "Fix empty-balance 402 handling and restore expert hand-over prompts when a session is not open.",
+      "Read the boot smoke's expected product name from the shared contract, so a rebrand cannot fail startup verification.",
+    ],
+  },
   {
     "version": "0.14.8",
     "date": "2026-09-14",

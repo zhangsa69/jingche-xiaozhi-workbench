@@ -29,6 +29,20 @@ export type ChangelogEntry = {
 
 const enEntries: ChangelogEntry[] = [
   {
+    version: "1.0.0",
+    date: "2026-11-12",
+    highlights: [
+      "Ship 1.0.0 as the frozen release line: desktop shell, local Rust host-core, and the agent runtime in one package.",
+      "Company control plane: email-code sign-in, per-turn bean deduction, one managed gateway, and an admin console with audit.",
+      "Gate the workspace behind control-plane sign-in and lock employee model configuration to the managed default.",
+      "Skip the GitHub update check on intranet deployments, so LAN-only clients never reach the public internet.",
+      "Update delivery still follows the platform: in-app on Windows NSIS and Linux AppImage, notify-and-link elsewhere.",
+      "Keep four operating modes, permission-aware workspace tools, projects, sessions, subagents, Skills, plugins, MCP, and themes.",
+      "Fix empty-balance 402 handling and restore expert hand-over prompts when a session is not open.",
+      "Read the boot smoke's expected product name from the shared contract, so a rebrand cannot fail startup verification.",
+    ],
+  },
+  {
     version: "0.14.8",
     date: "2026-09-14",
     highlights: [
@@ -759,6 +773,20 @@ const enEntries: ChangelogEntry[] = [
 
 const zhCNEntries: ChangelogEntry[] = [
   {
+    version: "1.0.0",
+    date: "2026-11-12",
+    highlights: [
+      "定稿 1.0.0：桌面外壳、本机 Rust 数据内核与智能体运行时全部装在同一个安装包里。",
+      "公司管控中心：邮箱验证码登录、按轮扣豆、统一网关，以及带审计的管理后台。",
+      "工作区由管控中心登录把守；员工侧模型配置锁定为托管默认值。",
+      "内网部署不再发起 GitHub 更新检查，局域网客户端不会触碰公网。",
+      "更新方式仍按平台区分：Windows 安装版与 Linux AppImage 应用内更新，其余提示并跳转下载页。",
+      "保留四种工作模式、带权限的工作区工具，以及项目、会话、子代理、Skills、插件、MCP 与主题能力。",
+      "修复 402 空余额判定，并恢复未打开会话时的专家交接提示。",
+      "启动冒烟的产品名改为从共享契约读取，品牌改名不再导致启动校验失败。",
+    ],
+  },
+  {
     version: "0.14.8",
     date: "2026-09-14",
     highlights: [
@@ -1487,6 +1515,20 @@ const zhCNEntries: ChangelogEntry[] = [
 ];
 
 const zhTWEntries: ChangelogEntry[] = [
+  {
+    version: "1.0.0",
+    date: "2026-11-12",
+    highlights: [
+      "定稿 1.0.0：桌面外殼、本機 Rust 資料核心與智慧體執行環境全部內建於同一個安裝包。",
+      "公司管控中心：電子郵件驗證碼登入、依回合扣豆、統一閘道，以及含稽核的管理後台。",
+      "工作區由管控中心登入把關；員工端模型設定鎖定為託管預設值。",
+      "內網部署不再發起 GitHub 更新檢查，僅區域網路的用戶端不會連上公網。",
+      "更新方式仍依平台區分：Windows 安裝版與 Linux AppImage 於應用程式內更新，其餘僅提示並開啟下載頁。",
+      "保留四種工作模式、具權限的工作區工具，以及專案、工作階段、子代理、Skills、外掛、MCP 與主題能力。",
+      "修正 402 空餘額判定，並還原未開啟工作階段時的專家交接提示。",
+      "啟動冒煙測試的產品名稱改為讀取共享契約，品牌更名不再造成啟動驗證失敗。",
+    ],
+  },
   {
     version: "0.14.8",
     date: "2026-09-14",

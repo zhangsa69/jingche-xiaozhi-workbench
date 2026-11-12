@@ -2,7 +2,7 @@ export const PROTOCOL_VERSION = 11 as const;
 export const SCHEMA_VERSION = 16 as const;
 export const APP_ID = "cn.hebeijingche.workbench";
 export const APP_NAME = "京车小智工作台";
-export const APP_VERSION = "0.14.8-native.1";
+export const APP_VERSION = "1.0.0";
 
 export const APP_MENU_COMMANDS = [
   "newTask",
