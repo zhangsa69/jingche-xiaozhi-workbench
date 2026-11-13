@@ -2,6 +2,11 @@
 
 Mandatory rules for AI coding agents working in PI-Desktop.
 
+> **Read `docs/编码规范.md` before touching code.** It records the current
+> monorepo layout, the local/remote branch and worktree state, where incremental
+> work must start, and the repo-specific coding conventions. This file governs
+> delivery process; the coding standard governs structure and style.
+
 PI-Desktop is released software with real users. Treat every change as production maintenance, not prototype work.
 
 Optimize for:
@@ -23,6 +28,7 @@ Optimize for:
 
 Before implementation, read:
 
+* `docs/编码规范.md` (mandatory: repo structure, branch/worktree state, coding conventions)
 * `docs/spec/00-baseline.md`
 * relevant documents under `docs/spec/`
 * relevant ADRs under `docs/adr/`
